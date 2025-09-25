@@ -178,13 +178,22 @@
         firstChargeDate.setDate(startDate.getDate() + 1);
 
         if (days < 7) {
-          total += data.perDay;
-          breakdown.push(`Day 1 (${firstChargeDate.toDateString()}): 基本日租 $${data.perDay}`);
+          const firstChargeDate = new Date(startDate);
+          firstChargeDate.setDate(startDate.getDate() + 1);
+        
+          const dowFirst = firstChargeDate.getDay();
+          const isWeekday = (dowFirst >= 1 && dowFirst <= 4); // Mon–Thu
+          const firstDayPrice = isWeekday ? data.weekday1 : data.perDay;
+        
+          total += firstDayPrice;
+          breakdown.push(`Day 1 (${firstChargeDate.toDateString()}): ${isWeekday ? "平日首日租金" : "週末/假日首日租金"} $${firstDayPrice}`);
+        
+          // Day 2+
           for (let i = 2; i <= days; i++) {
             const d = new Date(firstChargeDate);
             d.setDate(firstChargeDate.getDate() + (i - 1));
             const dow = d.getDay();
-            const isWeekend = (dow === 5 || dow === 6 || dow === 0);
+            const isWeekend = (dow === 5 || dow === 6 || dow === 0); // Fri, Sat, Sun
             const tier = isWeekend ? data.weekend : data.weekday;
             let addon = (i === 2) ? tier[2] : (i === 3 ? tier[3] : tier.more);
             total += addon;
