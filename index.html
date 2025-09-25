@@ -28,29 +28,36 @@
       margin-top: 10px;
       display: block;
     }
-    select, input, button {
+
+    /* ✅ Standardize all form fields */
+    select, input[type="date"], button {
       width: 100%;
       box-sizing: border-box;
       padding: 10px;
       margin-top: 5px;
       margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
       font-size: 16px;
+      border-radius: 6px;
       display: block;
     }
-    input[type="date"] {
-      line-height: normal;
+
+    /* Consistent border for select & input */
+    select, input[type="date"] {
+      border: 1px solid #ccc;
+      background: #fff;
     }
+
     button {
       background: #0078D7;
       color: white;
       border: none;
       cursor: pointer;
+      transition: background 0.2s ease-in-out;
     }
     button:hover {
       background: #005fa3;
     }
+
     #result {
       margin-top: 20px;
       padding: 15px;
