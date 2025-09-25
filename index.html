@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>租借計算工具</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 20px;
+      background: #f9fbfc;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+    select, input, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      display: block;
+    }
+    input[type="date"] {
+      line-height: normal;
+    }
+    button {
+      background: #0078D7;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005fa3;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f0f8ff;
+      border: 1px solid #add8e6;
+      border-radius: 8px;
+      font-size: 16px;
+      line-height: 1.6em;
+    }
+    #result .title {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    #result .line {
+      display: flex;
+      justify-content: space-between;
+      padding: 2px 0;
+    }
+    #result .total {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 10px;
+      border-top: 1px solid #add8e6;
+      padding-top: 8px;
+    }
+    #result .deposit {
+      margin-top: 5px;
+      color: #444;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>852camera租借價格計算器</h2>
+
+    <label for="product">選擇型號：</label>
+    <select id="product">
+      <option value="">-- 請選擇 --</option>
+      <option value="S24U">Samsung S24U</option>
+      <option value="S25U">Samsung S25U</option>
+      <option value="X200 Ultra">Vivo X200 Ultra + 專業攝影套裝</option>
+      <option value="R5">Canon R5</option>
+      <option value="R5ii">Canon R5ii</option>
+      <option value="R6ii">Canon R6ii</option>
+      <option value="EF 70-200 F2.8 ii">Canon EF 70-200 F2.8 ii</option>
+      <option value="RF 70-200 F2.8">Canon RF 70-200 F2.8</option>
+      <option value="RF 100-500">Canon RF 100-500</option>
+      <option value="RF 100-400">Canon RF 100-400</option>
+      <option value="RF 50mm 1.8">Canon RF 50mm 1.8</option>
+      <option value="A7R5">Sony A7R5</option>
+      <option value="A7C2">Sony A7C2</option>
+      <option value="FE 100-400">Sony FE 100-400</option>
+      <option value="FE 70-200 F2.8 ii">Sony FE 70-200 F2.8 ii</option>
+      <option value="FE 200-600">Sony FE 200-600</option>
+      <option value="1.4x Extender">Sony 1.4x 遠攝增距鏡</option>
+      <option value="X100VI">Fujifilm X100VI</option>
+    </select>
+
+    <label for="startDate">取機日期：</label>
+    <input type="date" id="startDate" />
+
+    <label for="endDate">還機日期：</label>
+    <input type="date" id="endDate" />
+
+    <button onclick="calculatePrice()">計算價格</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // 全部型號的價錢表 (含按金)
+    const pricingData = {
+      "S24U": { deposit:6000, perDay:150, weekday1:130, weekend:{2:90,3:30,more:30,more14:20}, weekday:{2:80,3:30,more:30,more14:20}, week:380, twoWeek:520 },
+      "S25U": { deposit:10000, perDay:210, weekday1:180, weekend:{2:130,3:40,more:50,more14:30}, weekday:{2:110,3:30,more:40,more14:30}, week:540, twoWeek:750 },
+      "X200 Ultra": { deposit:9000, perDay:300, weekday1:260, weekend:{2:210,3:110,more:70,more14:50}, weekday:{2:180,3:90,more:60,more14:40}, week:840, twoWeek:1150 },
+      "R5": { deposit:16000, perDay:350, weekday1:430, weekend:{2:210,3:70,more:80,more14:60}, weekday:{2:180,3:60,more:70,more14:50}, week:900, twoWeek:1280 },
+      "R5ii": { deposit:18000, perDay:500, weekday1:1300, weekend:{2:300,3:100,more:110,more14:80}, weekday:{2:260,3:90,more:90,more14:70}, week:1260, twoWeek:1780 },
+      "R6ii": { deposit:12000, perDay:250, weekday1:800, weekend:{2:150,3:50,more:60,more14:40}, weekday:{2:130,3:40,more:50,more14:40}, week:640, twoWeek:920 },
+      "EF 70-200 F2.8 ii": { deposit:8000, perDay:190, weekday1:160, weekend:{2:110,3:40,more:40,more14:30}, weekday:{2:90,3:30,more:40,more14:30}, week:640, twoWeek:850 },
+      "RF 70-200 F2.8": { deposit:15000, perDay:400, weekday1:340, weekend:{2:240,3:80,more:90,more14:70}, weekday:{2:200,3:70,more:70,more14:60}, week:990, twoWeek:1440 },
+      "RF 100-500": { deposit:15000, perDay:400, weekday1:990, weekend:{2:240,3:800,more:90,more14:70}, weekday:{2:200,3:70,more:70,more14:60}, week:990, twoWeek:1440 },
+      "RF 100-400": { deposit:3000, perDay:80, weekday1:260, weekend:{2:60,3:10,more:20,more14:10}, weekday:{2:50,3:10,more:10,more14:10}, week:200, twoWeek:280 },
+      "RF 50mm 1.8": { deposit:1000, perDay:50, weekday1:40, weekend:{2:40,3:10,more:10,more14:10}, weekday:{2:30,3:10,more:10,more14:10}, week:130, twoWeek:200},
+      "A7R5": { deposit:18000, perDay:400, weekday1:260, weekend:{2:240,3:80,more:90,more14:70}, weekday:{2:200,3:70,more:70,more14:60}, week:990, twoWeek:1440 },
+      "A7C2": { deposit:12000, perDay:350, weekday1:180, weekend:{2:210,3:70,more:80,more14:60}, weekday:{2:180,3:60,more:70,more14:50}, week:900, twoWeek:1280 },
+      "FE 100-400": { deposit:12000, perDay:290, weekday1:250, weekend:{2:170,3:60,more:60,more14:50}, weekday:{2:140,3:50,more:50,more14:40}, week:700, twoWeek:1010 },
+      "FE 70-200 F2.8 ii": { deposit:13000, perDay:400, weekday1:300, weekend:{2:240,3:80,more:90,more14:70}, weekday:{2:200,3:70,more:70,more14:60}, week:990, twoWeek:1440 },
+      "FE 200-600": { deposit:8000, perDay:230, weekday1:260, weekend:{2:140,3:40,more:50,more14:40}, weekday:{2:120,3:30,more:40,more14:30}, week:570, twoWeek:810 },
+      "1.4x Extender": { deposit:2000, perDay:80, weekday1:70, weekend:{2:50,3:10,more:20,more14:10}, weekday:{2:40,3:10,more:10,more14:10}, week:190, twoWeek:260 },
+      "X100VI": { deposit:14000, perDay:350, weekday1:180, weekend:{2:210,3:70,more:80,more14:60}, weekday:{2:180,3:60,more:70,more14:50}, week:900, twoWeek:1280 }
+    };
+
+    function calculatePrice() {
+      const product = document.getElementById("product").value;
+      const startDateRaw = document.getElementById("startDate").value;
+      const endDateRaw = document.getElementById("endDate").value;
+      const startDate = new Date(startDateRaw);
+      const endDate = new Date(endDateRaw);
+      const resultDiv = document.getElementById("result");
+
+      if (!product || isNaN(startDate) || isNaN(endDate) || endDate < startDate) {
+        resultDiv.innerHTML = "請選擇型號並輸入有效的日期範圍 (結束日必須大於或等於開始日)。";
+        return;
+      }
+
+      let days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+      if (days === 0) days = 1;
+
+      const data = pricingData[product];
+      let total = 0;
+      let breakdown = [];
+
+      if (days === 1) {
+        total = data.perDay;
+        breakdown.push(`同日租借：基本日租 $${data.perDay}`);
+      } else if (days === 7) {
+        total = data.week;
+        breakdown.push(`租借 7 天：一週套餐 → $${data.week}`);
+      } else if (days === 14) {
+        total = data.twoWeek;
+        breakdown.push(`租借 14 天：兩週套餐 → $${data.twoWeek}`);
+      } else {
+        const firstChargeDate = new Date(startDate);
+        firstChargeDate.setDate(startDate.getDate() + 1);
+
+        if (days < 7) {
+          total += data.perDay;
+          breakdown.push(`Day 1 (${firstChargeDate.toDateString()}): 基本日租 $${data.perDay}`);
+          for (let i = 2; i <= days; i++) {
+            const d = new Date(firstChargeDate);
+            d.setDate(firstChargeDate.getDate() + (i - 1));
+            const dow = d.getDay();
+            const isWeekend = (dow === 5 || dow === 6 || dow === 0);
+            const tier = isWeekend ? data.weekend : data.weekday;
+            let addon = (i === 2) ? tier[2] : (i === 3 ? tier[3] : tier.more);
+            total += addon;
+            breakdown.push(`Day ${i} (${d.toDateString()}): ${isWeekend ? "週末" : "平日"} 加價 $${addon}`);
+          }
+        } else if (days > 7 && days < 14) {
+          total = data.week;
+          breakdown.push(`前 7 天：一週套餐 → $${data.week}`);
+          for (let i = 8; i <= days; i++) {
+            const d = new Date(firstChargeDate);
+            d.setDate(firstChargeDate.getDate() + (i - 1));
+            const dow = d.getDay();
+            const isWeekend = (dow === 5 || dow === 6 || dow === 0);
+            const tier = isWeekend ? data.weekend : data.weekday;
+            const addon = tier.more14;
+            total += addon;
+            breakdown.push(`Day ${i} (${d.toDateString()}): ${isWeekend ? "週末" : "平日"} (8–14日加價) $${addon}`);
+          }
+        } else if (days > 14) {
+          total = data.twoWeek;
+          breakdown.push(`前 14 天：兩週套餐 → $${data.twoWeek}`);
+          for (let i = 15; i <= days; i++) {
+            const d = new Date(firstChargeDate);
+            d.setDate(firstChargeDate.getDate() + (i - 1));
+            const dow = d.getDay();
+            const isWeekend = (dow === 5 || dow === 6 || dow === 0);
+            const tier = isWeekend ? data.weekend : data.weekday;
+            const addon = tier.more14;
+            total += addon;
+            breakdown.push(`Day ${i} (${d.toDateString()}): ${isWeekend ? "週末" : "平日"} (超過14天, 按8–14日加價) $${addon}`);
+          }
+        }
+      }
+
+      resultDiv.innerHTML = `
+        <div class="title">📅 租借 ${days} 天 (取機日 ${startDate.toDateString()} ${days>1?"不計費":"含計費"})</div>
+        ${breakdown.map(line=>`<div class="line"><span>${line}</span></div>`).join("")}
+        <div class="total">💰 總價: $${total.toLocaleString()}</div>
+        <div class="deposit">
+          🔒 按金: $${data.deposit.toLocaleString()}<br/>
+          💳 支持信用卡預授權（Hold Limit）/FPS/Payme/Alipay作為按金方式
+        </div>
+        <div class="student-plan" style="margin-top:15px; padding:12px; border:1px dashed #aaa; border-radius:6px; background:#fdfdfd;">
+          <b>👩🏻‍🎓👨🏻‍🎓 學生按金計劃</b><br/>
+          如欲選用學生按金方案，請於<u>取機前最少一天</u>提交以下資料至我們的WhatsApp或IG：<br/>
+          • 身份證副本<br/>
+          • 有效學生證副本<br/>
+          • 活動門票（活動必須於租借期間舉行）<br/><br/>
+          ✅ 建議於學生證及身份證上加上水印，註明「僅供 852.camera 器材租用用途」。
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
