@@ -110,10 +110,10 @@
       <option value="X100VI">Fujifilm X100VI</option>
     </select>
 
-    <label for="startDate">取機日期：</label>
+    <label for="startDate">取機日期(MM/DD/YYYY)：</label>
     <input type="date" id="startDate" />
 
-    <label for="endDate">還機日期：</label>
+    <label for="endDate">還機日期(MM/DD/YYYY)：</label>
     <input type="date" id="endDate" />
 
     <button onclick="calculatePrice()">計算價格</button>
@@ -165,8 +165,12 @@
       let breakdown = [];
 
       if (days === 1) {
-        total = data.perDay;
-        breakdown.push(`同日租借：基本日租 $${data.perDay}`);
+        const dow = startDate.getDay(); 
+        const isWeekday = (dow >= 1 && dow <= 4); // Mon–Thu
+        total = isWeekday ? data.weekday1 : data.perDay;
+        breakdown.push(
+          `同日租借：${isWeekday ? "平日首日租金" : "週末/假日租金"} $${total}`
+        );
       } else if (days === 7) {
         total = data.week;
         breakdown.push(`租借 7 天：一週套餐 → $${data.week}`);
