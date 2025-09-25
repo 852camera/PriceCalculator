@@ -28,36 +28,29 @@
       margin-top: 10px;
       display: block;
     }
-
-    /* ✅ Standardize all form fields */
-    select, input[type="date"], button {
+    select, input, button {
       width: 100%;
       box-sizing: border-box;
       padding: 10px;
       margin-top: 5px;
       margin-bottom: 15px;
-      font-size: 16px;
+      border: 1px solid #ccc;
       border-radius: 6px;
+      font-size: 16px;
       display: block;
     }
-
-    /* Consistent border for select & input */
-    select, input[type="date"] {
-      border: 1px solid #ccc;
-      background: #fff;
+    input[type="date"] {
+      line-height: normal;
     }
-
     button {
       background: #0078D7;
       color: white;
       border: none;
       cursor: pointer;
-      transition: background 0.2s ease-in-out;
     }
     button:hover {
       background: #005fa3;
     }
-
     #result {
       margin-top: 20px;
       padding: 15px;
@@ -120,7 +113,7 @@
     <label for="startDate">取機日期(MM/DD/YYYY)：</label>
     <input type="date" id="startDate" />
 
-    <label for="endDate">還機日期(MM/DD/YYYY)：</label>
+    <label for="endDate">還機日期：</label>
     <input type="date" id="endDate" />
 
     <button onclick="calculatePrice()">計算價格</button>
