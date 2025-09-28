@@ -242,7 +242,7 @@
       }
 
       resultDiv.innerHTML = `
-        <div class="title">📅 租借 ${days} 天 (取機日 ${startDate.toDateString()} ${days>1?"不計費":"含計費"})</div>
+        <div class="title">📅 租借 ${days} 天 (取機日不計費)</div>
         ${breakdown.map(line=>`<div class="line"><span>${line}</span></div>`).join("")}
         <div class="total">💰 總價: $${total.toLocaleString()}</div>
         <div class="deposit">
