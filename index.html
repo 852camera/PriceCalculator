@@ -211,7 +211,7 @@
             const d = new Date(firstChargeDate);
             d.setDate(firstChargeDate.getDate() + (i - 1));
             const dow = d.getDay();
-            const isWeekend = (dow === 5 || dow === 6 || dow === 0); // Fri, Sat, Sun
+            const isWeekend = (dow === 4 || dow === 5 || dow === 6 || dow === 0); // Fri, Sat, Sun
             const tier = isWeekend ? data.weekend : data.weekday;
             let addon = (i === 2) ? tier[2] : (i === 3 ? tier[3] : tier.more);
             total += addon;
@@ -222,7 +222,7 @@
             const d = new Date(firstChargeDate);
             d.setDate(firstChargeDate.getDate() + (i - 1));
             const dow = d.getDay();
-            const isWeekend = (dow === 5 || dow === 6 || dow === 0);
+            const isWeekend = (dow === 4 || dow === 5 || dow === 6 || dow === 0);
             const tier = isWeekend ? data.weekend : data.weekday;
             const addon = tier.more14;
             total += addon;
@@ -233,7 +233,7 @@
             const d = new Date(firstChargeDate);
             d.setDate(firstChargeDate.getDate() + (i - 1));
             const dow = d.getDay();
-            const isWeekend = (dow === 5 || dow === 6 || dow === 0);
+            const isWeekend = (dow === 4 || dow === 5 || dow === 6 || dow === 0);
             const tier = isWeekend ? data.weekend : data.weekday;
             const addon = tier.more14;
             total += addon;
