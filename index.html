@@ -186,7 +186,7 @@
 
       if (days === 1) {
         const dow = startDate.getDay(); 
-        const isWeekday = (dow >= 1 && dow <= 4); // Mon–Thu
+        const isWeekday = (dow >= 1 && dow <= 3); // Mon–Thu
         total = isWeekday ? data.weekday1 : data.perDay;
       } else if (days === 7) {
         total = data.week;
@@ -201,7 +201,7 @@
           firstChargeDate.setDate(startDate.getDate() + 1);
         
           const dowFirst = firstChargeDate.getDay();
-          const isWeekday = (dowFirst >= 1 && dowFirst <= 4); // Mon–Thu
+          const isWeekday = (dowFirst >= 1 && dowFirst <= 3); // Mon–Thu
           const firstDayPrice = isWeekday ? data.weekday1 : data.perDay;
         
           total += firstDayPrice;
