@@ -144,27 +144,27 @@
 
   <script>
     // 全部型號的價錢表 (含按金)
-    const pricingData = {
-      "S24U": { deposit:6000, perDay:180, weekday1:150, weekend:{2:160,3:80,more:50,more14:40}, weekday:{2:135,3:70,more:40,more14:30}, week:580, twoWeek:1050 },
-      "S25U": { deposit:8000, perDay:280, weekday1:240, weekend:{2:230,3:80,more:65,more14:60}, weekday:{2:190,3:70,more:55,more14:50}, week:830, twoWeek:1450 },
-      "X200 Ultra": { deposit:9000, perDay:280, weekday1:240, weekend:{2:230,3:80,more:70,more14:50}, weekday:{2:190,3:70,more:60,more14:40}, week:840, twoWeek:1500 },
-      "R5": { deposit:16000, perDay:350, weekday1:300, weekend:{2:210,3:70,more:80,more14:60}, weekday:{2:180,3:60,more:70,more14:50}, week:900, twoWeek:1280 },
-      "R5ii": { deposit:18000, perDay:500, weekday1:430, weekend:{2:300,3:100,more:110,more14:80}, weekday:{2:260,3:90,more:90,more14:70}, week:1260, twoWeek:1780 },
-      "R6ii": { deposit:12000, perDay:250, weekday1:210, weekend:{2:150,3:100,more:80,more14:60}, weekday:{2:150,3:100,more:80,more14:60}, week:800, twoWeek:1200 },
-      "R6iii": { deposit:18000, perDay:400, weekday1:340, weekend:{2:240,3:80,more:90,more14:70}, weekday:{2:200,3:70,more:70,more14:60}, week:990, twoWeek:1440 },
-      "EF 70-200 F2.8 ii": { deposit:8000, perDay:190, weekday1:160, weekend:{2:110,3:40,more:40,more14:30}, weekday:{2:90,3:30,more:40,more14:30}, week:470, twoWeek:850 },
-      "RF 70-200 F2.8": { deposit:15000, perDay:400, weekday1:340, weekend:{2:240,3:80,more:90,more14:70}, weekday:{2:200,3:70,more:70,more14:60}, week:990, twoWeek:1440 },
-      "RF 100-500": { deposit:15000, perDay:400, weekday1:340, weekend:{2:240,3:80,more:90,more14:70}, weekday:{2:200,3:70,more:70,more14:60}, week:990, twoWeek:1440 },
-      "RF 100-400": { deposit:3000, perDay:120, weekday1:100, weekend:{2:80,3:30,more:30,more14:20}, weekday:{2:70,3:30,more:20,more14:20}, week:320, twoWeek:460 },
-      "RF 50mm 1.8": { deposit:1000, perDay:50, weekday1:40, weekend:{2:40,3:20,more:20,more14:20}, weekday:{2:30,3:20,more:20,more14:20}, week:180, twoWeek:350},
-      "A7R5": { deposit:18000, perDay:400, weekday1:340, weekend:{2:240,3:80,more:90,more14:70}, weekday:{2:200,3:70,more:70,more14:60}, week:990, twoWeek:1440 },
-      "A7C2": { deposit:12000, perDay:350, weekday1:300, weekend:{2:210,3:70,more:80,more14:60}, weekday:{2:180,3:60,more:70,more14:50}, week:900, twoWeek:1280 },
-      "FE 100-400": { deposit:12000, perDay:290, weekday1:250, weekend:{2:170,3:60,more:60,more14:50}, weekday:{2:140,3:50,more:50,more14:40}, week:700, twoWeek:1010 },
-      "FE 70-200 F2.8 ii": { deposit:13000, perDay:400, weekday1:340, weekend:{2:240,3:80,more:90,more14:70}, weekday:{2:200,3:70,more:70,more14:60}, week:990, twoWeek:1440 },
-      "FE 200-600": { deposit:8000, perDay:230, weekday1:200, weekend:{2:140,3:40,more:50,more14:40}, weekday:{2:120,3:30,more:40,more14:30}, week:570, twoWeek:810 },
-      "1.4x Extender": { deposit:2000, perDay:80, weekday1:70, weekend:{2:50,3:20,more:20,more14:20}, weekday:{2:40,3:20,more:20,more14:20}, week:220, twoWeek:420 },
-      "X100VI": { deposit:14000, perDay:350, weekday1:300, weekend:{2:210,3:70,more:80,more14:60}, weekday:{2:180,3:60,more:70,more14:50}, week:900, twoWeek:1280 }
-    };
+  const pricingData = {
+    "S24U": { deposit: 6000, perDay: 180, weekday1: 160, weekend: { 2: 110, 3: 50, more: 50, more14: 40 }, weekday: { 2: 100, 3: 50, more: 50, more14: 40 }, week: 500, twoWeek: 750 },
+    "S25U": { deposit: 10000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70, more14: 60 }, weekday: { 2: 150, 3: 70, more: 60, more14: 50 }, week: 780, twoWeek: 1170 },
+    "X200 Ultra": { deposit: 9000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70, more14: 60 }, weekday: { 2: 150, 3: 70, more: 60, more14: 50 }, week: 780, twoWeek: 1170 },
+    "R5": { deposit: 16000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90, more14: 70 }, weekday: { 2: 190, 3: 100, more: 80, more14: 60 }, week: 980, twoWeek: 1470 },
+    "R5ii": { deposit: 20000, perDay: 500, weekday1: 450, weekend: { 2: 300, 3: 150, more: 130, more14: 100 }, weekday: { 2: 270, 3: 140, more: 120, more14: 90 }, week: 1400, twoWeek: 2100 },
+    "R6ii": { deposit: 12000, perDay: 300, weekday1: 270, weekend: { 2: 180, 3: 90, more: 80, more14: 60 }, weekday: { 2: 160, 3: 80, more: 70, more14: 50 }, week: 840, twoWeek: 1260 },
+    "R6iii": { deposit: 18000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100, more14: 80 }, weekday: { 2: 220, 3: 110, more: 90, more14: 70 }, week: 1120, twoWeek: 1680 },
+    "EF 70-200 F2.8 ii": { deposit: 8000, perDay: 190, weekday1: 170, weekend: { 2: 110, 3: 60, more: 50, more14: 40 }, weekday: { 2: 100, 3: 50, more: 50, more14: 40 }, week: 530, twoWeek: 795 },
+    "RF 70-200 F2.8": { deposit: 14000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100, more14: 80 }, weekday: { 2: 220, 3: 110, more: 90, more14: 70 }, week: 1120, twoWeek: 1680 },
+    "RF 100-500": { deposit: 15000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100, more14: 80 }, weekday: { 2: 220, 3: 110, more: 90, more14: 70 }, week: 1120, twoWeek: 1680 },
+    "RF 100-400": { deposit: 3000, perDay: 120, weekday1: 110, weekend: { 2: 70, 3: 40, more: 30, more14: 20 }, weekday: { 2: 60, 3: 40, more: 30, more14: 20 }, week: 340, twoWeek: 510 },
+    "RF 50mm 1.8": { deposit: 1000, perDay: 50, weekday1: 50, weekend: { 2: 30, 3: 20, more: 10, more14: 10 }, weekday: { 2: 30, 3: 20, more: 10, more14: 10 }, week: 140, twoWeek: 210 },
+    "A7R5": { deposit: 18000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100, more14: 80 }, weekday: { 2: 220, 3: 110, more: 90, more14: 70 }, week: 1120, twoWeek: 1680 },
+    "A7C2": { deposit: 12000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90, more14: 70 }, weekday: { 2: 190, 3: 100, more: 80, more14: 60 }, week: 980, twoWeek: 1470 },
+    "FE 100-400": { deposit: 12000, perDay: 290, weekday1: 260, weekend: { 2: 170, 3: 90, more: 70, more14: 60 }, weekday: { 2: 150, 3: 80, more: 60, more14: 50 }, week: 810, twoWeek: 1215 },
+    "FE 70-200 F2.8 ii": { deposit: 13000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100, more14: 80 }, weekday: { 2: 220, 3: 110, more: 90, more14: 70 }, week: 1120, twoWeek: 1680 },
+    "FE 200-600": { deposit: 8000, perDay: 230, weekday1: 210, weekend: { 2: 140, 3: 70, more: 60, more14: 50 }, weekday: { 2: 130, 3: 60, more: 50, more14: 50 }, week: 640, twoWeek: 960 },
+    "1.4x Extender": { deposit: 2000, perDay: 80, weekday1: 70, weekend: { 2: 50, 3: 20, more: 20, more14: 20 }, weekday: { 2: 50, 3: 20, more: 20, more14: 20 }, week: 220, twoWeek: 330 },
+    "X100VI": { deposit: 14000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90, more14: 70 }, weekday: { 2: 190, 3: 100, more: 80, more14: 60 }, week: 980, twoWeek: 1470 }
+  };
 
     function calculatePrice() {
       const product = document.getElementById("product").value;
