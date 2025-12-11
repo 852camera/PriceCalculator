@@ -155,7 +155,12 @@
       }
     }
 
-    select, input[type="date"] {
+    /* Unified Input Styles */
+    select, 
+    input[type="date"], 
+    input[type="text"], 
+    input[type="email"], 
+    input[type="tel"] {
       width: 100%;
       padding: 12px 15px;
       font-size: 16px;
@@ -453,6 +458,19 @@
     .toast.success { background-color: var(--success-color); }
     .toast.error { background-color: var(--danger-color); }
 
+    .section-label {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: var(--text-main);
+      opacity: 0.9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 5px;
+    }
+
   </style>
 </head>
 <body>
@@ -530,6 +548,32 @@
           <div class="chip" onclick="setQuickDate(5)">+5日</div>
           <div class="chip" onclick="setQuickDate(7)">+7日</div>
         </div>
+      </div>
+    </div>
+
+    <!-- Customer Info -->
+    <div class="section-label">👤 租用者資料</div>
+    <div class="form-group">
+      <label>姓名</label>
+      <input type="text" id="customerName" placeholder="輸入您的稱呼" oninput="calculatePrice()">
+    </div>
+    <div class="form-group">
+      <label>電郵</label>
+      <input type="email" id="customerEmail" placeholder="example@email.com" oninput="calculatePrice()">
+    </div>
+    <div class="form-group">
+      <label>取機人電話號碼</label>
+      <input type="tel" id="customerPhone" placeholder="852 xxxx xxxx" oninput="calculatePrice()">
+    </div>
+    <div class="form-group">
+      <label>付款方式</label>
+      <div class="select-wrapper">
+        <select id="paymentMethod" onchange="calculatePrice()">
+          <option value="">-- 請選擇 --</option>
+          <option value="FPS">FPS 轉數快</option>
+          <option value="Alipay">AlipayHK</option>
+          <option value="Credit Card">信用卡 (Credit Card)</option>
+        </select>
       </div>
     </div>
 
@@ -620,6 +664,11 @@
         productSelect.value = "";
         startInput.value = "";
         endInput.value = "";
+        document.getElementById("customerName").value = "";
+        document.getElementById("customerEmail").value = "";
+        document.getElementById("customerPhone").value = "";
+        document.getElementById("paymentMethod").value = "";
+
         quickDatesDiv.style.display = "none";
         resultDiv.style.display = "none";
         errorBox.innerHTML = "";
@@ -684,6 +733,10 @@
       const product = productSelect.value;
       const startDateRaw = startInput.value;
       const endDateRaw = endInput.value;
+      const customerName = document.getElementById("customerName").value.trim();
+      const customerEmail = document.getElementById("customerEmail").value.trim();
+      const customerPhone = document.getElementById("customerPhone").value.trim();
+      const paymentMethod = document.getElementById("paymentMethod").value;
       
       // Update URL for sharing
       updateURL();
@@ -725,13 +778,7 @@
         let typeClass = "badge";
 
         if (i === 1) {
-          // If Day 1 is a holiday, it counts as weekend rate but we might want to keep the "Day 1" logic overriding
-          // Assuming Holiday logic overrides Weekday1 logic if it falls on Mon-Wed
-          // But usually, Day 1 logic is specific. 
-          // Logic: If Day 1 is Mon-Wed AND NOT Holiday -> Weekday1 price.
-          
           const isDay1Weekday = (dow >= 1 && dow <= 3 && !isHoliday);
-          
           dailyPrice = isDay1Weekday ? data.weekday1 : data.perDay;
           dayType = isDay1Weekday ? "首日 (平日)" : (isHoliday ? "首日 (公眾假期)" : "首日 (假日)");
           if (isHoliday) typeClass = "badge holiday";
@@ -750,6 +797,7 @@
           else if (i === 3) dailyPrice = tier[3];
           else dailyPrice = tier.more;
         }
+        
         total += dailyPrice;
 
         const dateStr = `${currentCalcDate.getMonth()+1}/${currentCalcDate.getDate()}`;
@@ -766,7 +814,14 @@
       }
 
       const productName = productSelect.options[productSelect.selectedIndex].text;
-      const copyText = `📷 租借查詢\n器材: ${productName}\n日期: ${startDateRaw} 至 ${endDateRaw}\n共 ${days} 天\n總價: $${total}\n按金: $${data.deposit}`;
+      let copyText = `📷 租借查詢\n------------------\n`;
+      if(customerName) copyText += `👤 姓名: ${customerName}\n`;
+      if(customerEmail) copyText += `📧 電郵: ${customerEmail}\n`;
+      if(customerPhone) copyText += `📞 電話: ${customerPhone}\n`;
+      if(paymentMethod) copyText += `💳 付款方式: ${paymentMethod}\n`;
+      copyText += `------------------\n`;
+      copyText += `📦 器材: ${productName}\n🗓️ 日期: ${startDateRaw} 至 ${endDateRaw}\n⏱️ 天數: 共 ${days} 天\n💰 總價: $${total}\n🔒 按金: $${data.deposit}`;
+      
       const whatsappUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(copyText)}`;
 
       // Render Result
@@ -894,10 +949,6 @@
     
     function copyPageUrl(btn) {
         const url = window.location.href;
-        // Re-use logic but just different toast message? 
-        // Or actually the copyToClipboard function handles the generic logic well.
-        // Let's create a temp custom version or just re-use copyToClipboard with a slightly different flow if needed.
-        // Re-using copyToClipboard is fine, but the toast message "Content copied" is generic enough.
         
         // Let's manually do it to customize the toast message for URL
         const textArea = document.createElement("textarea");
