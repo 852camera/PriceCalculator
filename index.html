@@ -205,6 +205,12 @@
       gap: 10px;
       margin-top: 15px;
     }
+    
+    .btn-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
 
     button.btn-main {
       width: 100%;
@@ -247,6 +253,17 @@
     .btn-copy:hover {
       background-color: var(--border-color);
       transform: translateY(-1px);
+    }
+    
+    .btn-link {
+      background-color: var(--bg-color);
+      color: var(--text-muted);
+      border: 1px dashed var(--border-color);
+      font-size: 14px;
+    }
+    .btn-link:hover {
+        background-color: var(--border-color);
+        color: var(--text-main);
     }
 
     /* Result Section */
@@ -368,6 +385,11 @@
       margin-left: 5px;
       text-transform: uppercase;
     }
+    
+    .badge.holiday {
+        background: #fee2e2;
+        color: #dc2626;
+    }
 
     .error-msg {
       color: #ef4444;
@@ -465,6 +487,12 @@
   <script>
     // ⬇️ 配置你的 WhatsApp 電話號碼 (不含 + 號)
     const WHATSAPP_PHONE = "85257409553"; 
+    
+    // ⬇️ 公眾假期配置 (格式: YYYY-MM-DD) - 這些日期會被視為 "週末/假日價"
+    const publicHolidays = [
+        "2024-12-25", "2024-12-26", "2025-01-01", 
+        "2025-01-29", "2025-01-30", "2025-01-31" 
+    ];
 
     const pricingData = {
       "S24U": { deposit: 6000, perDay: 180, weekday1: 160, weekend: { 2: 110, 3: 50, more: 50 }, weekday: { 2: 100, 3: 50, more: 50 } },
@@ -485,7 +513,7 @@
       "FE 100-400": { deposit: 12000, perDay: 290, weekday1: 260, weekend: { 2: 170, 3: 90, more: 70 }, weekday: { 2: 150, 3: 80, more: 60 } },
       "FE 70-200 F2.8 ii": { deposit: 13000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100 }, weekday: { 2: 220, 3: 110, more: 90 } },
       "FE 200-600": { deposit: 8000, perDay: 230, weekday1: 210, weekend: { 2: 140, 3: 70, more: 60 }, weekday: { 2: 130, 3: 60, more: 50 } },
-      "1.4x Extender": { deposit: 1000, perDay: 80, weekday1: 70, weekend: { 2: 50, 3: 20, more: 20 }, weekday: { 2: 50, 3: 20, more: 20 } },
+      "1.4x Extender": { deposit: 2000, perDay: 80, weekday1: 70, weekend: { 2: 50, 3: 20, more: 20 }, weekday: { 2: 50, 3: 20, more: 20 } },
       "X100VI": { deposit: 14000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90 }, weekday: { 2: 190, 3: 100, more: 80 } }
     };
 
@@ -500,6 +528,17 @@
     const today = new Date().toISOString().split("T")[0];
     startInput.min = today;
     endInput.min = today;
+
+    // Check URL Params on Load
+    window.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('product')) productSelect.value = params.get('product');
+        if (params.has('start')) startInput.value = params.get('start');
+        if (params.has('end')) endInput.value = params.get('end');
+        
+        if (startInput.value) handleStartDateChange();
+        if (productSelect.value && startInput.value && endInput.value) calculatePrice();
+    });
 
     // Theme Toggle Logic
     function toggleTheme() {
@@ -551,11 +590,25 @@
       calculatePrice();
     }
 
+    function updateURL() {
+        const url = new URL(window.location);
+        url.searchParams.set('product', productSelect.value);
+        url.searchParams.set('start', startInput.value);
+        url.searchParams.set('end', endInput.value);
+        // Only push state if we are in a valid environment
+        try {
+            window.history.replaceState({}, '', url);
+        } catch(e) { console.log('History update skipped'); }
+    }
+
     function calculatePrice() {
       const product = productSelect.value;
       const startDateRaw = startInput.value;
       const endDateRaw = endInput.value;
       
+      // Update URL for sharing
+      updateURL();
+
       // Reset UI
       errorBox.innerHTML = "";
       
@@ -585,19 +638,34 @@
       for (let i = 1; i <= days; i++) {
         currentCalcDate.setDate(currentCalcDate.getDate() + 1);
         const dow = currentCalcDate.getDay(); 
+        const dateStrISO = currentCalcDate.toISOString().split('T')[0];
+        const isHoliday = publicHolidays.includes(dateStrISO);
+        
         let dailyPrice = 0;
         let dayType = "平日";
-        let typeClass = "";
+        let typeClass = "badge";
 
         if (i === 1) {
-          const isDay1Weekday = (dow >= 1 && dow <= 3);
+          // If Day 1 is a holiday, it counts as weekend rate but we might want to keep the "Day 1" logic overriding
+          // Assuming Holiday logic overrides Weekday1 logic if it falls on Mon-Wed
+          // But usually, Day 1 logic is specific. 
+          // Logic: If Day 1 is Mon-Wed AND NOT Holiday -> Weekday1 price.
+          
+          const isDay1Weekday = (dow >= 1 && dow <= 3 && !isHoliday);
+          
           dailyPrice = isDay1Weekday ? data.weekday1 : data.perDay;
-          dayType = isDay1Weekday ? "首日 (平日)" : "首日 (假日)";
-          typeClass = "badge";
+          dayType = isDay1Weekday ? "首日 (平日)" : (isHoliday ? "首日 (公眾假期)" : "首日 (假日)");
+          if (isHoliday) typeClass = "badge holiday";
         } else {
-          const isWeekend = (dow === 0 || dow >= 4);
+          const isWeekend = (dow === 0 || dow >= 4 || isHoliday);
           const tier = isWeekend ? data.weekend : data.weekday;
-          dayType = isWeekend ? "假日價" : "平日價";
+          
+          if (isHoliday) {
+              dayType = "公眾假期";
+              typeClass = "badge holiday";
+          } else {
+              dayType = isWeekend ? "假日價" : "平日價";
+          }
 
           if (i === 2) dailyPrice = tier[2];
           else if (i === 3) dailyPrice = tier[3];
@@ -636,7 +704,7 @@
           <div class="info-icon">🔒</div>
           <div class="info-content">
             <div class="info-title">按金: $${data.deposit.toLocaleString()}</div>
-            <div class="info-desc">支持信用卡預授權 (Hold Limit) / FPS / Alipay</div>
+            <div class="info-desc">支持信用卡預授權 (Hold Limit) / FPS / Payme / Alipay</div>
           </div>
         </div>
 
@@ -665,9 +733,14 @@
             <span>💬</span> WhatsApp 預約
           </button>
           
-          <button class="btn-main btn-copy" onclick="copyToClipboard(this, \`${copyText.replace(/"/g, '&quot;')}\`)">
-            <span>📋</span> 複製報價單
-          </button>
+          <div class="btn-row">
+            <button class="btn-main btn-copy" onclick="copyToClipboard(this, \`${copyText.replace(/"/g, '&quot;')}\`)">
+                <span>📋</span> 複製內容
+            </button>
+            <button class="btn-main btn-link" onclick="copyPageUrl(this)">
+                <span>🔗</span> 複製連結
+            </button>
+          </div>
         </div>
       `;
       
@@ -716,6 +789,11 @@
       
       // Clean up
       document.body.removeChild(textArea);
+    }
+    
+    function copyPageUrl(btn) {
+        const url = window.location.href;
+        copyToClipboard(btn, url);
     }
   </script>
 </body>
