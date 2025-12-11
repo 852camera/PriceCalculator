@@ -17,6 +17,7 @@
       --success-hover: #059669;
       --whatsapp-color: #25D366;
       --whatsapp-hover: #128C7E;
+      --danger-color: #ef4444;
       --radius: 16px;
       --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
       --transition: all 0.2s ease;
@@ -85,6 +86,26 @@
     }
     [data-theme="dark"] .theme-toggle:hover {
       background-color: rgba(255,255,255,0.1);
+    }
+
+    /* Reset Button */
+    .reset-btn {
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-muted);
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .reset-btn:hover {
+      color: var(--danger-color);
+      text-decoration: underline;
     }
 
     header {
@@ -401,11 +422,46 @@
       border: 1px solid rgba(239, 68, 68, 0.2);
       margin-top: 10px;
     }
+
+    /* Toast Notification */
+    .toast {
+      visibility: hidden;
+      min-width: 200px;
+      margin-left: -100px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 50px;
+      padding: 12px 20px;
+      position: fixed;
+      z-index: 1000;
+      left: 50%;
+      bottom: 30px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      opacity: 0;
+      transition: opacity 0.3s, bottom 0.3s ease-in-out;
+    }
+
+    .toast.show {
+      visibility: visible;
+      opacity: 1;
+      bottom: 50px; /* Slight float up animation */
+    }
+    
+    .toast.success { background-color: var(--success-color); }
+    .toast.error { background-color: var(--danger-color); }
+
   </style>
 </head>
 <body>
 
   <div class="container">
+    <button class="reset-btn" onclick="resetForm()" title="重置表格">
+      ↻ 重置
+    </button>
+    
     <button class="theme-toggle" onclick="toggleTheme()" title="切換深色模式">
       <span id="theme-icon">🌙</span>
     </button>
@@ -469,6 +525,7 @@
         
         <!-- Quick Select Buttons -->
         <div class="quick-dates" id="quickDates" style="display:none;">
+          <div class="chip" onclick="setQuickDate(1)">+1日</div>
           <div class="chip" onclick="setQuickDate(3)">+3日</div>
           <div class="chip" onclick="setQuickDate(5)">+5日</div>
           <div class="chip" onclick="setQuickDate(7)">+7日</div>
@@ -483,6 +540,9 @@
       <!-- Results injected here -->
     </div>
   </div>
+  
+  <!-- Toast Element -->
+  <div id="toast" class="toast">訊息提示</div>
 
   <script>
     // ⬇️ 配置你的 WhatsApp 電話號碼 (不含 + 號)
@@ -553,6 +613,25 @@
         body.setAttribute("data-theme", "dark");
         icon.innerText = "☀️";
       }
+    }
+    
+    // Reset Form Logic
+    function resetForm() {
+        productSelect.value = "";
+        startInput.value = "";
+        endInput.value = "";
+        quickDatesDiv.style.display = "none";
+        resultDiv.style.display = "none";
+        errorBox.innerHTML = "";
+        
+        // Clear URL params
+        const url = new URL(window.location);
+        url.searchParams.delete('product');
+        url.searchParams.delete('start');
+        url.searchParams.delete('end');
+        try {
+            window.history.replaceState({}, '', url);
+        } catch(e) {}
     }
 
     // Handle Start Date Change
@@ -704,7 +783,7 @@
           <div class="info-icon">🔒</div>
           <div class="info-content">
             <div class="info-title">按金: $${data.deposit.toLocaleString()}</div>
-            <div class="info-desc">支持信用卡預授權 (Hold Limit) / FPS / Alipay</div>
+            <div class="info-desc">支持信用卡預授權 (Hold Limit) / FPS / Payme / Alipay</div>
           </div>
         </div>
 
@@ -752,6 +831,21 @@
       list.classList.toggle("open");
     }
 
+    // Toast Function
+    function showToast(message, type = 'normal') {
+        const toast = document.getElementById("toast");
+        toast.className = "toast show"; // Reset classes
+        toast.innerText = message;
+        
+        if (type === 'success') toast.classList.add("success");
+        if (type === 'error') toast.classList.add("error");
+        
+        // Hide after 3 seconds
+        setTimeout(() => {
+            toast.className = "toast";
+        }, 3000);
+    }
+
     function copyToClipboard(btn, text) {
       // Create a temporary textarea element to handle the copy
       const textArea = document.createElement("textarea");
@@ -761,30 +855,37 @@
       textArea.style.position = "fixed";
       textArea.style.left = "-9999px";
       textArea.style.top = "0";
+      
+      // Fix for Mobile: Prevent zooming (16px font) and keyboard flashing (readonly)
+      textArea.style.fontSize = "16px";
+      textArea.setAttribute("readonly", "");
+      
       document.body.appendChild(textArea);
       
       textArea.focus();
       textArea.select();
+      // Extra step for mobile devices to ensure selection
+      textArea.setSelectionRange(0, 99999);
       
       try {
         // Execute the copy command
         const successful = document.execCommand('copy');
         if (successful) {
+            showToast("✅ 已複製內容到剪貼板", "success");
+            // Visual feedback on button
             const originalHtml = btn.innerHTML;
-            btn.innerHTML = "<span>✅</span> 已複製！";
-            btn.style.borderColor = "var(--success-color)";
-            btn.style.color = "var(--success-color)";
+            btn.innerHTML = "<span>✅</span> 已複製";
+            btn.style.backgroundColor = "var(--border-color)";
             setTimeout(() => {
               btn.innerHTML = originalHtml;
-              btn.style.borderColor = "";
-              btn.style.color = "";
+              btn.style.backgroundColor = "";
             }, 2000);
         } else {
-             alert("複製失敗，請手動截圖");
+             showToast("❌ 複製失敗，請手動截圖", "error");
         }
       } catch (err) {
         console.error('Fallback: Oops, unable to copy', err);
-        alert("複製失敗，請手動截圖");
+        showToast("❌ 複製失敗，請手動截圖", "error");
       }
       
       // Clean up
@@ -793,7 +894,34 @@
     
     function copyPageUrl(btn) {
         const url = window.location.href;
-        copyToClipboard(btn, url);
+        // Re-use logic but just different toast message? 
+        // Or actually the copyToClipboard function handles the generic logic well.
+        // Let's create a temp custom version or just re-use copyToClipboard with a slightly different flow if needed.
+        // Re-using copyToClipboard is fine, but the toast message "Content copied" is generic enough.
+        
+        // Let's manually do it to customize the toast message for URL
+        const textArea = document.createElement("textarea");
+        textArea.value = url;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        textArea.style.fontSize = "16px";
+        textArea.setAttribute("readonly", "");
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        textArea.setSelectionRange(0, 99999);
+        
+        try {
+            const successful = document.execCommand('copy');
+            if(successful) {
+                showToast("🔗 連結已複製！", "success");
+            } else {
+                showToast("❌ 連結複製失敗", "error");
+            }
+        } catch(e) {
+            showToast("❌ 連結複製失敗", "error");
+        }
+        document.body.removeChild(textArea);
     }
   </script>
 </body>
