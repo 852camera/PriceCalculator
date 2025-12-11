@@ -54,7 +54,6 @@
     select, input[type="date"] {
       border: 1px solid #ccc;
       background: #fff;
-
       -webkit-appearance: none; /* iOS Safari fix */
       appearance: none;
     }
@@ -143,28 +142,28 @@
   </div>
 
   <script>
-    // 全部型號的價錢表 (含按金)
-  const pricingData = {
-    "S24U": { deposit: 6000, perDay: 180, weekday1: 160, weekend: { 2: 110, 3: 50, more: 50, more14: 40 }, weekday: { 2: 100, 3: 50, more: 50, more14: 40 }, week: 500, twoWeek: 750 },
-    "S25U": { deposit: 10000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70, more14: 60 }, weekday: { 2: 150, 3: 70, more: 60, more14: 50 }, week: 780, twoWeek: 1170 },
-    "X200 Ultra": { deposit: 9000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70, more14: 60 }, weekday: { 2: 150, 3: 70, more: 60, more14: 50 }, week: 780, twoWeek: 1170 },
-    "R5": { deposit: 16000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90, more14: 70 }, weekday: { 2: 190, 3: 100, more: 80, more14: 60 }, week: 980, twoWeek: 1470 },
-    "R5ii": { deposit: 20000, perDay: 500, weekday1: 450, weekend: { 2: 300, 3: 150, more: 130, more14: 100 }, weekday: { 2: 270, 3: 140, more: 120, more14: 90 }, week: 1400, twoWeek: 2100 },
-    "R6ii": { deposit: 12000, perDay: 300, weekday1: 270, weekend: { 2: 180, 3: 90, more: 80, more14: 60 }, weekday: { 2: 160, 3: 80, more: 70, more14: 50 }, week: 840, twoWeek: 1260 },
-    "R6iii": { deposit: 18000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100, more14: 80 }, weekday: { 2: 220, 3: 110, more: 90, more14: 70 }, week: 1120, twoWeek: 1680 },
-    "EF 70-200 F2.8 ii": { deposit: 8000, perDay: 190, weekday1: 170, weekend: { 2: 110, 3: 60, more: 50, more14: 40 }, weekday: { 2: 100, 3: 50, more: 50, more14: 40 }, week: 530, twoWeek: 795 },
-    "RF 70-200 F2.8": { deposit: 14000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100, more14: 80 }, weekday: { 2: 220, 3: 110, more: 90, more14: 70 }, week: 1120, twoWeek: 1680 },
-    "RF 100-500": { deposit: 15000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100, more14: 80 }, weekday: { 2: 220, 3: 110, more: 90, more14: 70 }, week: 1120, twoWeek: 1680 },
-    "RF 100-400": { deposit: 3000, perDay: 120, weekday1: 110, weekend: { 2: 70, 3: 40, more: 30, more14: 20 }, weekday: { 2: 60, 3: 40, more: 30, more14: 20 }, week: 340, twoWeek: 510 },
-    "RF 50mm 1.8": { deposit: 1000, perDay: 50, weekday1: 50, weekend: { 2: 30, 3: 20, more: 10, more14: 10 }, weekday: { 2: 30, 3: 20, more: 10, more14: 10 }, week: 140, twoWeek: 210 },
-    "A7R5": { deposit: 18000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100, more14: 80 }, weekday: { 2: 220, 3: 110, more: 90, more14: 70 }, week: 1120, twoWeek: 1680 },
-    "A7C2": { deposit: 12000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90, more14: 70 }, weekday: { 2: 190, 3: 100, more: 80, more14: 60 }, week: 980, twoWeek: 1470 },
-    "FE 100-400": { deposit: 12000, perDay: 290, weekday1: 260, weekend: { 2: 170, 3: 90, more: 70, more14: 60 }, weekday: { 2: 150, 3: 80, more: 60, more14: 50 }, week: 810, twoWeek: 1215 },
-    "FE 70-200 F2.8 ii": { deposit: 13000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100, more14: 80 }, weekday: { 2: 220, 3: 110, more: 90, more14: 70 }, week: 1120, twoWeek: 1680 },
-    "FE 200-600": { deposit: 8000, perDay: 230, weekday1: 210, weekend: { 2: 140, 3: 70, more: 60, more14: 50 }, weekday: { 2: 130, 3: 60, more: 50, more14: 50 }, week: 640, twoWeek: 960 },
-    "1.4x Extender": { deposit: 2000, perDay: 80, weekday1: 70, weekend: { 2: 50, 3: 20, more: 20, more14: 20 }, weekday: { 2: 50, 3: 20, more: 20, more14: 20 }, week: 220, twoWeek: 330 },
-    "X100VI": { deposit: 14000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90, more14: 70 }, weekday: { 2: 190, 3: 100, more: 80, more14: 60 }, week: 980, twoWeek: 1470 }
-  };
+    // ✅ 已移除 week, twoWeek, 和 more14 數據，僅保留基礎與遞減邏輯
+    const pricingData = {
+      "S24U": { deposit: 6000, perDay: 180, weekday1: 160, weekend: { 2: 110, 3: 50, more: 50 }, weekday: { 2: 100, 3: 50, more: 50 } },
+      "S25U": { deposit: 10000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70 }, weekday: { 2: 150, 3: 70, more: 60 } },
+      "X200 Ultra": { deposit: 9000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70 }, weekday: { 2: 150, 3: 70, more: 60 } },
+      "R5": { deposit: 16000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90 }, weekday: { 2: 190, 3: 100, more: 80 } },
+      "R5ii": { deposit: 20000, perDay: 500, weekday1: 450, weekend: { 2: 300, 3: 150, more: 130 }, weekday: { 2: 270, 3: 140, more: 120 } },
+      "R6ii": { deposit: 12000, perDay: 300, weekday1: 270, weekend: { 2: 180, 3: 90, more: 80 }, weekday: { 2: 160, 3: 80, more: 70 } },
+      "R6iii": { deposit: 18000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100 }, weekday: { 2: 220, 3: 110, more: 90 } },
+      "EF 70-200 F2.8 ii": { deposit: 8000, perDay: 190, weekday1: 170, weekend: { 2: 110, 3: 60, more: 50 }, weekday: { 2: 100, 3: 50, more: 50 } },
+      "RF 70-200 F2.8": { deposit: 14000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100 }, weekday: { 2: 220, 3: 110, more: 90 } },
+      "RF 100-500": { deposit: 15000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100 }, weekday: { 2: 220, 3: 110, more: 90 } },
+      "RF 100-400": { deposit: 3000, perDay: 120, weekday1: 110, weekend: { 2: 70, 3: 40, more: 30 }, weekday: { 2: 60, 3: 40, more: 30 } },
+      "RF 50mm 1.8": { deposit: 1000, perDay: 50, weekday1: 50, weekend: { 2: 30, 3: 20, more: 10 }, weekday: { 2: 30, 3: 20, more: 10 } },
+      "A7R5": { deposit: 18000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100 }, weekday: { 2: 220, 3: 110, more: 90 } },
+      "A7C2": { deposit: 12000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90 }, weekday: { 2: 190, 3: 100, more: 80 } },
+      "FE 100-400": { deposit: 12000, perDay: 290, weekday1: 260, weekend: { 2: 170, 3: 90, more: 70 }, weekday: { 2: 150, 3: 80, more: 60 } },
+      "FE 70-200 F2.8 ii": { deposit: 13000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100 }, weekday: { 2: 220, 3: 110, more: 90 } },
+      "FE 200-600": { deposit: 8000, perDay: 230, weekday1: 210, weekend: { 2: 140, 3: 70, more: 60 }, weekday: { 2: 130, 3: 60, more: 50 } },
+      "1.4x Extender": { deposit: 2000, perDay: 80, weekday1: 70, weekend: { 2: 50, 3: 20, more: 20 }, weekday: { 2: 50, 3: 20, more: 20 } },
+      "X100VI": { deposit: 14000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90 }, weekday: { 2: 190, 3: 100, more: 80 } }
+    };
 
     function calculatePrice() {
       const product = document.getElementById("product").value;
@@ -185,67 +184,46 @@
       const data = pricingData[product];
       let total = 0;
       let breakdown = [];
+      
+      // 用於計算費用的日期指針 (從取機日隔天開始計算)
+      let currentCalcDate = new Date(startDate);
+      
+      for (let i = 1; i <= days; i++) {
+        // 第一天對應的是 start + 1 (因為取機日不計費)
+        currentCalcDate.setDate(currentCalcDate.getDate() + 1);
+        const dow = currentCalcDate.getDay(); // 0=Sun, 1=Mon... 6=Sat
 
-      if (days === 1) {
-        const dow = startDate.getDay(); 
-        const isWeekday = (dow >= 1 && dow <= 3); // Mon–Thu
-        total = isWeekday ? data.weekday1 : data.perDay;
-      } else if (days === 7) {
-        total = data.week;
-      } else if (days === 14) {
-        total = data.twoWeek;
-      } else {
-        const firstChargeDate = new Date(startDate);
-        firstChargeDate.setDate(startDate.getDate() + 1);
+        // 根據原始邏輯定義：
+        // "Weekday" (平日價) 適用於 Mon(1), Tue(2), Wed(3)
+        // "Weekend" (週末/高價) 適用於 Thu(4), Fri(5), Sat(6), Sun(0)
+        
+        let dailyPrice = 0;
 
-        if (days < 7) {
-          const firstChargeDate = new Date(startDate);
-          firstChargeDate.setDate(startDate.getDate() + 1);
-        
-          const dowFirst = firstChargeDate.getDay();
-          const isWeekday = (dowFirst >= 1 && dowFirst <= 3); // Mon–Thu
-          const firstDayPrice = isWeekday ? data.weekday1 : data.perDay;
-        
-          total += firstDayPrice;
-        
-          // Day 2+
-          for (let i = 2; i <= days; i++) {
-            const d = new Date(firstChargeDate);
-            d.setDate(firstChargeDate.getDate() + (i - 1));
-            const dow = d.getDay();
-            const isWeekend = (dow === 4 || dow === 5 || dow === 6 || dow === 0); // Fri, Sat, Sun
-            const tier = isWeekend ? data.weekend : data.weekday;
-            let addon = (i === 2) ? tier[2] : (i === 3 ? tier[3] : tier.more);
-            total += addon;
-          }
-        } else if (days > 7 && days < 14) {
-          total = data.week;
-          for (let i = 8; i <= days; i++) {
-            const d = new Date(firstChargeDate);
-            d.setDate(firstChargeDate.getDate() + (i - 1));
-            const dow = d.getDay();
-            const isWeekend = (dow === 4 || dow === 5 || dow === 6 || dow === 0);
-            const tier = isWeekend ? data.weekend : data.weekday;
-            const addon = tier.more14;
-            total += addon;
-          }
-        } else if (days > 14) {
-          total = data.twoWeek;
-          for (let i = 15; i <= days; i++) {
-            const d = new Date(firstChargeDate);
-            d.setDate(firstChargeDate.getDate() + (i - 1));
-            const dow = d.getDay();
-            const isWeekend = (dow === 4 || dow === 5 || dow === 6 || dow === 0);
-            const tier = isWeekend ? data.weekend : data.weekday;
-            const addon = tier.more14;
-            total += addon;
+        if (i === 1) {
+          // --- 第 1 天計費 ---
+          const isDay1Weekday = (dow >= 1 && dow <= 3);
+          dailyPrice = isDay1Weekday ? data.weekday1 : data.perDay;
+        } else {
+          // --- 第 2 天及以後 ---
+          const isWeekend = (dow === 0 || dow >= 4);
+          const tier = isWeekend ? data.weekend : data.weekday;
+
+          if (i === 2) {
+            dailyPrice = tier[2];
+          } else if (i === 3) {
+            dailyPrice = tier[3];
+          } else {
+            // 第 4 天及以後，統一使用 more，不再有 more14 折扣
+            dailyPrice = tier.more;
           }
         }
+
+        total += dailyPrice;
+        // 這裡可以選擇是否顯示詳細的每日列表，目前暫不顯示，只算總價
       }
 
       resultDiv.innerHTML = `
         <div class="title">📅 租借 ${days} 天 (取機日不計費)</div>
-        ${breakdown.map(line=>`<div class="line"><span>${line}</span></div>`).join("")}
         <div class="total">💰 總價: $${total.toLocaleString()}</div>
         <div class="deposit">
           🔒 按金: $${data.deposit.toLocaleString()}<br/>
