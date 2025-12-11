@@ -193,6 +193,11 @@
       border-color: var(--primary-color);
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
+    
+    /* Error styling for inputs */
+    input.invalid {
+        border-color: var(--danger-color);
+    }
 
     /* Quick Date Chips */
     .quick-dates {
@@ -560,10 +565,12 @@
     <div class="form-group">
       <label>電郵</label>
       <input type="email" id="customerEmail" placeholder="example@email.com" oninput="calculatePrice()">
+      <div id="emailError" style="display:none; color: var(--danger-color); font-size: 12px; margin-top: 5px;">⚠️ 請輸入有效的電郵格式</div>
     </div>
     <div class="form-group">
       <label>取機人電話號碼</label>
-      <input type="tel" id="customerPhone" placeholder="852 xxxx xxxx" oninput="calculatePrice()">
+      <input type="tel" id="customerPhone" placeholder="8位數字電話號碼" maxlength="8" oninput="this.value = this.value.replace(/\D/g,''); calculatePrice()">
+      <div id="phoneError" style="display:none; color: var(--danger-color); font-size: 12px; margin-top: 5px;">⚠️ 請輸入有效的8位數字電話號碼</div>
     </div>
     <div class="form-group">
       <label>付款方式</label>
@@ -668,6 +675,10 @@
         document.getElementById("customerEmail").value = "";
         document.getElementById("customerPhone").value = "";
         document.getElementById("paymentMethod").value = "";
+        
+        // Hide Errors
+        document.getElementById("emailError").style.display = "none";
+        document.getElementById("phoneError").style.display = "none";
 
         quickDatesDiv.style.display = "none";
         resultDiv.style.display = "none";
@@ -743,6 +754,24 @@
 
       // Reset UI
       errorBox.innerHTML = "";
+      
+      // Email Validation
+      const emailError = document.getElementById("emailError");
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (customerEmail && !emailPattern.test(customerEmail)) {
+         emailError.style.display = 'block';
+      } else {
+         emailError.style.display = 'none';
+      }
+
+      // Phone Validation
+      const phoneError = document.getElementById("phoneError");
+      if (customerPhone && customerPhone.length !== 8) {
+         phoneError.style.display = 'block';
+      } else {
+         phoneError.style.display = 'none';
+      }
       
       // Basic Validation
       if (!product || !startDateRaw || !endDateRaw) {
@@ -838,7 +867,7 @@
           <div class="info-icon">🔒</div>
           <div class="info-content">
             <div class="info-title">按金: $${data.deposit.toLocaleString()}</div>
-            <div class="info-desc">支持信用卡預授權 (Hold Limit) / FPS / Payme / Alipay</div>
+            <div class="info-desc">支持信用卡預授權 (Hold Limit) / FPS</div>
           </div>
         </div>
 
