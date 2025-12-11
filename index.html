@@ -3,146 +3,300 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>租借計算工具</title>
+  <title>852camera 租借計算器</title>
   <style>
-    /* ✅ Make sizing consistent everywhere */
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg-color: #f3f4f6;
+      --card-bg: #ffffff;
+      --text-main: #1f2937;
+      --text-muted: #6b7280;
+      --border-color: #e5e7eb;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
     *, *::before, *::after {
       box-sizing: border-box;
     }
 
     body {
-      font-family: "Segoe UI", sans-serif;
-      margin: 20px;
-      background: #f9fbfc;
-      color: #333;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
 
     .container {
-      max-width: 600px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 550px;
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-top: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
     }
 
     h2 {
-      text-align: center;
+      margin: 0;
+      font-size: 24px;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+
+    .form-group {
       margin-bottom: 20px;
     }
 
     label {
-      font-weight: bold;
-      margin-top: 10px;
-      display: block;
-    }
-
-    /* ✅ Standardize all form fields */
-    select, input[type="date"], button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      margin-bottom: 15px;
-      font-size: 16px;
-      border-radius: 6px;
-      display: block;
-      height: 44px; /* consistent mobile-friendly height */
-      line-height: 1.2;
-    }
-
-    /* Inputs & select consistent borders */
-    select, input[type="date"] {
-      border: 1px solid #ccc;
-      background: #fff;
-      -webkit-appearance: none; /* iOS Safari fix */
-      appearance: none;
-    }
-
-    /* Button matches width & height */
-    button {
-      background: #0078D7;
-      color: white;
-      border: none;
-      cursor: pointer;
-      transition: background 0.2s ease-in-out;
-    }
-    button:hover {
-      background: #005fa3;
-    }
-
-    #result {
-      margin-top: 20px;
-      padding: 15px;
-      background: #f0f8ff;
-      border: 1px solid #add8e6;
-      border-radius: 8px;
-      font-size: 16px;
-      line-height: 1.6em;
-    }
-    #result .title {
-      font-size: 18px;
+      font-size: 14px;
+      font-weight: 600;
       margin-bottom: 8px;
+      display: block;
+      color: #374151;
     }
-    #result .line {
+
+    /* Grid for Dates */
+    .date-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    @media (max-width: 480px) {
+      .date-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    select, input[type="date"] {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: #fff;
+      transition: all 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      color: var(--text-main);
+    }
+
+    /* Custom Arrow for Select */
+    .select-wrapper {
+      position: relative;
+    }
+    .select-wrapper::after {
+      content: "▼";
+      font-size: 12px;
+      color: var(--text-muted);
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      background-color: var(--primary-color);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    /* Result Section */
+    #result {
+      margin-top: 30px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      display: none; /* Hidden by default */
+    }
+
+    #result.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .result-card {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .result-header {
       display: flex;
       justify-content: space-between;
-      padding: 2px 0;
+      align-items: center;
+      border-bottom: 2px dashed var(--border-color);
+      padding-bottom: 15px;
+      margin-bottom: 15px;
     }
-    #result .total {
+
+    .result-days {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .price-tag {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--primary-color);
+    }
+
+    .deposit-info {
+      font-size: 14px;
+      color: var(--text-muted);
+      background: #fff;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .deposit-icon {
       font-size: 18px;
-      font-weight: bold;
-      margin-top: 10px;
-      border-top: 1px solid #add8e6;
-      padding-top: 8px;
     }
-    #result .deposit {
-      margin-top: 5px;
-      color: #444;
-      font-size: 15px;
+
+    .student-plan {
+      background: #eff6ff;
+      border-left: 4px solid var(--primary-color);
+      padding: 15px;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #1e3a8a;
+    }
+
+    .student-title {
+      font-weight: 700;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .error-msg {
+      color: #dc2626;
+      background: #fef2f2;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      text-align: center;
+      border: 1px solid #fee2e2;
     }
   </style>
 </head>
 <body>
+
   <div class="container">
-    <h2>852camera租借價格計算器</h2>
+    <header>
+      <h2>📷 852Camera 租借計算</h2>
+      <div class="subtitle">攝影器材租賃費用估算</div>
+    </header>
 
-    <label for="product">選擇型號：</label>
-    <select id="product">
-      <option value="">-- 請選擇 --</option>
-      <option value="S24U">Samsung S24U</option>
-      <option value="S25U">Samsung S25U</option>
-      <option value="X200 Ultra">Vivo X200 Ultra + 專業攝影套裝</option>
-      <option value="R5">Canon R5</option>
-      <option value="R5ii">Canon R5ii</option>
-      <option value="R6ii">Canon R6ii</option>
-      <option value="R6iii">Canon R6iii</option>
-      <option value="EF 70-200 F2.8 ii">Canon EF 70-200 F2.8 ii</option>
-      <option value="RF 70-200 F2.8">Canon RF 70-200 F2.8</option>
-      <option value="RF 100-500">Canon RF 100-500</option>
-      <option value="RF 100-400">Canon RF 100-400</option>
-      <option value="RF 50mm 1.8">Canon RF 50mm 1.8</option>
-      <option value="A7R5">Sony A7R5</option>
-      <option value="A7C2">Sony A7C2</option>
-      <option value="FE 100-400">Sony FE 100-400</option>
-      <option value="FE 70-200 F2.8 ii">Sony FE 70-200 F2.8 ii</option>
-      <option value="FE 200-600">Sony FE 200-600</option>
-      <option value="1.4x Extender">Sony 1.4x 遠攝增距鏡</option>
-      <option value="X100VI">Fujifilm X100VI</option>
-    </select>
+    <div class="form-group">
+      <label for="product">選擇器材型號</label>
+      <div class="select-wrapper">
+        <select id="product">
+          <option value="">-- 請選擇 --</option>
+          <optgroup label="Samsung 手機">
+            <option value="S24U">Samsung S24U</option>
+            <option value="S25U">Samsung S25U</option>
+          </optgroup>
+          <optgroup label="Vivo 手機">
+            <option value="X200 Ultra">Vivo X200 Ultra + 專業攝影套裝</option>
+          </optgroup>
+          <optgroup label="Canon 相機">
+            <option value="R5">Canon R5</option>
+            <option value="R5ii">Canon R5ii</option>
+            <option value="R6ii">Canon R6ii</option>
+            <option value="R6iii">Canon R6iii</option>
+          </optgroup>
+          <optgroup label="Canon 鏡頭">
+            <option value="EF 70-200 F2.8 ii">EF 70-200 F2.8 ii</option>
+            <option value="RF 70-200 F2.8">RF 70-200 F2.8</option>
+            <option value="RF 100-500">RF 100-500</option>
+            <option value="RF 100-400">RF 100-400</option>
+            <option value="RF 50mm 1.8">RF 50mm 1.8</option>
+          </optgroup>
+          <optgroup label="Sony 相機">
+            <option value="A7R5">Sony A7R5</option>
+            <option value="A7C2">Sony A7C2</option>
+          </optgroup>
+          <optgroup label="Sony 鏡頭/配件">
+            <option value="FE 100-400">FE 100-400</option>
+            <option value="FE 70-200 F2.8 ii">FE 70-200 F2.8 ii</option>
+            <option value="FE 200-600">FE 200-600</option>
+            <option value="1.4x Extender">1.4x 遠攝增距鏡</option>
+          </optgroup>
+          <optgroup label="Fujifilm">
+            <option value="X100VI">Fujifilm X100VI</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
 
-    <label for="startDate">取機日期：</label>
-    <input type="date" id="startDate" />
-
-    <label for="endDate">還機日期：</label>
-    <input type="date" id="endDate" />
+    <div class="date-row">
+      <div class="form-group">
+        <label for="startDate">取機日期</label>
+        <input type="date" id="startDate" />
+      </div>
+      <div class="form-group">
+        <label for="endDate">還機日期</label>
+        <input type="date" id="endDate" />
+      </div>
+    </div>
 
     <button onclick="calculatePrice()">計算價格</button>
 
-    <div id="result"></div>
+    <div id="result">
+      <!-- Results will be injected here -->
+    </div>
   </div>
 
   <script>
-    // ✅ 已移除 week, twoWeek, 和 more14 數據，僅保留基礎與遞減邏輯
+    // ✅ 保持原有的定價數據
     const pricingData = {
       "S24U": { deposit: 6000, perDay: 180, weekday1: 160, weekend: { 2: 110, 3: 50, more: 50 }, weekday: { 2: 100, 3: 50, more: 50 } },
       "S25U": { deposit: 10000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70 }, weekday: { 2: 150, 3: 70, more: 60 } },
@@ -173,8 +327,12 @@
       const endDate = new Date(endDateRaw);
       const resultDiv = document.getElementById("result");
 
+      // UI Reset
+      resultDiv.className = "";
+      
       if (!product || isNaN(startDate) || isNaN(endDate) || endDate < startDate) {
-        resultDiv.innerHTML = "請選擇型號並輸入有效的日期範圍 (結束日必須大於或等於開始日)。";
+        resultDiv.innerHTML = '<div class="error-msg">⚠️ 請選擇型號並輸入有效的日期範圍<br>(結束日必須大於或等於開始日)</div>';
+        resultDiv.classList.add("show");
         return;
       }
 
@@ -183,61 +341,54 @@
 
       const data = pricingData[product];
       let total = 0;
-      let breakdown = [];
-      
-      // 用於計算費用的日期指針 (從取機日隔天開始計算)
       let currentCalcDate = new Date(startDate);
       
       for (let i = 1; i <= days; i++) {
-        // 第一天對應的是 start + 1 (因為取機日不計費)
         currentCalcDate.setDate(currentCalcDate.getDate() + 1);
-        const dow = currentCalcDate.getDay(); // 0=Sun, 1=Mon... 6=Sat
-
-        // 根據原始邏輯定義：
-        // "Weekday" (平日價) 適用於 Mon(1), Tue(2), Wed(3)
-        // "Weekend" (週末/高價) 適用於 Thu(4), Fri(5), Sat(6), Sun(0)
-        
+        const dow = currentCalcDate.getDay(); 
         let dailyPrice = 0;
 
         if (i === 1) {
-          // --- 第 1 天計費 ---
           const isDay1Weekday = (dow >= 1 && dow <= 3);
           dailyPrice = isDay1Weekday ? data.weekday1 : data.perDay;
         } else {
-          // --- 第 2 天及以後 ---
           const isWeekend = (dow === 0 || dow >= 4);
           const tier = isWeekend ? data.weekend : data.weekday;
-
-          if (i === 2) {
-            dailyPrice = tier[2];
-          } else if (i === 3) {
-            dailyPrice = tier[3];
-          } else {
-            // 第 4 天及以後，統一使用 more，不再有 more14 折扣
-            dailyPrice = tier.more;
-          }
+          if (i === 2) dailyPrice = tier[2];
+          else if (i === 3) dailyPrice = tier[3];
+          else dailyPrice = tier.more;
         }
-
         total += dailyPrice;
-        // 這裡可以選擇是否顯示詳細的每日列表，目前暫不顯示，只算總價
       }
 
+      // 生成美化後的結果 HTML
       resultDiv.innerHTML = `
-        <div class="title">📅 租借 ${days} 天 (取機日不計費)</div>
-        <div class="total">💰 總價: $${total.toLocaleString()}</div>
-        <div class="deposit">
-          🔒 按金: $${data.deposit.toLocaleString()}<br/>
-          💳 支持信用卡預授權（Hold Limit）/FPS/Payme/Alipay作為按金方式
-        </div>
-        <div class="student-plan" style="margin-top:15px; padding:12px; border:1px dashed #aaa; border-radius:6px; background:#fdfdfd;">
-          <b>👩🏻‍🎓👨🏻‍🎓 學生按金計劃</b><br/>
-          如欲選用學生按金方案，請於<u>取機前最少一天</u>提交以下資料至我們的WhatsApp或IG：<br/>
-          • 身份證副本<br/>
-          • 有效學生證副本<br/>
-          • 活動門票（活動必須於租借期間舉行）<br/><br/>
-          ✅ 建議於學生證及身份證上加上水印，註明「僅供 852.camera 器材租用用途」。
+        <div class="result-card">
+          <div class="result-header">
+            <div class="result-days">📅 租借 ${days} 天 <span style="font-size:12px; font-weight:normal; color:#6b7280">(取機日不計費)</span></div>
+            <div class="price-tag">$${total.toLocaleString()}</div>
+          </div>
+          
+          <div class="deposit-info">
+            <div class="deposit-icon">🔒</div>
+            <div>
+              <div style="font-weight:600; color:#374151; margin-bottom:4px;">按金: $${data.deposit.toLocaleString()}</div>
+              <div style="font-size:12px; line-height:1.4;">支持信用卡預授權 (Hold Limit) / FPS / Alipay</div>
+            </div>
+          </div>
+
+          <div class="student-plan">
+            <span class="student-title">🎓 學生按金計劃</span>
+            如選用學生方案，請於取機前最少一天提交：<br/>
+            1. 身份證副本<br/>
+            2. 有效學生證副本<br/>
+            3. 相關活動門票 (需於租借期間舉行)
+          </div>
         </div>
       `;
+      
+      // Trigger animation
+      setTimeout(() => resultDiv.classList.add("show"), 10);
     }
   </script>
 </body>
