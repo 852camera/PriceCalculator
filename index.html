@@ -15,8 +15,21 @@
       --border-color: #e5e7eb;
       --success-color: #10b981;
       --success-hover: #059669;
-      --radius: 12px;
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --whatsapp-color: #25D366;
+      --whatsapp-hover: #128C7E;
+      --radius: 16px;
+      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --transition: all 0.2s ease;
+    }
+
+    /* Dark Mode Variables */
+    [data-theme="dark"] {
+      --bg-color: #111827;
+      --card-bg: #1f2937;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-color: #374151;
+      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
     }
 
     *, *::before, *::after {
@@ -33,6 +46,7 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .container {
@@ -43,18 +57,47 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       margin-top: 20px;
+      position: relative;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+      color: var(--text-muted);
+      padding: 5px;
+      border-radius: 50%;
+      width: auto;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .theme-toggle:hover {
+      background-color: rgba(0,0,0,0.05);
+      color: var(--primary-color);
+    }
+    [data-theme="dark"] .theme-toggle:hover {
+      background-color: rgba(255,255,255,0.1);
     }
 
     header {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
 
     h2 {
       margin: 0;
       font-size: 24px;
       color: var(--text-main);
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: -0.5px;
     }
 
     .subtitle {
@@ -68,11 +111,14 @@
     }
 
     label {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       margin-bottom: 8px;
       display: block;
-      color: #374151;
+      color: var(--text-main);
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     /* Grid for Dates */
@@ -93,9 +139,9 @@
       padding: 12px 15px;
       font-size: 16px;
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      background-color: #fff;
-      transition: all 0.2s ease;
+      border-radius: 10px;
+      background-color: var(--card-bg);
+      transition: var(--transition);
       appearance: none;
       -webkit-appearance: none;
       color: var(--text-main);
@@ -107,7 +153,7 @@
     }
     .select-wrapper::after {
       content: "▼";
-      font-size: 12px;
+      font-size: 10px;
       color: var(--text-muted);
       position: absolute;
       right: 15px;
@@ -119,10 +165,48 @@
     select:focus, input:focus {
       outline: none;
       border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
 
-    button {
+    /* Quick Date Chips */
+    .quick-dates {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .chip {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .chip:hover {
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+
+    .chip:active {
+      transform: scale(0.95);
+    }
+
+    /* Action Buttons */
+    .btn-group {
+      display: grid;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    button.btn-main {
       width: 100%;
       padding: 14px;
       font-size: 16px;
@@ -130,105 +214,132 @@
       color: white;
       background-color: var(--primary-color);
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s;
-      margin-top: 10px;
+      transition: var(--transition);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
     }
 
-    button:hover {
+    button.btn-main:hover {
       background-color: var(--primary-hover);
+      transform: translateY(-1px);
     }
 
-    button:active {
-      transform: scale(0.98);
+    button.btn-main:active {
+      transform: translateY(1px);
     }
 
-    .btn-secondary {
-      background-color: var(--success-color);
-      margin-top: 15px;
+    .btn-whatsapp {
+      background-color: var(--whatsapp-color);
     }
-    .btn-secondary:hover {
-      background-color: var(--success-hover);
+    .btn-whatsapp:hover {
+      background-color: var(--whatsapp-hover);
+    }
+
+    .btn-copy {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+    .btn-copy:hover {
+      background-color: var(--border-color);
+      transform: translateY(-1px);
     }
 
     /* Result Section */
     #result {
       margin-top: 30px;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.3s ease;
-      display: none; /* Hidden by default */
+      border-top: 2px dashed var(--border-color);
+      padding-top: 20px;
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
     }
 
-    #result.show {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .result-card {
-      background: #f8fafc;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      padding: 20px;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .result-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 2px dashed var(--border-color);
-      padding-bottom: 15px;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
 
     .result-days {
       font-weight: 600;
       color: var(--text-main);
+      font-size: 16px;
     }
 
     .price-tag {
-      font-size: 28px;
+      font-size: 32px;
       font-weight: 800;
       color: var(--primary-color);
+      letter-spacing: -1px;
     }
 
-    .deposit-info {
-      font-size: 14px;
-      color: var(--text-muted);
-      background: #fff;
-      padding: 12px;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
-      margin-bottom: 15px;
+    .info-card {
+      background: var(--bg-color);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 12px;
       display: flex;
-      gap: 10px;
-      align-items: start;
+      gap: 12px;
+      align-items: flex-start;
+      border: 1px solid var(--border-color);
     }
 
-    .deposit-icon {
-      font-size: 18px;
+    .info-icon {
+      font-size: 20px;
+      padding-top: 2px;
     }
 
-    /* Breakdown Section */
-    .breakdown-toggle {
+    .info-content {
+      flex: 1;
+    }
+    
+    .info-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
       font-size: 14px;
-      color: var(--primary-color);
+    }
+
+    .info-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Breakdown Toggle */
+    .breakdown-section {
+      margin: 15px 0;
+    }
+    
+    .breakdown-toggle {
+      font-size: 13px;
+      color: var(--text-muted);
       cursor: pointer;
-      text-decoration: underline;
-      margin-bottom: 10px;
-      display: inline-block;
-      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 0;
+    }
+    .breakdown-toggle:hover {
+      color: var(--primary-color);
     }
     
     .breakdown-list {
       display: none;
-      background: #fff;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
+      background: var(--bg-color);
+      border-radius: 8px;
       padding: 10px;
-      margin-bottom: 15px;
+      margin-top: 5px;
       max-height: 200px;
       overflow-y: auto;
     }
@@ -241,54 +352,51 @@
       display: flex;
       justify-content: space-between;
       font-size: 13px;
-      padding: 4px 0;
-      border-bottom: 1px solid #f3f4f6;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
     }
     .breakdown-item:last-child {
       border-bottom: none;
     }
-    .breakdown-date { color: var(--text-muted); }
-    .breakdown-price { font-weight: 600; }
-    .breakdown-type { font-size: 11px; background: #e5e7eb; padding: 2px 6px; border-radius: 4px; margin-right: 8px; }
-
-    .student-plan {
-      background: #eff6ff;
-      border-left: 4px solid var(--primary-color);
-      padding: 15px;
+    .badge {
+      font-size: 10px;
+      background: var(--border-color);
+      color: var(--text-muted);
+      padding: 2px 6px;
       border-radius: 4px;
-      font-size: 14px;
-      color: #1e3a8a;
-    }
-
-    .student-title {
-      font-weight: 700;
-      margin-bottom: 5px;
-      display: block;
+      margin-left: 5px;
+      text-transform: uppercase;
     }
 
     .error-msg {
-      color: #dc2626;
-      background: #fef2f2;
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
       padding: 12px;
       border-radius: 8px;
       font-size: 14px;
       text-align: center;
-      border: 1px solid #fee2e2;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
+    <button class="theme-toggle" onclick="toggleTheme()" title="切換深色模式">
+      <span id="theme-icon">🌙</span>
+    </button>
+
     <header>
-      <h2>📷 852camera 租借計算</h2>
-      <div class="subtitle">專業攝影器材租賃費用估算</div>
+      <h2>📷 852camera</h2>
+      <div class="subtitle">專業攝影器材租賃計算</div>
     </header>
 
     <div class="form-group">
       <label for="product">選擇器材型號</label>
       <div class="select-wrapper">
-        <select id="product">
+        <select id="product" onchange="calculatePrice()">
           <option value="">-- 請選擇 --</option>
           <optgroup label="Samsung 手機">
             <option value="S24U">Samsung S24U</option>
@@ -296,7 +404,7 @@
           </optgroup>
           <optgroup label="Vivo 手機">
             <option value="X200 Ultra">Vivo X200 Ultra + 專業攝影套裝</option>
-            <option value="X200 Ultra">Vivo X300 Pro + 專業攝影套裝</option>
+            <option value="X300 Pro">Vivo X300 Pro + 專業攝影套裝</option>
           </optgroup>
           <optgroup label="Canon 相機">
             <option value="R5">Canon R5</option>
@@ -331,22 +439,33 @@
     <div class="date-row">
       <div class="form-group">
         <label for="startDate">取機日期</label>
-        <input type="date" id="startDate" />
+        <input type="date" id="startDate" onchange="handleStartDateChange()" />
       </div>
       <div class="form-group">
         <label for="endDate">還機日期</label>
-        <input type="date" id="endDate" />
+        <input type="date" id="endDate" onchange="calculatePrice()" />
+        
+        <!-- Quick Select Buttons -->
+        <div class="quick-dates" id="quickDates" style="display:none;">
+          <div class="chip" onclick="setQuickDate(3)">+3日</div>
+          <div class="chip" onclick="setQuickDate(5)">+5日</div>
+          <div class="chip" onclick="setQuickDate(7)">+7日</div>
+        </div>
       </div>
     </div>
 
-    <button onclick="calculatePrice()">計算價格</button>
+    <!-- Error container -->
+    <div id="error-box"></div>
 
     <div id="result">
-      <!-- Results will be injected here -->
+      <!-- Results injected here -->
     </div>
   </div>
 
   <script>
+    // ⬇️ 配置你的 WhatsApp 電話號碼 (不含 + 號)
+    const WHATSAPP_PHONE = "85257409553"; 
+
     const pricingData = {
       "S24U": { deposit: 6000, perDay: 180, weekday1: 160, weekend: { 2: 110, 3: 50, more: 50 }, weekday: { 2: 100, 3: 50, more: 50 } },
       "S25U": { deposit: 8000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70 }, weekday: { 2: 150, 3: 70, more: 60 } },
@@ -366,43 +485,92 @@
       "FE 100-400": { deposit: 12000, perDay: 290, weekday1: 260, weekend: { 2: 170, 3: 90, more: 70 }, weekday: { 2: 150, 3: 80, more: 60 } },
       "FE 70-200 F2.8 ii": { deposit: 13000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100 }, weekday: { 2: 220, 3: 110, more: 90 } },
       "FE 200-600": { deposit: 8000, perDay: 230, weekday1: 210, weekend: { 2: 140, 3: 70, more: 60 }, weekday: { 2: 130, 3: 60, more: 50 } },
-      "1.4x Extender": { deposit: 2000, perDay: 80, weekday1: 70, weekend: { 2: 50, 3: 20, more: 20 }, weekday: { 2: 50, 3: 20, more: 20 } },
+      "1.4x Extender": { deposit: 1000, perDay: 80, weekday1: 70, weekend: { 2: 50, 3: 20, more: 20 }, weekday: { 2: 50, 3: 20, more: 20 } },
       "X100VI": { deposit: 14000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90 }, weekday: { 2: 190, 3: 100, more: 80 } }
     };
 
-    // --- Date Constraints Logic ---
     const startInput = document.getElementById("startDate");
     const endInput = document.getElementById("endDate");
+    const productSelect = document.getElementById("product");
+    const resultDiv = document.getElementById("result");
+    const errorBox = document.getElementById("error-box");
+    const quickDatesDiv = document.getElementById("quickDates");
 
-    // Set minimum date to Today
+    // Init Date Limits
     const today = new Date().toISOString().split("T")[0];
     startInput.min = today;
     endInput.min = today;
 
-    // Update End Date minimum when Start Date changes
-    startInput.addEventListener("change", function() {
-      endInput.min = this.value;
-      if (endInput.value && endInput.value < this.value) {
-        endInput.value = this.value;
+    // Theme Toggle Logic
+    function toggleTheme() {
+      const body = document.body;
+      const currentTheme = body.getAttribute("data-theme");
+      const icon = document.getElementById("theme-icon");
+      
+      if (currentTheme === "dark") {
+        body.removeAttribute("data-theme");
+        icon.innerText = "🌙";
+      } else {
+        body.setAttribute("data-theme", "dark");
+        icon.innerText = "☀️";
       }
-    });
-    // -----------------------------
+    }
+
+    // Handle Start Date Change
+    function handleStartDateChange() {
+      if (!startInput.value) {
+        quickDatesDiv.style.display = "none";
+        return;
+      }
+      
+      // Show Quick Date buttons
+      quickDatesDiv.style.display = "flex";
+      
+      // Ensure End Date isn't before Start Date
+      endInput.min = startInput.value;
+      if (endInput.value && endInput.value < startInput.value) {
+        endInput.value = startInput.value;
+      }
+      
+      calculatePrice(); // Auto calculate
+    }
+
+    // Quick Date Setter
+    function setQuickDate(daysToAdd) {
+      if (!startInput.value) return;
+      
+      const date = new Date(startInput.value);
+      date.setDate(date.getDate() + daysToAdd);
+      
+      // Format to YYYY-MM-DD
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      
+      endInput.value = `${year}-${month}-${day}`;
+      calculatePrice();
+    }
 
     function calculatePrice() {
-      const productSelect = document.getElementById("product");
       const product = productSelect.value;
       const startDateRaw = startInput.value;
       const endDateRaw = endInput.value;
+      
+      // Reset UI
+      errorBox.innerHTML = "";
+      
+      // Basic Validation
+      if (!product || !startDateRaw || !endDateRaw) {
+        resultDiv.style.display = "none";
+        return;
+      }
+      
       const startDate = new Date(startDateRaw);
       const endDate = new Date(endDateRaw);
-      const resultDiv = document.getElementById("result");
 
-      // UI Reset
-      resultDiv.className = "";
-      
-      if (!product || isNaN(startDate) || isNaN(endDate) || endDate < startDate) {
-        resultDiv.innerHTML = '<div class="error-msg">⚠️ 請選擇型號並輸入有效的日期範圍<br>(結束日必須大於或等於開始日)</div>';
-        resultDiv.classList.add("show");
+      if (endDate < startDate) {
+        errorBox.innerHTML = '<div class="error-msg">⚠️ 結束日必須大於或等於開始日</div>';
+        resultDiv.style.display = "none";
         return;
       }
 
@@ -418,12 +586,14 @@
         currentCalcDate.setDate(currentCalcDate.getDate() + 1);
         const dow = currentCalcDate.getDay(); 
         let dailyPrice = 0;
-        let dayType = "平日"; // Label for breakdown
+        let dayType = "平日";
+        let typeClass = "";
 
         if (i === 1) {
           const isDay1Weekday = (dow >= 1 && dow <= 3);
           dailyPrice = isDay1Weekday ? data.weekday1 : data.perDay;
-          dayType = isDay1Weekday ? "首日(平日)" : "首日(假日)";
+          dayType = isDay1Weekday ? "首日 (平日)" : "首日 (假日)";
+          typeClass = "badge";
         } else {
           const isWeekend = (dow === 0 || dow >= 4);
           const tier = isWeekend ? data.weekend : data.weekday;
@@ -435,61 +605,73 @@
         }
         total += dailyPrice;
 
-        // Generate date string (MM/DD)
         const dateStr = `${currentCalcDate.getMonth()+1}/${currentCalcDate.getDate()}`;
         
         breakdownHtml += `
           <div class="breakdown-item">
-            <span class="breakdown-date">${dateStr} (Day ${i})</span>
             <div>
-              <span class="breakdown-type">${dayType}</span>
-              <span class="breakdown-price">$${dailyPrice}</span>
+              <span class="breakdown-date">${dateStr}</span>
+              <span class="${typeClass}">${dayType}</span>
             </div>
+            <span class="breakdown-price">$${dailyPrice}</span>
           </div>
         `;
       }
 
       const productName = productSelect.options[productSelect.selectedIndex].text;
       const copyText = `📷 租借查詢\n器材: ${productName}\n日期: ${startDateRaw} 至 ${endDateRaw}\n共 ${days} 天\n總價: $${total}\n按金: $${data.deposit}`;
+      const whatsappUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(copyText)}`;
 
-      // 生成結果 HTML
+      // Render Result
       resultDiv.innerHTML = `
-        <div class="result-card">
-          <div class="result-header">
-            <div class="result-days">📅 租借 ${days} 天 <span style="font-size:12px; font-weight:normal; color:#6b7280">(取機日不計費)</span></div>
-            <div class="price-tag">$${total.toLocaleString()}</div>
+        <div class="result-header">
+          <div class="result-days">
+             📅 租借 ${days} 天
+             <div style="font-size:12px; font-weight:normal; color:var(--text-muted); margin-top:4px;">取機日不計費</div>
           </div>
-          
-          <div class="deposit-info">
-            <div class="deposit-icon">🔒</div>
-            <div>
-              <div style="font-weight:600; color:#374151; margin-bottom:4px;">按金: $${data.deposit.toLocaleString()}</div>
-              <div style="font-size:12px; line-height:1.4;">支持信用卡預授權 (Hold Limit) / FPS / Payme / Alipay</div>
+          <div class="price-tag">$${total.toLocaleString()}</div>
+        </div>
+        
+        <div class="info-card">
+          <div class="info-icon">🔒</div>
+          <div class="info-content">
+            <div class="info-title">按金: $${data.deposit.toLocaleString()}</div>
+            <div class="info-desc">支持信用卡預授權 (Hold Limit) / FPS / Payme / Alipay</div>
+          </div>
+        </div>
+
+        <div class="breakdown-section">
+           <div class="breakdown-toggle" onclick="toggleBreakdown()">
+             <span>📋 查看價格詳情</span>
+             <span>▼</span>
+           </div>
+           <div class="breakdown-list" id="breakdownList">
+              ${breakdownHtml}
+           </div>
+        </div>
+
+        <div class="info-card" style="border-left: 3px solid var(--primary-color);">
+          <div class="info-icon">🎓</div>
+          <div class="info-content">
+            <div class="info-title">學生按金計劃</div>
+            <div class="info-desc">
+              需提交：1. 身份證副本 2. 學生證副本 3. 活動門票 (租借期內)
             </div>
           </div>
+        </div>
 
-          <div style="margin-bottom:15px;">
-             <span class="breakdown-toggle" onclick="toggleBreakdown()">📋 查看價格詳情</span>
-             <div class="breakdown-list" id="breakdownList">
-                ${breakdownHtml}
-             </div>
-          </div>
-
-          <div class="student-plan">
-            <span class="student-title">🎓 學生按金計劃</span>
-            如選用學生方案，請於取機前最少一天提交：<br/>
-            1. 身份證副本<br/>
-            2. 有效學生證副本<br/>
-            3. 相關活動門票 (需於租借期間舉行)
-          </div>
-
-          <button class="btn-secondary" onclick="copyToClipboard(this, \`${copyText.replace(/"/g, '&quot;')}\`)">
-            📋 複製報價 (WhatsApp/IG)
+        <div class="btn-group">
+          <button class="btn-main btn-whatsapp" onclick="window.open('${whatsappUrl}', '_blank')">
+            <span>💬</span> WhatsApp 預約
+          </button>
+          
+          <button class="btn-main btn-copy" onclick="copyToClipboard(this, \`${copyText.replace(/"/g, '&quot;')}\`)">
+            <span>📋</span> 複製報價單
           </button>
         </div>
       `;
       
-      setTimeout(() => resultDiv.classList.add("show"), 10);
+      resultDiv.style.display = "block";
     }
 
     function toggleBreakdown() {
@@ -498,17 +680,42 @@
     }
 
     function copyToClipboard(btn, text) {
-      navigator.clipboard.writeText(text).then(() => {
-        const originalText = btn.innerText;
-        btn.innerText = "✅ 已複製！";
-        btn.style.backgroundColor = "#059669";
-        setTimeout(() => {
-          btn.innerText = originalText;
-          btn.style.backgroundColor = "";
-        }, 2000);
-      }).catch(err => {
+      // Create a temporary textarea element to handle the copy
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      
+      // Ensure it's not visible but part of the DOM to avoid scrolling
+      textArea.style.position = "fixed";
+      textArea.style.left = "-9999px";
+      textArea.style.top = "0";
+      document.body.appendChild(textArea);
+      
+      textArea.focus();
+      textArea.select();
+      
+      try {
+        // Execute the copy command
+        const successful = document.execCommand('copy');
+        if (successful) {
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = "<span>✅</span> 已複製！";
+            btn.style.borderColor = "var(--success-color)";
+            btn.style.color = "var(--success-color)";
+            setTimeout(() => {
+              btn.innerHTML = originalHtml;
+              btn.style.borderColor = "";
+              btn.style.color = "";
+            }, 2000);
+        } else {
+             alert("複製失敗，請手動截圖");
+        }
+      } catch (err) {
+        console.error('Fallback: Oops, unable to copy', err);
         alert("複製失敗，請手動截圖");
-      });
+      }
+      
+      // Clean up
+      document.body.removeChild(textArea);
     }
   </script>
 </body>
