@@ -215,10 +215,22 @@
         animation: fadeIn 0.3s ease;
     }
 
+    .item-info {
+        flex: 1;
+    }
+
     .item-name {
         font-size: 14px;
         font-weight: 600;
         color: var(--text-main);
+        margin-bottom: 2px;
+    }
+
+    .item-price {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 2px;
     }
 
     .item-deposit {
@@ -1233,15 +1245,34 @@
 
         elements.selectedList.style.display = "flex";
         
+        // Check for dates to calculate item pricing
+        let rentalDays = 0;
+        let validDates = false;
+        
+        if (elements.start.value && elements.end.value && elements.end.value >= elements.start.value) {
+            const start = new Date(elements.start.value);
+            const end = new Date(elements.end.value);
+            rentalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+            if (rentalDays === 0) rentalDays = 1;
+            validDates = true;
+        }
+        
         selectedProducts.forEach((key, index) => {
             const data = pricingData[key];
             const name = document.querySelector(`#productSelector option[value="${key}"]`)?.text || key;
             
+            let priceDisplay = `日租: $${data.perDay} (起)`;
+            if (validDates) {
+                const itemCalc = calculateItemPrice(key, elements.start.value, rentalDays);
+                priceDisplay = `租金: $${itemCalc.total.toLocaleString()}`;
+            }
+
             const div = document.createElement("div");
             div.className = "selected-item";
             div.innerHTML = `
-                <div>
+                <div class="item-info">
                     <div class="item-name">${name}</div>
+                    <div class="item-price">${priceDisplay}</div>
                     <div class="item-deposit">按金: $${data.deposit.toLocaleString()}</div>
                 </div>
                 <button class="btn-remove" onclick="removeProduct(${index})" title="移除">×</button>
@@ -1505,6 +1536,9 @@
           grandDeposit += pricingData[key].deposit;
       });
 
+      // Update the list view with calculated prices
+      renderProductList();
+
       // 5. Update View
       // Generate Product Names list
       let productNamesList = selectedProducts.map(key => {
@@ -1529,7 +1563,7 @@
       }
       
       currentQuoteText += `💰 總價: $${grandTotal.toLocaleString()}\n🔒 總按金: $${grandDeposit.toLocaleString()}`;
-      currentQuoteText += `\n\n✅ 本人已閱讀並同意 租賃條款及細則，並確認以上資料正確無誤。`;
+      currentQuoteText += `\n\n✅ 本人已閱讀並同意租賃條款及細則，並確認以上資料正確無誤。`;
 
       elements.result.innerHTML = `
         <div class="result-header">
