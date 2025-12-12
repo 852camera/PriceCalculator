@@ -127,6 +127,39 @@
       margin-top: 5px;
     }
 
+    /* Shop Info Section */
+    .shop-info {
+        background: var(--bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 25px;
+        font-size: 13px;
+    }
+    .shop-info-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 8px;
+        align-items: flex-start;
+    }
+    .shop-info-row:last-child {
+        margin-bottom: 0;
+    }
+    .shop-info-icon {
+        font-size: 16px;
+        line-height: 1.4;
+    }
+    .shop-info-text {
+        color: var(--text-main);
+        line-height: 1.5;
+    }
+    .shop-info-sub {
+        color: var(--text-muted);
+        font-size: 12px;
+        display: block;
+        margin-top: 2px;
+    }
+
     .form-group {
       margin-bottom: 20px;
     }
@@ -754,6 +787,7 @@
         #result { display: block !important; border-top: 2px solid #000; }
         .price-tag { color: #000; }
         .info-card { border: 1px solid #ccc; }
+        .shop-info { border: 1px solid #000; }
     }
 
   </style>
@@ -773,6 +807,23 @@
       <h2>📷 852Camera</h2>
       <div class="subtitle">專業攝影器材租賃計算</div>
     </header>
+
+    <div class="shop-info">
+        <div class="shop-info-row">
+            <span class="shop-info-icon">📍</span>
+            <div class="shop-info-text">
+                <strong>交收中心地址</strong><br>
+                旺角萬事昌中心19/F Easy Trade
+            </div>
+        </div>
+        <div class="shop-info-row">
+            <span class="shop-info-icon">⏰</span>
+            <div class="shop-info-text">
+                <strong>營業時間</strong> 12:00 - 22:00<br>
+                <span class="shop-info-sub">（當日任何時間內取還即可 非24小時計算）</span>
+            </div>
+        </div>
+    </div>
 
     <div class="form-group">
       <label for="productSelector">選擇器材 (可多選)</label>
@@ -1478,7 +1529,7 @@
       }
       
       currentQuoteText += `💰 總價: $${grandTotal.toLocaleString()}\n🔒 總按金: $${grandDeposit.toLocaleString()}`;
-      currentQuoteText += `\n\n✅ 本人已閱讀並同意租賃條款及細則，並確認以上資料正確無誤。`;
+      currentQuoteText += `\n\n✅ 本人已閱讀並同意 租賃條款及細則，並確認以上資料正確無誤。`;
 
       elements.result.innerHTML = `
         <div class="result-header">
