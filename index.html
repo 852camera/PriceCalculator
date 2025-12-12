@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>852camera 租借計算器</title>
+  <title>852camera 租借計算器 (多項器材版)</title>
   <style>
     :root {
       --primary-color: #2563eb;
@@ -40,7 +40,7 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       margin: 0;
-      padding: 20px 20px 80px 20px; /* Extra padding bottom for sticky bar */
+      padding: 20px 20px 100px 20px; /* Extra padding bottom for sticky bar */
       background-color: var(--bg-color);
       color: var(--text-main);
       min-height: 100vh;
@@ -52,7 +52,7 @@
 
     .container {
       width: 100%;
-      max-width: 550px;
+      max-width: 600px;
       background: var(--card-bg);
       padding: 30px;
       border-radius: var(--radius);
@@ -142,6 +142,74 @@
       letter-spacing: 0.5px;
     }
 
+    /* Product Selection Styles */
+    .product-selector-group {
+        display: flex;
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    .btn-add {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        white-space: nowrap;
+    }
+    .btn-add:hover {
+        background-color: var(--primary-hover);
+    }
+
+    .selected-items-list {
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .selected-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg-color);
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        animation: fadeIn 0.3s ease;
+    }
+
+    .item-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-main);
+    }
+
+    .item-deposit {
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+
+    .btn-remove {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 5px;
+        font-size: 18px;
+        line-height: 1;
+        border-radius: 50%;
+        transition: var(--transition);
+        margin-left: 10px;
+    }
+    .btn-remove:hover {
+        color: var(--danger-color);
+        background: rgba(239, 68, 68, 0.1);
+    }
+
     /* Grid for Dates */
     .date-row {
       display: grid;
@@ -176,6 +244,7 @@
     /* Custom Arrow for Select */
     .select-wrapper {
       position: relative;
+      width: 100%;
     }
     .select-wrapper::after {
       content: "▼";
@@ -395,7 +464,7 @@
       border-radius: 8px;
       padding: 10px;
       margin-top: 5px;
-      max-height: 200px;
+      max-height: 250px;
       overflow-y: auto;
     }
     
@@ -464,7 +533,7 @@
     .toast.show {
       visibility: visible;
       opacity: 1;
-      bottom: 50px;
+      bottom: 80px; /* Elevated to avoid sticky bar */
     }
     
     .toast.success { background-color: var(--success-color); }
@@ -679,7 +748,7 @@
     @media print {
         body { background: white; padding: 0; color: black; }
         .container { box-shadow: none; border: none; max-width: 100%; margin: 0; padding: 0; }
-        .theme-toggle, .reset-btn, .btn-group, .sticky-total, .faq-container { display: none !important; }
+        .theme-toggle, .reset-btn, .btn-group, .sticky-total, .faq-container, .btn-add, .btn-remove { display: none !important; }
         input, select { border: none; background: none; padding: 0; font-weight: bold; -webkit-appearance: none; }
         .select-wrapper::after { display: none; }
         #result { display: block !important; border-top: 2px solid #000; }
@@ -706,46 +775,52 @@
     </header>
 
     <div class="form-group">
-      <label for="product">選擇器材型號</label>
-      <div class="select-wrapper">
-        <select id="product" onchange="calculatePrice()">
-          <option value="">-- 請選擇 --</option>
-          <optgroup label="Samsung 手機">
-            <option value="S24U">Samsung S24U</option>
-            <option value="S25U">Samsung S25U</option>
-          </optgroup>
-          <optgroup label="Vivo 手機">
-            <option value="X200 Ultra">Vivo X200 Ultra + 專業攝影套裝</option>
-            <option value="X300 Pro">Vivo X300 Pro + 專業攝影套裝</option>
-          </optgroup>
-          <optgroup label="Canon 相機">
-            <option value="R5">Canon R5</option>
-            <option value="R5ii">Canon R5ii</option>
-            <option value="R6ii">Canon R6ii</option>
-            <option value="R6iii">Canon R6iii</option>
-          </optgroup>
-          <optgroup label="Canon 鏡頭">
-            <option value="EF 70-200 F2.8 ii">EF 70-200 F2.8 ii</option>
-            <option value="RF 70-200 F2.8">RF 70-200 F2.8</option>
-            <option value="RF 100-500">RF 100-500</option>
-            <option value="RF 100-400">RF 100-400</option>
-            <option value="RF 50mm 1.8">RF 50mm 1.8</option>
-          </optgroup>
-          <optgroup label="Sony 相機">
-            <option value="A7R5">Sony A7R5</option>
-            <option value="A7C2">Sony A7C2</option>
-          </optgroup>
-          <optgroup label="Sony 鏡頭/配件">
-            <option value="FE 100-400">FE 100-400</option>
-            <option value="FE 70-200 F2.8 ii">FE 70-200 F2.8 ii</option>
-            <option value="FE 200-600">FE 200-600</option>
-            <option value="1.4x Extender">1.4x 遠攝增距鏡</option>
-          </optgroup>
-          <optgroup label="Fujifilm">
-            <option value="X100VI">Fujifilm X100VI</option>
-          </optgroup>
-        </select>
+      <label for="productSelector">選擇器材 (可多選)</label>
+      <div class="product-selector-group">
+        <div class="select-wrapper">
+          <select id="productSelector">
+            <option value="">-- 請選擇 --</option>
+            <optgroup label="Samsung 手機">
+              <option value="S24U">Samsung S24U</option>
+              <option value="S25U">Samsung S25U</option>
+            </optgroup>
+            <optgroup label="Vivo 手機">
+              <option value="X200 Ultra">Vivo X200 Ultra + 專業攝影套裝</option>
+              <option value="X300 Pro">Vivo X300 Pro + 專業攝影套裝</option>
+            </optgroup>
+            <optgroup label="Canon 相機">
+              <option value="R5">Canon R5</option>
+              <option value="R5ii">Canon R5ii</option>
+              <option value="R6ii">Canon R6ii</option>
+              <option value="R6iii">Canon R6iii</option>
+            </optgroup>
+            <optgroup label="Canon 鏡頭">
+              <option value="EF 70-200 F2.8 ii">EF 70-200 F2.8 ii</option>
+              <option value="RF 70-200 F2.8">RF 70-200 F2.8</option>
+              <option value="RF 100-500">RF 100-500</option>
+              <option value="RF 100-400">RF 100-400</option>
+              <option value="RF 50mm 1.8">RF 50mm 1.8</option>
+            </optgroup>
+            <optgroup label="Sony 相機">
+              <option value="A7R5">Sony A7R5</option>
+              <option value="A7C2">Sony A7C2</option>
+            </optgroup>
+            <optgroup label="Sony 鏡頭/配件">
+              <option value="FE 100-400">FE 100-400</option>
+              <option value="FE 70-200 F2.8 ii">FE 70-200 F2.8 ii</option>
+              <option value="FE 200-600">FE 200-600</option>
+              <option value="1.4x Extender">1.4x 遠攝增距鏡</option>
+            </optgroup>
+            <optgroup label="Fujifilm">
+              <option value="X100VI">Fujifilm X100VI</option>
+            </optgroup>
+          </select>
+        </div>
+        <button type="button" class="btn-add" onclick="addProduct()">+ 加入</button>
       </div>
+
+      <!-- Selected Items Container -->
+      <div id="selectedItemsList" class="selected-items-list" style="display:none;"></div>
     </div>
 
     <div class="date-row">
@@ -986,7 +1061,8 @@
 
     // DOM Elements
     const elements = {
-        product: document.getElementById("product"),
+        productSelector: document.getElementById("productSelector"),
+        selectedList: document.getElementById("selectedItemsList"),
         start: document.getElementById("startDate"),
         end: document.getElementById("endDate"),
         name: document.getElementById("customerName"),
@@ -1012,6 +1088,7 @@
 
     // State
     let currentQuoteText = "";
+    let selectedProducts = []; // Array of product keys
 
     // Init
     const today = new Date().toISOString().split("T")[0];
@@ -1020,22 +1097,37 @@
 
     // Load from LocalStorage on mount
     window.addEventListener('DOMContentLoaded', () => {
-        loadFromLocal(); // 1. Load local data
+        loadFromLocal();
         
-        // 2. Override with URL params if exist
+        // Handle URL params
         const params = new URLSearchParams(window.location.search);
-        if (params.has('product')) elements.product.value = params.get('product');
+        
+        // If 'products' param exists (comma separated)
+        if (params.has('products')) {
+            const keys = params.get('products').split(',');
+            keys.forEach(k => {
+                if(pricingData[k.trim()]) selectedProducts.push(k.trim());
+            });
+        } 
+        // Backward compatibility for old single 'product' param
+        else if (params.has('product')) {
+            const val = params.get('product');
+            if(pricingData[val]) selectedProducts.push(val);
+        }
+
         if (params.has('start')) elements.start.value = params.get('start');
         if (params.has('end')) elements.end.value = params.get('end');
         
+        renderProductList();
+        
         if (elements.start.value) handleStartDateChange();
-        if (elements.product.value && elements.start.value && elements.end.value) calculatePrice();
+        calculatePrice();
     });
 
     // Save to LocalStorage helper
     function saveToLocal() {
         const data = {
-            product: elements.product.value,
+            products: selectedProducts,
             start: elements.start.value,
             end: elements.end.value,
             name: elements.name.value,
@@ -1043,15 +1135,15 @@
             phone: elements.phone.value,
             payment: elements.payment.value
         };
-        localStorage.setItem('rentalCalculatorData', JSON.stringify(data));
+        localStorage.setItem('rentalCalculatorData_multi', JSON.stringify(data));
     }
 
     function loadFromLocal() {
-        const stored = localStorage.getItem('rentalCalculatorData');
+        const stored = localStorage.getItem('rentalCalculatorData_multi');
         if (stored) {
             try {
                 const data = JSON.parse(stored);
-                if (data.product) elements.product.value = data.product;
+                if (data.products && Array.isArray(data.products)) selectedProducts = data.products;
                 if (data.start) elements.start.value = data.start;
                 if (data.end) elements.end.value = data.end;
                 if (data.name) elements.name.value = data.name;
@@ -1060,6 +1152,51 @@
                 if (data.payment) elements.payment.value = data.payment;
             } catch(e) {}
         }
+    }
+
+    function addProduct() {
+        const val = elements.productSelector.value;
+        if (!val) {
+            showToast("請選擇器材", "error");
+            return;
+        }
+        selectedProducts.push(val);
+        renderProductList();
+        calculatePrice();
+        elements.productSelector.value = ""; // Reset selector
+    }
+
+    function removeProduct(index) {
+        selectedProducts.splice(index, 1);
+        renderProductList();
+        calculatePrice();
+    }
+
+    function renderProductList() {
+        elements.selectedList.innerHTML = "";
+        
+        if (selectedProducts.length === 0) {
+            elements.selectedList.style.display = "none";
+            return;
+        }
+
+        elements.selectedList.style.display = "flex";
+        
+        selectedProducts.forEach((key, index) => {
+            const data = pricingData[key];
+            const name = document.querySelector(`#productSelector option[value="${key}"]`)?.text || key;
+            
+            const div = document.createElement("div");
+            div.className = "selected-item";
+            div.innerHTML = `
+                <div>
+                    <div class="item-name">${name}</div>
+                    <div class="item-deposit">按金: $${data.deposit.toLocaleString()}</div>
+                </div>
+                <button class="btn-remove" onclick="removeProduct(${index})" title="移除">×</button>
+            `;
+            elements.selectedList.appendChild(div);
+        });
     }
 
     function toggleTheme() {
@@ -1077,8 +1214,9 @@
     }
     
     function resetForm() {
-        localStorage.removeItem('rentalCalculatorData'); // Clear storage
-        elements.product.value = "";
+        localStorage.removeItem('rentalCalculatorData_multi'); // Clear storage
+        selectedProducts = [];
+        elements.productSelector.value = "";
         elements.start.value = "";
         elements.end.value = "";
         elements.name.value = "";
@@ -1089,6 +1227,8 @@
         elements.termsCheck.checked = false;
         elements.termsCheck.disabled = true; // Reset disabled state
         
+        renderProductList();
+
         if(elements.termsLockHint) elements.termsLockHint.style.display = 'block';
         
         const hint = document.getElementById('scrollHint');
@@ -1138,7 +1278,12 @@
 
     function updateURL() {
         const url = new URL(window.location);
-        url.searchParams.set('product', elements.product.value);
+        if (selectedProducts.length > 0) {
+            url.searchParams.set('products', selectedProducts.join(','));
+        } else {
+            url.searchParams.delete('products');
+            url.searchParams.delete('product');
+        }
         url.searchParams.set('start', elements.start.value);
         url.searchParams.set('end', elements.end.value);
         try { window.history.replaceState({}, '', url); } catch(e) { }
@@ -1182,12 +1327,41 @@
         }
     }
 
+    function calculateItemPrice(productKey, startDate, days) {
+        const data = pricingData[productKey];
+        if (!data) return { total: 0, deposit: 0 };
+
+        let total = 0;
+        let currentCalcDate = new Date(startDate);
+        
+        for (let i = 1; i <= days; i++) {
+            currentCalcDate.setDate(currentCalcDate.getDate() + 1);
+            const dow = currentCalcDate.getDay(); 
+            const dateStrISO = currentCalcDate.toISOString().split('T')[0];
+            const isHoliday = publicHolidays.includes(dateStrISO);
+            
+            let dailyPrice = 0;
+
+            if (i === 1) {
+                const isDay1Weekday = (dow >= 1 && dow <= 3 && !isHoliday);
+                dailyPrice = isDay1Weekday ? data.weekday1 : data.perDay;
+            } else {
+                const isWeekend = (dow === 0 || dow >= 4 || isHoliday);
+                const tier = isWeekend ? data.weekend : data.weekday;
+                if (i === 2) dailyPrice = tier[2];
+                else if (i === 3) dailyPrice = tier[3];
+                else dailyPrice = tier.more;
+            }
+            total += dailyPrice;
+        }
+        return { total: total, deposit: data.deposit };
+    }
+
     function calculatePrice() {
       // 1. Save state
       saveToLocal();
       updateURL();
 
-      const product = elements.product.value;
       const startDateRaw = elements.start.value;
       const endDateRaw = elements.end.value;
       
@@ -1205,7 +1379,7 @@
       elements.phoneError.style.display = (phoneVal && phoneVal.length !== 8) ? 'block' : 'none';
       
       // Validation - Basic
-      if (!product || !startDateRaw || !endDateRaw) {
+      if (selectedProducts.length === 0 || !startDateRaw || !endDateRaw) {
         elements.result.style.display = "none";
         elements.termsContainer.style.display = "none";
         elements.btns.style.display = "none";
@@ -1227,53 +1401,65 @@
       let days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
       if (days === 0) days = 1;
 
-      const data = pricingData[product];
-      let baseTotal = 0;
-      let currentCalcDate = new Date(startDate);
+      let grandTotal = 0;
+      let grandDeposit = 0;
       let breakdownHtml = "";
       
-      for (let i = 1; i <= days; i++) {
+      // Calculate All Items Day by Day for Breakdown
+      // We also want a summary per item
+      
+      // Let's generate breakdown based on daily cost of ALL items
+      let dailyBreakdown = [];
+      let currentCalcDate = new Date(startDate);
+      
+      for(let i=1; i<=days; i++) {
         currentCalcDate.setDate(currentCalcDate.getDate() + 1);
         const dow = currentCalcDate.getDay(); 
         const dateStrISO = currentCalcDate.toISOString().split('T')[0];
         const isHoliday = publicHolidays.includes(dateStrISO);
-        
-        let dailyPrice = 0;
-        let dayType = "平日";
-        let typeClass = "badge";
-
-        if (i === 1) {
-          const isDay1Weekday = (dow >= 1 && dow <= 3 && !isHoliday);
-          dailyPrice = isDay1Weekday ? data.weekday1 : data.perDay;
-          dayType = isDay1Weekday ? "首日 (平日)" : (isHoliday ? "首日 (公眾假期)" : "首日 (假日)");
-          if (isHoliday) typeClass = "badge holiday";
-        } else {
-          const isWeekend = (dow === 0 || dow >= 4 || isHoliday);
-          const tier = isWeekend ? data.weekend : data.weekday;
-          if (isHoliday) { dayType = "公眾假期"; typeClass = "badge holiday"; }
-          else { dayType = isWeekend ? "假日價" : "平日價"; }
-
-          if (i === 2) dailyPrice = tier[2];
-          else if (i === 3) dailyPrice = tier[3];
-          else dailyPrice = tier.more;
-        }
-        
-        baseTotal += dailyPrice;
         const dateStr = `${currentCalcDate.getMonth()+1}/${currentCalcDate.getDate()}`;
+        
+        let dailySum = 0;
+        let dayType = isHoliday ? "假期" : ((dow === 0 || dow >= 4) ? "假日" : "平日");
+        let typeClass = (isHoliday) ? "badge holiday" : "badge";
+
+        selectedProducts.forEach(key => {
+             const data = pricingData[key];
+             let price = 0;
+             if (i === 1) {
+                const isDay1Weekday = (dow >= 1 && dow <= 3 && !isHoliday);
+                price = isDay1Weekday ? data.weekday1 : data.perDay;
+            } else {
+                const isWeekend = (dow === 0 || dow >= 4 || isHoliday);
+                const tier = isWeekend ? data.weekend : data.weekday;
+                if (i === 2) price = tier[2];
+                else if (i === 3) price = tier[3];
+                else price = tier.more;
+            }
+            dailySum += price;
+        });
+
+        grandTotal += dailySum;
         
         breakdownHtml += `
           <div class="breakdown-item">
             <div><span class="breakdown-date">${dateStr}</span><span class="${typeClass}">${dayType}</span></div>
-            <span class="breakdown-price">$${dailyPrice}</span>
+            <span class="breakdown-price">$${dailySum}</span>
           </div>
         `;
       }
-
-      let finalTotal = baseTotal;
-
-      // 7. Update View
-      const productName = elements.product.options[elements.product.selectedIndex].text;
       
+      // Sum Deposit
+      selectedProducts.forEach(key => {
+          grandDeposit += pricingData[key].deposit;
+      });
+
+      // 5. Update View
+      // Generate Product Names list
+      let productNamesList = selectedProducts.map(key => {
+          return document.querySelector(`#productSelector option[value="${key}"]`)?.text || key;
+      });
+
       // Update Global State for Copy/WhatsApp
       currentQuoteText = `📷 租借查詢\n------------------\n`;
       if(elements.name.value) currentQuoteText += `👤 姓名: ${elements.name.value}\n`;
@@ -1281,31 +1467,35 @@
       if(elements.phone.value) currentQuoteText += `📞 電話: ${elements.phone.value}\n`;
       if(elements.payment.value) currentQuoteText += `💳 付款方式: ${elements.payment.value}\n`;
       currentQuoteText += `------------------\n`;
-      currentQuoteText += `📦 器材: ${productName}\n🗓️ 日期: ${startDateRaw} 至 ${endDateRaw}\n⏱️ 天數: 共 ${days} 天\n`;
+      currentQuoteText += `📦 器材清單:\n`;
+      productNamesList.forEach(name => {
+          currentQuoteText += `   • ${name}\n`;
+      });
+      currentQuoteText += `🗓️ 日期: ${startDateRaw} 至 ${endDateRaw}\n⏱️ 天數: 共 ${days} 天\n`;
       
       if(elements.photoEdit.checked) {
           currentQuoteText += `✨ 修圖服務: 免費試用 (最多5張)\n`;
       }
       
-      currentQuoteText += `💰 總價: $${finalTotal.toLocaleString()}\n🔒 按金: $${data.deposit.toLocaleString()}`;
-      currentQuoteText += `\n\n✅ 本人已閱讀並同意 租賃條款及細則，並確認以上資料正確無誤。`;
+      currentQuoteText += `💰 總價: $${grandTotal.toLocaleString()}\n🔒 總按金: $${grandDeposit.toLocaleString()}`;
+      currentQuoteText += `\n\n✅ 本人已閱讀並同意租賃條款及細則，並確認以上資料正確無誤。`;
 
       elements.result.innerHTML = `
         <div class="result-header">
-          <div class="result-days">📅 租借 ${days} 天 <div style="font-size:12px; font-weight:normal; color:var(--text-muted); margin-top:4px;">取機日不計費</div></div>
-          <div class="price-tag">$${finalTotal.toLocaleString()}</div>
+          <div class="result-days">📅 租借 ${days} 天 (${selectedProducts.length} 項器材) <div style="font-size:12px; font-weight:normal; color:var(--text-muted); margin-top:4px;">取機日不計費</div></div>
+          <div class="price-tag">$${grandTotal.toLocaleString()}</div>
         </div>
         
         <div class="info-card">
           <div class="info-icon">🔒</div>
           <div class="info-content">
-            <div class="info-title">按金: $${data.deposit.toLocaleString()}</div>
+            <div class="info-title">總按金: $${grandDeposit.toLocaleString()}</div>
             <div class="info-desc">支持信用卡預授權 (Hold Limit) / FPS </div>
           </div>
         </div>
 
         <div class="breakdown-section">
-           <div class="breakdown-toggle" onclick="toggleBreakdown()"><span>📋 查看價格詳情</span><span>▼</span></div>
+           <div class="breakdown-toggle" onclick="toggleBreakdown()"><span>📋 查看每日總價詳情</span><span>▼</span></div>
            <div class="breakdown-list" id="breakdownList">${breakdownHtml}</div>
         </div>
 
@@ -1323,7 +1513,7 @@
       elements.btns.style.display = "grid";
       
       // Update Sticky Bar
-      elements.stickyPrice.innerText = `$${finalTotal.toLocaleString()}`;
+      elements.stickyPrice.innerText = `$${grandTotal.toLocaleString()}`;
       elements.stickyTotal.classList.add("visible");
     }
 
