@@ -40,7 +40,7 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 20px 20px 80px 20px; /* Extra padding bottom for sticky bar */
       background-color: var(--bg-color);
       color: var(--text-main);
       min-height: 100vh;
@@ -194,7 +194,6 @@
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
     
-    /* Error styling for inputs */
     input.invalid {
         border-color: var(--danger-color);
     }
@@ -263,6 +262,14 @@
     button.btn-main:hover {
       background-color: var(--primary-hover);
       transform: translateY(-1px);
+    }
+    
+    button.btn-main:disabled {
+        background-color: var(--border-color);
+        cursor: not-allowed;
+        transform: none;
+        opacity: 0.7;
+        color: var(--text-muted);
     }
 
     button.btn-main:active {
@@ -457,7 +464,7 @@
     .toast.show {
       visibility: visible;
       opacity: 1;
-      bottom: 50px; /* Slight float up animation */
+      bottom: 50px;
     }
     
     .toast.success { background-color: var(--success-color); }
@@ -466,7 +473,7 @@
     .section-label {
       font-size: 13px;
       font-weight: 600;
-      margin: 20px 0 10px;
+      margin: 25px 0 15px;
       color: var(--text-main);
       opacity: 0.9;
       display: flex;
@@ -474,6 +481,210 @@
       align-items: center;
       border-bottom: 1px solid var(--border-color);
       padding-bottom: 5px;
+    }
+
+    /* Checkbox Styles */
+    .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 5px; /* Reduced to sit closer to hint */
+        cursor: pointer;
+        position: relative;
+    }
+    .checkbox-wrapper input {
+        width: 18px;
+        height: 18px;
+        margin: 0; /* Align fix */
+        flex-shrink: 0;
+    }
+    
+    /* Disabled Checkbox Styles */
+    .checkbox-wrapper input:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+    .checkbox-wrapper input:disabled + .checkbox-text, 
+    .checkbox-wrapper input:disabled + div .checkbox-text {
+        color: var(--text-muted);
+        cursor: not-allowed;
+    }
+    
+    .checkbox-text {
+        font-size: 14px;
+        color: var(--text-main);
+        line-height: 1.4;
+        display: block;
+    }
+    .checkbox-subtext {
+        font-size: 12px;
+        color: var(--text-muted);
+        display: block;
+        margin-top: 2px;
+    }
+
+    /* FAQ Section */
+    .faq-container {
+        margin-top: 40px;
+        border-top: 1px solid var(--border-color);
+        padding-top: 20px;
+    }
+    .faq-title {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: var(--text-main);
+        text-align: center;
+    }
+    details {
+        margin-bottom: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background: var(--bg-color);
+    }
+    summary {
+        padding: 12px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        outline: none;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    summary::after {
+        content: '+';
+        font-size: 16px;
+    }
+    details[open] summary::after {
+        content: '-';
+    }
+    .faq-content {
+        padding: 0 12px 12px;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--text-muted);
+        border-top: 1px dashed var(--border-color);
+        margin-top: 5px;
+        padding-top: 10px;
+    }
+
+    /* Sticky Bottom Bar for Mobile */
+    .sticky-total {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--card-bg);
+        border-top: 1px solid var(--border-color);
+        padding: 15px 20px;
+        box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+        display: none; /* Shown via JS if needed or Media Query */
+        z-index: 900;
+        justify-content: space-between;
+        align-items: center;
+    }
+    @media (max-width: 600px) {
+        .sticky-total.visible {
+            display: flex;
+        }
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(2px);
+    }
+    .modal-overlay.show {
+        display: flex;
+    }
+    .modal-content {
+        background: var(--card-bg);
+        width: 90%;
+        max-width: 500px;
+        max-height: 80vh;
+        border-radius: 12px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .modal-header h3 {
+        margin: 0;
+        font-size: 18px;
+        color: var(--text-main);
+    }
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--text-muted);
+        padding: 0;
+        line-height: 1;
+    }
+    .modal-body {
+        padding: 20px;
+        overflow-y: auto;
+        font-size: 14px;
+        line-height: 1.6;
+        color: var(--text-main);
+        position: relative;
+    }
+    .modal-body ul {
+        padding-left: 20px;
+        margin: 10px 0;
+    }
+    .modal-body li {
+        margin-bottom: 8px;
+    }
+    
+    /* Scroll Hint Bar in Modal */
+    .scroll-hint {
+        background: #f3f4f6;
+        color: var(--text-muted);
+        text-align: center;
+        padding: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        border-top: 1px solid var(--border-color);
+        position: sticky;
+        bottom: 0;
+        margin: 0 -20px -20px -20px; /* Offset parent padding */
+        transition: background-color 0.3s;
+    }
+    .scroll-hint.done {
+        background: var(--success-color);
+        color: white;
+    }
+
+    /* Print Styles */
+    @media print {
+        body { background: white; padding: 0; color: black; }
+        .container { box-shadow: none; border: none; max-width: 100%; margin: 0; padding: 0; }
+        .theme-toggle, .reset-btn, .btn-group, .sticky-total, .faq-container { display: none !important; }
+        input, select { border: none; background: none; padding: 0; font-weight: bold; -webkit-appearance: none; }
+        .select-wrapper::after { display: none; }
+        #result { display: block !important; border-top: 2px solid #000; }
+        .price-tag { color: #000; }
+        .info-card { border: 1px solid #ccc; }
     }
 
   </style>
@@ -557,7 +768,10 @@
     </div>
 
     <!-- Customer Info -->
-    <div class="section-label">👤 租用者資料</div>
+    <div class="section-label">
+        <span>👤 租用者資料</span>
+        <span style="font-size: 11px; color: var(--text-muted); font-weight: normal;">(可留空查詢，填寫可加速預約)</span>
+    </div>
     <div class="form-group">
       <label>姓名</label>
       <input type="text" id="customerName" placeholder="輸入您的稱呼" oninput="calculatePrice()">
@@ -584,22 +798,164 @@
       </div>
     </div>
 
+    <!-- Optional Services -->
+    <div class="section-label">⚙️ 額外服務 (Optional)</div>
+    <label class="checkbox-wrapper" style="align-items: flex-start;">
+        <input type="checkbox" id="photoEditToggle" onchange="calculatePrice()">
+        <div>
+            <span class="checkbox-text">✨ 試用修圖服務 (Photo Editing)</span>
+            <span class="checkbox-subtext" style="color:var(--text-muted);">免費試用 (最多5張)。此乃測試功能，不包含在租賃費用/服務範圍內。</span>
+        </div>
+    </label>
+
     <!-- Error container -->
     <div id="error-box"></div>
 
     <div id="result">
       <!-- Results injected here -->
     </div>
+    
+    <!-- Terms Checkbox (Only visible when result is shown) -->
+    <div id="termsContainer" style="display:none; margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+        <label class="checkbox-wrapper" style="margin-bottom: 5px;">
+            <input type="checkbox" id="termsCheck" disabled onchange="toggleButtons()">
+            <span class="checkbox-text" style="font-size: 13px;">本人已閱讀並同意 <a href="javascript:void(0)" onclick="openTermsModal(event)" style="color:var(--primary-color); text-decoration:underline; font-weight:bold;">租賃條款及細則</a>，並確認以上資料正確無誤。</span>
+        </label>
+        <div id="termsLockHint" style="font-size: 12px; color: var(--danger-color); margin-left: 28px;">
+            ⚠️ 需點擊連結並閱讀至底部方可勾選
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="btn-group" id="actionButtons" style="display:none; margin-top: 20px;">
+        <button id="btnWhatsapp" class="btn-main btn-whatsapp" disabled onclick="sendWhatsapp()">
+          <span>💬</span> WhatsApp 預約
+        </button>
+        
+        <div class="btn-row">
+          <button id="btnCopy" class="btn-main btn-copy" disabled onclick="copyQuote()">
+              <span>📋</span> 複製內容
+          </button>
+          <button class="btn-main btn-link" onclick="copyPageUrl(this)">
+              <span>🔗</span> 複製連結
+          </button>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="faq-container">
+        <div class="faq-title">❓ 常見問題 (FAQ)</div>
+        <details>
+            <summary>如何計算租借天數？</summary>
+            <div class="faq-content">取機日當天不計算租金。例如：1號取機，3號還機，租期為2天。</div>
+        </details>
+        <details>
+            <summary>按金何時退還？</summary>
+            <div class="faq-content">檢查器材無誤後，現金/FPS按金會即日/+1日退還。信用卡預授權於付款後7個工作天解除鎖定。</div>
+        </details>
+        <details>
+            <summary>如果遲還會怎樣？</summary>
+            <div class="faq-content">遲還將收取額外日租及逾期行政費。請務必準時歸還以免影響下一位客人。</div>
+        </details>
+    </div>
+
+  </div>
+  
+  <!-- Sticky Total for Mobile -->
+  <div id="stickyTotal" class="sticky-total">
+      <div style="font-weight:bold; font-size:16px;">總價: <span id="stickyPrice" style="color:var(--primary-color)">$0</span></div>
+      <button class="btn-main" style="width: auto; padding: 8px 16px; font-size: 14px;" onclick="document.getElementById('actionButtons').scrollIntoView({behavior: 'smooth'})">
+          前往預約
+      </button>
   </div>
   
   <!-- Toast Element -->
   <div id="toast" class="toast">訊息提示</div>
 
+  <!-- Terms Modal -->
+  <div id="termsModal" class="modal-overlay" onclick="closeTermsModal(event)">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h3>租賃條款及細則</h3>
+              <button class="close-modal" onclick="closeTermsModal(event)">×</button>
+          </div>
+          <div class="modal-body" id="modalTermsBody" onscroll="checkTermsScroll()">
+              <h4 style="margin-top:0;">📜 租賃條款</h4>
+              <ul>
+                  <li>如租借期間遺失/損壞任何器材或配件，承租人須根據本公司所列之價目表作出賠償。</li>
+                  <li>如器材或配件出現故障，承租人需承擔相關維修費用；本公司有權暫時保留按金，直至完成維修程序。 相關維修款項將於按金中扣除。</li>
+                  <li>若交收時未能提供所需按金，交易將被取消，已繳付之費用將不予退還。</li>
+                  <li>以信用卡繳付按金涉及信用卡授權預留額度，該預留僅作保證用途，並不構成實際交易。歸還器材且驗收無誤後，預留將被取消。</li>
+                  <li>學生按金計劃所附之活動門票，其活動日期必須安排於租借期間內，否則視為無效。</li>
+                  <li>歸還器材時，設備電量須達80%或以上。如無法達標，將收取港幣$10之服務費。</li>
+                  <li>還機前請自行將記憶卡格式化。如未格式化，可能影響後續使用，承租人需承擔相關責任。</li>
+                  <li>取機時請仔細檢查器材狀態，如發現任何損壞或異常，請即時透過WhatsApp或Instagram私訊並提供照片備案。否則將視為交收時器材狀況良好。</li>
+                  <li>所提供之記憶卡僅為方便顧客存取及傳輸檔案之用。如記憶卡發生故障導致檔案損失或無法讀取，本公司概不負責。</li>
+                  <li>如記憶卡出現讀取問題，請勿擅自交由第三方進行數據修復或維修。否則視同損壞記憶卡，承租人需按原價作出賠償。</li>
+                  <li>付款後預約一經確認恕不作退款</li>
+              </ul>
+
+              <h4>🛠️ 器材損壞／遺失賠償價目表</h4>
+              <ul>
+                  <li>刮花 HKD$200+/每條</li>
+                  <li>撞凹 HKD$500+/每條</li>
+                  <li>機身蓋/鏡頭蓋：HKD$200</li>
+                  <li>電池：HKD$700</li>
+                  <li>充電器：HKD$500</li>
+                  <li>相機袋：HKD$100</li>
+                  <li>記憶卡: HKD$220(128GB) / $400(256GB) / $1000(CFB)</li>
+              </ul>
+
+              <h4>💳 按金繳付方式</h4>
+              <div style="background:#f9f9f9; padding:10px; border-radius:8px; margin-bottom:10px; font-size:13px;">
+                  請前往 852.camera 網店：<br>
+                  👉 <a href="https://o852camerarental.booking-radar.com" target="_blank" style="color:var(--primary-color);">https://o852camerarental.booking-radar.com</a><br>
+                  點選 「按金」 分類，選擇相應器材，任選一天進行付款。
+              </div>
+
+              <strong>1. 信用卡預授權（Hold Limit）</strong>
+              <p style="margin:5px 0;">請選擇以下其中一種方式付款：信用卡 / Apple Pay / Google Pay</p>
+              <p style="font-size:12px; color:#666; margin-bottom:10px;">
+                  📌 注意事項：如租借期超過 7 日，將收取 4% 處理費，該費用將直接由按金中扣除。<br>
+                  建議於取機前完成付款，以免因系統延誤未能即時收到確認電郵。
+              </p>
+
+              <strong>2. FPS / 銀行轉帳</strong>
+              <p style="margin:5px 0;">請選擇 FPS 方式完成付款，並保留交易記錄以供核實。</p>
+
+              <h4>📅 建議付款時間</h4>
+              <p>建議於取機前一日完成按金繳付，以免當日取機時出現延誤或問題。如選擇於交收中心現場付款，請務必向職員出示付款證明。</p>
+
+              <h4>💸 按金退回方式</h4>
+              <p>器材歸還後如無任何損壞或問題，按金(FPS/Alipay)將於即日/翌日退回。信用卡將於付款日+7日後自動取消。</p>
+
+              <h4>❗ 重要提醒</h4>
+              <p style="color:var(--danger-color); font-weight:bold;">
+                  交收中心職員並非 852Camera 員工，請於還機後直接 WhatsApp 或 IG DM 通知我們已成功歸還器材。
+              </p>
+
+              <h4>👩🏻‍🎓👨🏻‍🎓 學生按金計劃</h4>
+              <p>如欲選用學生按金方案，請於 <u>取機前最少一天</u> 提交以下資料至我們的 WhatsApp 或 IG：</p>
+              <ul style="margin-bottom:5px;">
+                  <li>身份證副本</li>
+                  <li>有效學生證副本</li>
+                  <li>活動門票（活動必須於租借期間舉行）</li>
+              </ul>
+              <p style="font-size:13px; color:var(--success-hover);">✅ 建議於學生證及身份證上加上水印，註明「僅供 852Camera 器材租用用途」。</p>
+              <p style="font-size:12px; color:#666;">📌 如未能提前提交上述資料，將視為放棄學生按金計劃，需按一般按金方式處理。</p>
+
+              <h4>🤝 如需由他人代取器材</h4>
+              <p>請提前通知我們，否則系統將自動登記您本人電話號碼為取機人。</p>
+              
+              <!-- Scroll Hint Inside Body -->
+              <div id="scrollHint" class="scroll-hint">請向下捲動以閱讀完整條款 ⬇️</div>
+          </div>
+      </div>
+  </div>
+
   <script>
-    // ⬇️ 配置你的 WhatsApp 電話號碼 (不含 + 號)
     const WHATSAPP_PHONE = "85257409553"; 
     
-    // ⬇️ 公眾假期配置 (格式: YYYY-MM-DD) - 這些日期會被視為 "週末/假日價"
     const publicHolidays = [
         "2024-12-25", "2024-12-26", "2025-01-01", 
         "2025-01-29", "2025-01-30", "2025-01-31" 
@@ -628,30 +984,84 @@
       "X100VI": { deposit: 14000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90 }, weekday: { 2: 190, 3: 100, more: 80 } }
     };
 
-    const startInput = document.getElementById("startDate");
-    const endInput = document.getElementById("endDate");
-    const productSelect = document.getElementById("product");
-    const resultDiv = document.getElementById("result");
-    const errorBox = document.getElementById("error-box");
-    const quickDatesDiv = document.getElementById("quickDates");
+    // DOM Elements
+    const elements = {
+        product: document.getElementById("product"),
+        start: document.getElementById("startDate"),
+        end: document.getElementById("endDate"),
+        name: document.getElementById("customerName"),
+        email: document.getElementById("customerEmail"),
+        phone: document.getElementById("customerPhone"),
+        payment: document.getElementById("paymentMethod"),
+        photoEdit: document.getElementById("photoEditToggle"),
+        result: document.getElementById("result"),
+        errorBox: document.getElementById("error-box"),
+        quickDates: document.getElementById("quickDates"),
+        emailError: document.getElementById("emailError"),
+        phoneError: document.getElementById("phoneError"),
+        termsContainer: document.getElementById("termsContainer"),
+        termsCheck: document.getElementById("termsCheck"),
+        termsLockHint: document.getElementById("termsLockHint"),
+        btns: document.getElementById("actionButtons"),
+        btnWhatsapp: document.getElementById("btnWhatsapp"),
+        btnCopy: document.getElementById("btnCopy"),
+        stickyTotal: document.getElementById("stickyTotal"),
+        stickyPrice: document.getElementById("stickyPrice"),
+        termsModal: document.getElementById("termsModal")
+    };
 
-    // Init Date Limits
+    // State
+    let currentQuoteText = "";
+
+    // Init
     const today = new Date().toISOString().split("T")[0];
-    startInput.min = today;
-    endInput.min = today;
+    elements.start.min = today;
+    elements.end.min = today;
 
-    // Check URL Params on Load
+    // Load from LocalStorage on mount
     window.addEventListener('DOMContentLoaded', () => {
-        const params = new URLSearchParams(window.location.search);
-        if (params.has('product')) productSelect.value = params.get('product');
-        if (params.has('start')) startInput.value = params.get('start');
-        if (params.has('end')) endInput.value = params.get('end');
+        loadFromLocal(); // 1. Load local data
         
-        if (startInput.value) handleStartDateChange();
-        if (productSelect.value && startInput.value && endInput.value) calculatePrice();
+        // 2. Override with URL params if exist
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('product')) elements.product.value = params.get('product');
+        if (params.has('start')) elements.start.value = params.get('start');
+        if (params.has('end')) elements.end.value = params.get('end');
+        
+        if (elements.start.value) handleStartDateChange();
+        if (elements.product.value && elements.start.value && elements.end.value) calculatePrice();
     });
 
-    // Theme Toggle Logic
+    // Save to LocalStorage helper
+    function saveToLocal() {
+        const data = {
+            product: elements.product.value,
+            start: elements.start.value,
+            end: elements.end.value,
+            name: elements.name.value,
+            email: elements.email.value,
+            phone: elements.phone.value,
+            payment: elements.payment.value
+        };
+        localStorage.setItem('rentalCalculatorData', JSON.stringify(data));
+    }
+
+    function loadFromLocal() {
+        const stored = localStorage.getItem('rentalCalculatorData');
+        if (stored) {
+            try {
+                const data = JSON.parse(stored);
+                if (data.product) elements.product.value = data.product;
+                if (data.start) elements.start.value = data.start;
+                if (data.end) elements.end.value = data.end;
+                if (data.name) elements.name.value = data.name;
+                if (data.email) elements.email.value = data.email;
+                if (data.phone) elements.phone.value = data.phone;
+                if (data.payment) elements.payment.value = data.payment;
+            } catch(e) {}
+        }
+    }
+
     function toggleTheme() {
       const body = document.body;
       const currentTheme = body.getAttribute("data-theme");
@@ -666,116 +1076,139 @@
       }
     }
     
-    // Reset Form Logic
     function resetForm() {
-        productSelect.value = "";
-        startInput.value = "";
-        endInput.value = "";
-        document.getElementById("customerName").value = "";
-        document.getElementById("customerEmail").value = "";
-        document.getElementById("customerPhone").value = "";
-        document.getElementById("paymentMethod").value = "";
+        localStorage.removeItem('rentalCalculatorData'); // Clear storage
+        elements.product.value = "";
+        elements.start.value = "";
+        elements.end.value = "";
+        elements.name.value = "";
+        elements.email.value = "";
+        elements.phone.value = "";
+        elements.payment.value = "";
+        elements.photoEdit.checked = false;
+        elements.termsCheck.checked = false;
+        elements.termsCheck.disabled = true; // Reset disabled state
         
-        // Hide Errors
-        document.getElementById("emailError").style.display = "none";
-        document.getElementById("phoneError").style.display = "none";
+        if(elements.termsLockHint) elements.termsLockHint.style.display = 'block';
+        
+        const hint = document.getElementById('scrollHint');
+        if(hint) {
+            hint.innerText = "請向下捲動以閱讀完整條款 ⬇️";
+            hint.classList.remove('done');
+        }
+        
+        elements.emailError.style.display = "none";
+        elements.phoneError.style.display = "none";
 
-        quickDatesDiv.style.display = "none";
-        resultDiv.style.display = "none";
-        errorBox.innerHTML = "";
+        elements.quickDates.style.display = "none";
+        elements.result.style.display = "none";
+        elements.termsContainer.style.display = "none";
+        elements.btns.style.display = "none";
+        elements.stickyTotal.classList.remove("visible");
+        elements.errorBox.innerHTML = "";
         
-        // Clear URL params
         const url = new URL(window.location);
-        url.searchParams.delete('product');
-        url.searchParams.delete('start');
-        url.searchParams.delete('end');
-        try {
-            window.history.replaceState({}, '', url);
-        } catch(e) {}
+        url.search = "";
+        try { window.history.replaceState({}, '', url); } catch(e) {}
     }
 
-    // Handle Start Date Change
     function handleStartDateChange() {
-      if (!startInput.value) {
-        quickDatesDiv.style.display = "none";
+      if (!elements.start.value) {
+        elements.quickDates.style.display = "none";
         return;
       }
-      
-      // Show Quick Date buttons
-      quickDatesDiv.style.display = "flex";
-      
-      // Ensure End Date isn't before Start Date
-      endInput.min = startInput.value;
-      if (endInput.value && endInput.value < startInput.value) {
-        endInput.value = startInput.value;
+      elements.quickDates.style.display = "flex";
+      elements.end.min = elements.start.value;
+      if (elements.end.value && elements.end.value < elements.start.value) {
+        elements.end.value = elements.start.value;
       }
-      
-      calculatePrice(); // Auto calculate
+      calculatePrice();
     }
 
-    // Quick Date Setter
     function setQuickDate(daysToAdd) {
-      if (!startInput.value) return;
-      
-      const date = new Date(startInput.value);
+      if (!elements.start.value) return;
+      const date = new Date(elements.start.value);
       date.setDate(date.getDate() + daysToAdd);
-      
-      // Format to YYYY-MM-DD
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
-      
-      endInput.value = `${year}-${month}-${day}`;
+      elements.end.value = `${year}-${month}-${day}`;
       calculatePrice();
     }
 
     function updateURL() {
         const url = new URL(window.location);
-        url.searchParams.set('product', productSelect.value);
-        url.searchParams.set('start', startInput.value);
-        url.searchParams.set('end', endInput.value);
-        // Only push state if we are in a valid environment
-        try {
-            window.history.replaceState({}, '', url);
-        } catch(e) { console.log('History update skipped'); }
+        url.searchParams.set('product', elements.product.value);
+        url.searchParams.set('start', elements.start.value);
+        url.searchParams.set('end', elements.end.value);
+        try { window.history.replaceState({}, '', url); } catch(e) { }
+    }
+
+    function toggleButtons() {
+        const agreed = elements.termsCheck.checked;
+        elements.btnWhatsapp.disabled = !agreed;
+        elements.btnCopy.disabled = !agreed;
+    }
+
+    // Modal Functions
+    function openTermsModal(e) {
+        if(e) e.preventDefault();
+        elements.termsModal.classList.add('show');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling bg
+        
+        // Initial Check if scrolling is needed
+        setTimeout(checkTermsScroll, 100);
+    }
+
+    function closeTermsModal(e) {
+        if(e.target === elements.termsModal || e.target.classList.contains('close-modal')) {
+            elements.termsModal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+    }
+    
+    function checkTermsScroll() {
+        const el = document.getElementById('modalTermsBody');
+        const hint = document.getElementById('scrollHint');
+        
+        // Check if reached bottom with small tolerance
+        if (el.scrollHeight - el.scrollTop - el.clientHeight < 20) {
+            if (elements.termsCheck.disabled) {
+                elements.termsCheck.disabled = false;
+                if(elements.termsLockHint) elements.termsLockHint.style.display = 'none';
+                hint.innerText = "✅ 已閱讀完畢，現在可以勾選同意條款";
+                hint.classList.add('done');
+            }
+        }
     }
 
     function calculatePrice() {
-      const product = productSelect.value;
-      const startDateRaw = startInput.value;
-      const endDateRaw = endInput.value;
-      const customerName = document.getElementById("customerName").value.trim();
-      const customerEmail = document.getElementById("customerEmail").value.trim();
-      const customerPhone = document.getElementById("customerPhone").value.trim();
-      const paymentMethod = document.getElementById("paymentMethod").value;
-      
-      // Update URL for sharing
+      // 1. Save state
+      saveToLocal();
       updateURL();
 
-      // Reset UI
-      errorBox.innerHTML = "";
+      const product = elements.product.value;
+      const startDateRaw = elements.start.value;
+      const endDateRaw = elements.end.value;
       
-      // Email Validation
-      const emailError = document.getElementById("emailError");
+      // 2. Reset UI
+      elements.errorBox.innerHTML = "";
+      elements.stickyTotal.classList.remove("visible");
+      
+      // 3. Validation - Email
+      const emailVal = elements.email.value.trim();
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      elements.emailError.style.display = (emailVal && !emailPattern.test(emailVal)) ? 'block' : 'none';
 
-      if (customerEmail && !emailPattern.test(customerEmail)) {
-         emailError.style.display = 'block';
-      } else {
-         emailError.style.display = 'none';
-      }
-
-      // Phone Validation
-      const phoneError = document.getElementById("phoneError");
-      if (customerPhone && customerPhone.length !== 8) {
-         phoneError.style.display = 'block';
-      } else {
-         phoneError.style.display = 'none';
-      }
+      // Validation - Phone
+      const phoneVal = elements.phone.value.trim();
+      elements.phoneError.style.display = (phoneVal && phoneVal.length !== 8) ? 'block' : 'none';
       
-      // Basic Validation
+      // Validation - Basic
       if (!product || !startDateRaw || !endDateRaw) {
-        resultDiv.style.display = "none";
+        elements.result.style.display = "none";
+        elements.termsContainer.style.display = "none";
+        elements.btns.style.display = "none";
         return;
       }
       
@@ -783,16 +1216,19 @@
       const endDate = new Date(endDateRaw);
 
       if (endDate < startDate) {
-        errorBox.innerHTML = '<div class="error-msg">⚠️ 結束日必須大於或等於開始日</div>';
-        resultDiv.style.display = "none";
+        elements.errorBox.innerHTML = '<div class="error-msg">⚠️ 結束日必須大於或等於開始日</div>';
+        elements.result.style.display = "none";
+        elements.termsContainer.style.display = "none";
+        elements.btns.style.display = "none";
         return;
       }
 
+      // 4. Calculation Logic
       let days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
       if (days === 0) days = 1;
 
       const data = pricingData[product];
-      let total = 0;
+      let baseTotal = 0;
       let currentCalcDate = new Date(startDate);
       let breakdownHtml = "";
       
@@ -814,100 +1250,81 @@
         } else {
           const isWeekend = (dow === 0 || dow >= 4 || isHoliday);
           const tier = isWeekend ? data.weekend : data.weekday;
-          
-          if (isHoliday) {
-              dayType = "公眾假期";
-              typeClass = "badge holiday";
-          } else {
-              dayType = isWeekend ? "假日價" : "平日價";
-          }
+          if (isHoliday) { dayType = "公眾假期"; typeClass = "badge holiday"; }
+          else { dayType = isWeekend ? "假日價" : "平日價"; }
 
           if (i === 2) dailyPrice = tier[2];
           else if (i === 3) dailyPrice = tier[3];
           else dailyPrice = tier.more;
         }
         
-        total += dailyPrice;
-
+        baseTotal += dailyPrice;
         const dateStr = `${currentCalcDate.getMonth()+1}/${currentCalcDate.getDate()}`;
         
         breakdownHtml += `
           <div class="breakdown-item">
-            <div>
-              <span class="breakdown-date">${dateStr}</span>
-              <span class="${typeClass}">${dayType}</span>
-            </div>
+            <div><span class="breakdown-date">${dateStr}</span><span class="${typeClass}">${dayType}</span></div>
             <span class="breakdown-price">$${dailyPrice}</span>
           </div>
         `;
       }
 
-      const productName = productSelect.options[productSelect.selectedIndex].text;
-      let copyText = `📷 租借查詢\n------------------\n`;
-      if(customerName) copyText += `👤 姓名: ${customerName}\n`;
-      if(customerEmail) copyText += `📧 電郵: ${customerEmail}\n`;
-      if(customerPhone) copyText += `📞 電話: ${customerPhone}\n`;
-      if(paymentMethod) copyText += `💳 付款方式: ${paymentMethod}\n`;
-      copyText += `------------------\n`;
-      copyText += `📦 器材: ${productName}\n🗓️ 日期: ${startDateRaw} 至 ${endDateRaw}\n⏱️ 天數: 共 ${days} 天\n💰 總價: $${total}\n🔒 按金: $${data.deposit}`;
-      
-      const whatsappUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(copyText)}`;
+      let finalTotal = baseTotal;
 
-      // Render Result
-      resultDiv.innerHTML = `
+      // 7. Update View
+      const productName = elements.product.options[elements.product.selectedIndex].text;
+      
+      // Update Global State for Copy/WhatsApp
+      currentQuoteText = `📷 租借查詢\n------------------\n`;
+      if(elements.name.value) currentQuoteText += `👤 姓名: ${elements.name.value}\n`;
+      if(elements.email.value) currentQuoteText += `📧 電郵: ${elements.email.value}\n`;
+      if(elements.phone.value) currentQuoteText += `📞 電話: ${elements.phone.value}\n`;
+      if(elements.payment.value) currentQuoteText += `💳 付款方式: ${elements.payment.value}\n`;
+      currentQuoteText += `------------------\n`;
+      currentQuoteText += `📦 器材: ${productName}\n🗓️ 日期: ${startDateRaw} 至 ${endDateRaw}\n⏱️ 天數: 共 ${days} 天\n`;
+      
+      if(elements.photoEdit.checked) {
+          currentQuoteText += `✨ 修圖服務: 免費試用 (最多5張)\n`;
+      }
+      
+      currentQuoteText += `💰 總價: $${finalTotal.toLocaleString()}\n🔒 按金: $${data.deposit.toLocaleString()}`;
+      currentQuoteText += `\n\n✅ 本人已閱讀並同意 租賃條款及細則，並確認以上資料正確無誤。`;
+
+      elements.result.innerHTML = `
         <div class="result-header">
-          <div class="result-days">
-             📅 租借 ${days} 天
-             <div style="font-size:12px; font-weight:normal; color:var(--text-muted); margin-top:4px;">取機日不計費</div>
-          </div>
-          <div class="price-tag">$${total.toLocaleString()}</div>
+          <div class="result-days">📅 租借 ${days} 天 <div style="font-size:12px; font-weight:normal; color:var(--text-muted); margin-top:4px;">取機日不計費</div></div>
+          <div class="price-tag">$${finalTotal.toLocaleString()}</div>
         </div>
         
         <div class="info-card">
           <div class="info-icon">🔒</div>
           <div class="info-content">
             <div class="info-title">按金: $${data.deposit.toLocaleString()}</div>
-            <div class="info-desc">支持信用卡預授權 (Hold Limit) / FPS</div>
+            <div class="info-desc">支持信用卡預授權 (Hold Limit) / FPS </div>
           </div>
         </div>
 
         <div class="breakdown-section">
-           <div class="breakdown-toggle" onclick="toggleBreakdown()">
-             <span>📋 查看價格詳情</span>
-             <span>▼</span>
-           </div>
-           <div class="breakdown-list" id="breakdownList">
-              ${breakdownHtml}
-           </div>
+           <div class="breakdown-toggle" onclick="toggleBreakdown()"><span>📋 查看價格詳情</span><span>▼</span></div>
+           <div class="breakdown-list" id="breakdownList">${breakdownHtml}</div>
         </div>
 
         <div class="info-card" style="border-left: 3px solid var(--primary-color);">
           <div class="info-icon">🎓</div>
           <div class="info-content">
             <div class="info-title">學生按金計劃</div>
-            <div class="info-desc">
-              需提交：1. 身份證副本 2. 學生證副本 3. 活動門票 (租借期內)
-            </div>
-          </div>
-        </div>
-
-        <div class="btn-group">
-          <button class="btn-main btn-whatsapp" onclick="window.open('${whatsappUrl}', '_blank')">
-            <span>💬</span> WhatsApp 預約
-          </button>
-          
-          <div class="btn-row">
-            <button class="btn-main btn-copy" onclick="copyToClipboard(this, \`${copyText.replace(/"/g, '&quot;')}\`)">
-                <span>📋</span> 複製內容
-            </button>
-            <button class="btn-main btn-link" onclick="copyPageUrl(this)">
-                <span>🔗</span> 複製連結
-            </button>
+            <div class="info-desc">需提交：1. 身份證副本 2. 學生證副本 3. 活動門票 (租借期內)</div>
           </div>
         </div>
       `;
       
-      resultDiv.style.display = "block";
+      elements.result.style.display = "block";
+      elements.termsContainer.style.display = "block";
+      elements.btns.style.display = "grid";
+      
+      // Update Sticky Bar
+      elements.stickyPrice.innerText = `$${finalTotal.toLocaleString()}`;
+      elements.stickyTotal.classList.add("visible");
     }
 
     function toggleBreakdown() {
@@ -915,93 +1332,57 @@
       list.classList.toggle("open");
     }
 
-    // Toast Function
+    function sendWhatsapp() {
+        const url = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(currentQuoteText)}`;
+        window.open(url, '_blank');
+    }
+
+    function copyQuote() {
+        copyToClipboard(elements.btnCopy, currentQuoteText);
+    }
+
     function showToast(message, type = 'normal') {
         const toast = document.getElementById("toast");
-        toast.className = "toast show"; // Reset classes
+        toast.className = "toast show"; 
         toast.innerText = message;
-        
         if (type === 'success') toast.classList.add("success");
         if (type === 'error') toast.classList.add("error");
-        
-        // Hide after 3 seconds
-        setTimeout(() => {
-            toast.className = "toast";
-        }, 3000);
+        setTimeout(() => { toast.className = "toast"; }, 3000);
     }
 
     function copyToClipboard(btn, text) {
-      // Create a temporary textarea element to handle the copy
       const textArea = document.createElement("textarea");
       textArea.value = text;
-      
-      // Ensure it's not visible but part of the DOM to avoid scrolling
       textArea.style.position = "fixed";
       textArea.style.left = "-9999px";
-      textArea.style.top = "0";
-      
-      // Fix for Mobile: Prevent zooming (16px font) and keyboard flashing (readonly)
       textArea.style.fontSize = "16px";
       textArea.setAttribute("readonly", "");
-      
       document.body.appendChild(textArea);
-      
       textArea.focus();
       textArea.select();
-      // Extra step for mobile devices to ensure selection
       textArea.setSelectionRange(0, 99999);
       
       try {
-        // Execute the copy command
         const successful = document.execCommand('copy');
         if (successful) {
-            showToast("✅ 已複製內容到剪貼板", "success");
-            // Visual feedback on button
-            const originalHtml = btn.innerHTML;
-            btn.innerHTML = "<span>✅</span> 已複製";
-            btn.style.backgroundColor = "var(--border-color)";
-            setTimeout(() => {
-              btn.innerHTML = originalHtml;
-              btn.style.backgroundColor = "";
-            }, 2000);
+            showToast("✅ 已複製內容", "success");
+            if(btn) {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = "<span>✅</span> 已複製";
+                btn.style.backgroundColor = "var(--border-color)";
+                setTimeout(() => { btn.innerHTML = originalHtml; btn.style.backgroundColor = ""; }, 2000);
+            }
         } else {
-             showToast("❌ 複製失敗，請手動截圖", "error");
+             showToast("❌ 複製失敗", "error");
         }
       } catch (err) {
-        console.error('Fallback: Oops, unable to copy', err);
-        showToast("❌ 複製失敗，請手動截圖", "error");
+        showToast("❌ 複製失敗", "error");
       }
-      
-      // Clean up
       document.body.removeChild(textArea);
     }
     
     function copyPageUrl(btn) {
-        const url = window.location.href;
-        
-        // Let's manually do it to customize the toast message for URL
-        const textArea = document.createElement("textarea");
-        textArea.value = url;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-9999px";
-        textArea.style.fontSize = "16px";
-        textArea.setAttribute("readonly", "");
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        textArea.setSelectionRange(0, 99999);
-        
-        try {
-            const successful = document.execCommand('copy');
-            if(successful) {
-                showToast("🔗 連結已複製！", "success");
-            } else {
-                showToast("❌ 連結複製失敗", "error");
-            }
-        } catch(e) {
-            showToast("❌ 連結複製失敗", "error");
-        }
-        document.body.removeChild(textArea);
+        copyToClipboard(btn, window.location.href);
     }
   </script>
 </body>
