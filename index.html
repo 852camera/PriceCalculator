@@ -343,6 +343,68 @@
       transform: scale(0.95);
     }
 
+    /* Deposit Options Grid */
+    .deposit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* 2 Columns */
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .deposit-card {
+      background: var(--bg-color);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 15px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 80px;
+    }
+
+    .deposit-card:hover {
+      border-color: #93c5fd;
+    }
+
+    .deposit-card.active {
+      border-color: var(--primary-color);
+      background-color: rgba(37, 99, 235, 0.05);
+      box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1);
+    }
+
+    .dep-percent {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .deposit-card.active .dep-percent {
+      color: var(--primary-color);
+    }
+
+    .dep-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+    
+    .deposit-note {
+        font-size: 12px;
+        color: var(--danger-color);
+        background: rgba(239, 68, 68, 0.05);
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px dashed rgba(239, 68, 68, 0.2);
+        margin-bottom: 25px;
+        text-align: center;
+        line-height: 1.5;
+    }
+
     /* Action Buttons */
     .btn-group {
       display: grid;
@@ -602,7 +664,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        margin-bottom: 5px; /* Reduced to sit closer to hint */
+        margin-bottom: 12px; 
         cursor: pointer;
         position: relative;
     }
@@ -904,6 +966,33 @@
       </div>
     </div>
 
+    <!-- Deposit Options Section -->
+    <div class="section-label">💰 選擇按金方案</div>
+    <div class="deposit-grid">
+      <div class="deposit-card active" onclick="setDepositRate(1, this)" data-rate="1">
+        <div class="dep-percent">標準按金</div>
+        <div class="dep-desc">無需證明文件</div>
+      </div>
+      <div class="deposit-card" onclick="setDepositRate(0.5, this)" data-rate="0.5">
+        <div class="dep-percent">50% 按金</div>
+        <div class="dep-desc">身份證 + 2個月內住址</div>
+      </div>
+      <div class="deposit-card" onclick="setDepositRate(0.2, this)" data-rate="0.2">
+        <div class="dep-percent">20% 按金</div>
+        <div class="dep-desc">身份證 + 2個月內住址 + 門票</div>
+      </div>
+      <div class="deposit-card" onclick="setDepositRate(0, this)" data-rate="0">
+        <div class="dep-percent">學生按金 0%</div>
+        <div class="dep-desc">身份證 + 學生證 + 門票</div>
+      </div>
+    </div>
+    
+    <div class="deposit-note">
+        ⚠️ <strong>請注意：</strong>所需證明文件需租用最少前一日經 WhatsApp / Instagram 傳送給我們。<br>
+        • 住址證明需為最近 2 個月內<br>
+        • 活動門票需為租用期內進行之活動
+    </div>
+
     <!-- Customer Info -->
     <div class="section-label">
         <span>👤 租用者資料</span>
@@ -943,6 +1032,10 @@
             <span class="checkbox-text">✨ 試用修圖服務 (Photo Editing)</span>
             <span class="checkbox-subtext" style="color:var(--text-muted);">免費試用 (最多5張)。此乃測試功能，不包含在租賃費用/服務範圍內。</span>
         </div>
+    </label>
+    <label class="checkbox-wrapper">
+        <input type="checkbox" id="starFilterToggle" onchange="calculatePrice()">
+        <span class="checkbox-text">✨ 加配星鏡 (+HKD$50)</span>
     </label>
 
     <!-- Error container -->
@@ -1131,6 +1224,7 @@
         phone: document.getElementById("customerPhone"),
         payment: document.getElementById("paymentMethod"),
         photoEdit: document.getElementById("photoEditToggle"),
+        starFilter: document.getElementById("starFilterToggle"),
         result: document.getElementById("result"),
         errorBox: document.getElementById("error-box"),
         quickDates: document.getElementById("quickDates"),
@@ -1150,6 +1244,7 @@
     // State
     let currentQuoteText = "";
     let selectedProducts = []; // Array of product keys
+    let currentDepositRate = 1; // 1 = 100%, 0.5 = 50%, 0.2 = 20%
 
     // Init
     const today = new Date().toISOString().split("T")[0];
@@ -1194,13 +1289,14 @@
             name: elements.name.value,
             email: elements.email.value,
             phone: elements.phone.value,
-            payment: elements.payment.value
+            payment: elements.payment.value,
+            depositRate: currentDepositRate
         };
-        localStorage.setItem('rentalCalculatorData_multi', JSON.stringify(data));
+        localStorage.setItem('rentalCalculatorData_multi_v2', JSON.stringify(data));
     }
 
     function loadFromLocal() {
-        const stored = localStorage.getItem('rentalCalculatorData_multi');
+        const stored = localStorage.getItem('rentalCalculatorData_multi_v2');
         if (stored) {
             try {
                 const data = JSON.parse(stored);
@@ -1211,6 +1307,10 @@
                 if (data.email) elements.email.value = data.email;
                 if (data.phone) elements.phone.value = data.phone;
                 if (data.payment) elements.payment.value = data.payment;
+                if (data.depositRate !== undefined) {
+                    currentDepositRate = data.depositRate;
+                    updateDepositUI(currentDepositRate);
+                }
             } catch(e) {}
         }
     }
@@ -1265,13 +1365,16 @@
                 priceDisplay = `租金: $${itemCalc.total.toLocaleString()}`;
             }
 
+            // Calculate deposit for this item based on rate
+            const adjustedDeposit = data.deposit * currentDepositRate;
+
             const div = document.createElement("div");
             div.className = "selected-item";
             div.innerHTML = `
                 <div class="item-info">
                     <div class="item-name">${name}</div>
                     <div class="item-price">${priceDisplay}</div>
-                    <div class="item-deposit">按金: $${data.deposit.toLocaleString()}</div>
+                    <div class="item-deposit">按金: $${adjustedDeposit.toLocaleString()} <span style="font-size:10px; color:#999">(${currentDepositRate*100}%)</span></div>
                 </div>
                 <button class="btn-remove" onclick="removeProduct(${index})" title="移除">×</button>
             `;
@@ -1294,7 +1397,7 @@
     }
     
     function resetForm() {
-        localStorage.removeItem('rentalCalculatorData_multi'); // Clear storage
+        localStorage.removeItem('rentalCalculatorData_multi_v2'); // Clear storage
         selectedProducts = [];
         elements.productSelector.value = "";
         elements.start.value = "";
@@ -1304,8 +1407,13 @@
         elements.phone.value = "";
         elements.payment.value = "";
         elements.photoEdit.checked = false;
+        elements.starFilter.checked = false;
         elements.termsCheck.checked = false;
         elements.termsCheck.disabled = true; // Reset disabled state
+        
+        // Reset Deposit
+        currentDepositRate = 1;
+        updateDepositUI(1);
         
         renderProductList();
 
@@ -1354,6 +1462,24 @@
       const day = String(date.getDate()).padStart(2, '0');
       elements.end.value = `${year}-${month}-${day}`;
       calculatePrice();
+    }
+    
+    // Deposit Logic
+    function setDepositRate(rate, element) {
+        currentDepositRate = rate;
+        updateDepositUI(rate);
+        renderProductList(); // Update individual item deposit text
+        calculatePrice();
+    }
+    
+    function updateDepositUI(rate) {
+        // Update Active Class
+        document.querySelectorAll('.deposit-card').forEach(card => {
+            card.classList.remove('active');
+            if(parseFloat(card.getAttribute('data-rate')) === rate) {
+                card.classList.add('active');
+            }
+        });
     }
 
     function updateURL() {
@@ -1486,10 +1612,6 @@
       let breakdownHtml = "";
       
       // Calculate All Items Day by Day for Breakdown
-      // We also want a summary per item
-      
-      // Let's generate breakdown based on daily cost of ALL items
-      let dailyBreakdown = [];
       let currentCalcDate = new Date(startDate);
       
       for(let i=1; i<=days; i++) {
@@ -1533,9 +1655,16 @@
       selectedProducts.forEach(key => {
           grandDeposit += pricingData[key].deposit;
       });
+      
+      // Apply Deposit Multiplier
+      grandDeposit = grandDeposit * currentDepositRate;
 
-      // Update the list view with calculated prices
-      renderProductList();
+      // Add Optional Services Costs
+      let starFilterCost = 0;
+      if (elements.starFilter.checked) {
+          starFilterCost = 50;
+          grandTotal += starFilterCost;
+      }
 
       // 5. Update View
       // Generate Product Names list
@@ -1556,9 +1685,36 @@
       });
       currentQuoteText += `🗓️ 日期: ${startDateRaw} 至 ${endDateRaw}\n⏱️ 天數: 共 ${days} 天\n`;
       
+      // Add Services to Text
+      let hasServices = false;
       if(elements.photoEdit.checked) {
-          currentQuoteText += `✨ 修圖服務: 免費試用 (最多5張)\n`;
+          currentQuoteText += `✨ 服務: 試用修圖 (免費)\n`;
+          hasServices = true;
       }
+      if(elements.starFilter.checked) {
+          currentQuoteText += `✨ 服務: 加配星鏡 (+$50)\n`;
+          hasServices = true;
+      }
+      
+      // Deposit Scheme Text
+      let depositSchemeText = "標準按金";
+      let depositDocs = "無需文件";
+      if (currentDepositRate === 0.5) {
+          depositSchemeText = "50% 按金方案";
+          depositDocs = "身份證 + 住址證明 (2個月內)";
+      } else if (currentDepositRate === 0.2) {
+          depositSchemeText = "20% 按金方案";
+          depositDocs = "身份證 + 住址證明 (2個月內) + 活動門票";
+      } else if (currentDepositRate === 0) {
+          depositSchemeText = "學生按金 0% 方案";
+          depositDocs = "身份證 + 學生證 + 活動門票 (需於租借期內)";
+      }
+      
+      currentQuoteText += `------------------\n`;
+      currentQuoteText += `🔒 按金方案: ${depositSchemeText}\n`;
+      currentQuoteText += `📄 所需文件: ${depositDocs}\n`;
+      currentQuoteText += `⚠️ 注意: 所有文件需經 WhatsApp 提交審批\n`;
+      currentQuoteText += `------------------\n`;
       
       currentQuoteText += `💰 總價: $${grandTotal.toLocaleString()}\n🔒 總按金: $${grandDeposit.toLocaleString()}`;
       currentQuoteText += `\n\n✅ 本人已閱讀並同意租賃條款及細則，並確認以上資料正確無誤。`;
@@ -1572,22 +1728,14 @@
         <div class="info-card">
           <div class="info-icon">🔒</div>
           <div class="info-content">
-            <div class="info-title">總按金: $${grandDeposit.toLocaleString()}</div>
-            <div class="info-desc">支持信用卡預授權 (Hold Limit) / FPS </div>
+            <div class="info-title">總按金: $${grandDeposit.toLocaleString()} (${currentDepositRate * 100}%)</div>
+            <div class="info-desc">所需文件：${depositDocs}</div>
           </div>
         </div>
 
         <div class="breakdown-section">
            <div class="breakdown-toggle" onclick="toggleBreakdown()"><span>📋 查看每日總價詳情</span><span>▼</span></div>
            <div class="breakdown-list" id="breakdownList">${breakdownHtml}</div>
-        </div>
-
-        <div class="info-card" style="border-left: 3px solid var(--primary-color);">
-          <div class="info-icon">🎓</div>
-          <div class="info-content">
-            <div class="info-title">學生按金計劃</div>
-            <div class="info-desc">需提交：1. 身份證副本 2. 學生證副本 3. 活動門票 (租借期內)</div>
-          </div>
         </div>
       `;
       
