@@ -1034,9 +1034,18 @@
             <span class="checkbox-subtext" style="color:var(--text-muted);">免費試用 (最多5張)。此乃測試功能，不包含在租賃費用/服務範圍內。</span>
         </div>
     </label>
+    
     <label class="checkbox-wrapper">
         <input type="checkbox" id="starFilterToggle" onchange="calculatePrice()">
-        <span class="checkbox-text">✨ 加配星鏡 (+HKD$50)</span>
+        <span class="checkbox-text">✨ 加配星鏡 (+HKD$20/日)</span>
+    </label>
+
+    <label class="checkbox-wrapper" style="align-items: flex-start;">
+        <input type="checkbox" id="coolingFanToggle" onchange="calculatePrice()">
+        <div>
+            <span class="checkbox-text">❄️ 加配散熱風扇 推薦用於R5/需長時間錄影4K的相機 (+HKD$20/日)</span>
+            <span class="checkbox-subtext" style="color:var(--text-muted);">需自備行動電源(Power Bank)供電</span>
+        </div>
     </label>
 
     <!-- Error container -->
@@ -1226,6 +1235,7 @@
         payment: document.getElementById("paymentMethod"),
         photoEdit: document.getElementById("photoEditToggle"),
         starFilter: document.getElementById("starFilterToggle"),
+        coolingFan: document.getElementById("coolingFanToggle"), // Added Cooling Fan
         result: document.getElementById("result"),
         errorBox: document.getElementById("error-box"),
         quickDates: document.getElementById("quickDates"),
@@ -1409,6 +1419,7 @@
         elements.payment.value = "";
         elements.photoEdit.checked = false;
         elements.starFilter.checked = false;
+        elements.coolingFan.checked = false; // Reset Fan
         elements.termsCheck.checked = false;
         elements.termsCheck.disabled = true; // Reset disabled state
         
@@ -1660,11 +1671,42 @@
       // Apply Deposit Multiplier
       grandDeposit = grandDeposit * currentDepositRate;
 
-      // Add Optional Services Costs
+      // Add Optional Services Costs (Now Per Day)
       let starFilterCost = 0;
+      let coolingFanCost = 0;
+      let hasExtras = false;
+
       if (elements.starFilter.checked) {
-          starFilterCost = 50;
+          starFilterCost = 20 * days;
           grandTotal += starFilterCost;
+          hasExtras = true;
+      }
+
+      if (elements.coolingFan.checked) {
+          coolingFanCost = 20 * days;
+          grandTotal += coolingFanCost;
+          hasExtras = true;
+      }
+      
+      // Append Extras to Breakdown HTML
+      if (hasExtras) {
+           breakdownHtml += `<div style="border-top:1px dashed var(--border-color); margin:8px 0;"></div>`;
+           
+           if (elements.starFilter.checked) {
+             breakdownHtml += `
+              <div class="breakdown-item">
+                <div style="color:var(--text-main); font-size:13px;">✨ 星鏡 (Star Filter) x ${days}日</div>
+                <span class="breakdown-price" style="color:var(--text-main);">+$${starFilterCost}</span>
+              </div>`;
+           }
+           
+           if (elements.coolingFan.checked) {
+             breakdownHtml += `
+              <div class="breakdown-item">
+                <div style="color:var(--text-main); font-size:13px;">❄️ 散熱風扇 x ${days}日</div>
+                <span class="breakdown-price" style="color:var(--text-main);">+$${coolingFanCost}</span>
+              </div>`;
+           }
       }
 
       // 5. Update View
@@ -1687,14 +1729,14 @@
       currentQuoteText += `🗓️ 日期: ${startDateRaw} 至 ${endDateRaw}\n⏱️ 天數: 共 ${days} 天\n`;
       
       // Add Services to Text
-      let hasServices = false;
       if(elements.photoEdit.checked) {
           currentQuoteText += `✨ 服務: 試用修圖 (免費)\n`;
-          hasServices = true;
       }
       if(elements.starFilter.checked) {
-          currentQuoteText += `✨ 服務: 加配星鏡 (+$50)\n`;
-          hasServices = true;
+          currentQuoteText += `✨ 服務: 加配星鏡 (+$${starFilterCost})\n`;
+      }
+      if(elements.coolingFan.checked) {
+          currentQuoteText += `❄️ 服務: 散熱風扇 (+$${coolingFanCost}) *需自備供電\n`;
       }
       
       // Deposit Scheme Text
