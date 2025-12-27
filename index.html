@@ -1235,7 +1235,7 @@
         payment: document.getElementById("paymentMethod"),
         photoEdit: document.getElementById("photoEditToggle"),
         starFilter: document.getElementById("starFilterToggle"),
-        coolingFan: document.getElementById("coolingFanToggle"), // Added Cooling Fan
+        coolingFan: document.getElementById("coolingFanToggle"), 
         result: document.getElementById("result"),
         errorBox: document.getElementById("error-box"),
         quickDates: document.getElementById("quickDates"),
@@ -1333,14 +1333,14 @@
             return;
         }
         selectedProducts.push(val);
-        renderProductList();
+        // Removed renderProductList() because calculatePrice() now handles it
         calculatePrice();
         elements.productSelector.value = ""; // Reset selector
     }
 
     function removeProduct(index) {
         selectedProducts.splice(index, 1);
-        renderProductList();
+        // Removed renderProductList() because calculatePrice() now handles it
         calculatePrice();
     }
 
@@ -1419,15 +1419,16 @@
         elements.payment.value = "";
         elements.photoEdit.checked = false;
         elements.starFilter.checked = false;
-        elements.coolingFan.checked = false; // Reset Fan
+        elements.coolingFan.checked = false; 
         elements.termsCheck.checked = false;
-        elements.termsCheck.disabled = true; // Reset disabled state
+        elements.termsCheck.disabled = true; 
         
         // Reset Deposit
         currentDepositRate = 1;
         updateDepositUI(1);
         
-        renderProductList();
+        // calculatePrice will handle rendering the empty list
+        calculatePrice();
 
         if(elements.termsLockHint) elements.termsLockHint.style.display = 'block';
         
@@ -1462,7 +1463,7 @@
       if (elements.end.value && elements.end.value < elements.start.value) {
         elements.end.value = elements.start.value;
       }
-      calculatePrice();
+      calculatePrice(); 
     }
 
     function setQuickDate(daysToAdd) {
@@ -1480,7 +1481,7 @@
     function setDepositRate(rate, element) {
         currentDepositRate = rate;
         updateDepositUI(rate);
-        renderProductList(); // Update individual item deposit text
+        // Removed renderProductList() because calculatePrice() now handles it
         calculatePrice();
     }
     
@@ -1576,6 +1577,9 @@
     }
 
     function calculatePrice() {
+      // 0. Update the product list UI first (The FIX)
+      renderProductList();
+      
       // 1. Save state
       saveToLocal();
       updateURL();
