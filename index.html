@@ -52,7 +52,7 @@
 
     .container {
       width: 100%;
-      max-width: 600px;
+      max-width: 650px; /* Slightly wider for item dates */
       background: var(--card-bg);
       padding: 30px;
       border-radius: var(--radius);
@@ -201,36 +201,78 @@
         margin-top: 15px;
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 12px;
     }
 
     .selected-item {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        flex-direction: column; /* Changed to column for embedded dates */
         background: var(--bg-color);
-        padding: 10px 15px;
-        border-radius: 8px;
+        padding: 12px 15px;
+        border-radius: 10px;
         border: 1px solid var(--border-color);
         animation: fadeIn 0.3s ease;
+        position: relative;
     }
-
-    .item-info {
-        flex: 1;
+    
+    .item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        width: 100%;
+        margin-bottom: 8px;
     }
 
     .item-name {
-        font-size: 14px;
-        font-weight: 600;
+        font-size: 15px;
+        font-weight: 700;
         color: var(--text-main);
-        margin-bottom: 2px;
+    }
+    
+    .item-dates-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        width: 100%;
+        background: rgba(0,0,0,0.03);
+        padding: 8px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .item-date-group {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .item-date-label {
+        font-size: 10px;
+        color: var(--text-muted);
+        font-weight: 600;
+    }
+    
+    .item-date-input {
+        width: 100%;
+        padding: 6px 8px;
+        font-size: 13px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background: var(--card-bg);
+    }
+
+    .item-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        width: 100%;
+        border-top: 1px dashed var(--border-color);
+        padding-top: 8px;
     }
 
     .item-price {
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 700;
         color: var(--primary-color);
-        margin-bottom: 2px;
     }
 
     .item-deposit {
@@ -244,11 +286,13 @@
         color: var(--text-muted);
         cursor: pointer;
         padding: 5px;
-        font-size: 18px;
+        font-size: 20px;
         line-height: 1;
         border-radius: 50%;
         transition: var(--transition);
-        margin-left: 10px;
+        position: absolute;
+        top: 10px;
+        right: 10px;
     }
     .btn-remove:hover {
         color: var(--danger-color);
@@ -260,6 +304,11 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 15px;
+      background: var(--bg-color);
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
     }
 
     @media (max-width: 480px) {
@@ -321,12 +370,12 @@
     }
     
     .chip {
-      background: var(--bg-color);
+      background: var(--card-bg);
       border: 1px solid var(--border-color);
       color: var(--text-muted);
-      padding: 6px 12px;
+      padding: 4px 10px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 500;
       cursor: pointer;
       transition: var(--transition);
@@ -433,6 +482,19 @@
       justify-content: center;
       align-items: center;
       gap: 8px;
+    }
+    
+    button.btn-sm {
+        padding: 4px 10px;
+        font-size: 12px;
+        border-radius: 6px;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+    }
+    button.btn-sm:hover {
+        background-color: var(--border-color);
     }
 
     button.btn-main:hover {
@@ -898,6 +960,32 @@
             </div>
         </div>
     </div>
+    
+    <div class="date-row">
+      <div class="section-label" style="grid-column: 1/-1; margin: 0 0 10px 0; border: none;">
+        <span>📅 預設租用日期 (用於新增項目)</span>
+        <button class="btn-sm" onclick="applyDatesToAll()">套用到所有項目</button>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label for="startDate">取機日期</label>
+        <input type="date" id="startDate" onchange="handleGlobalDateChange()" />
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label for="endDate">還機日期</label>
+        <input type="date" id="endDate" />
+        
+        <!-- Quick Select Buttons -->
+        <div class="quick-dates" id="quickDates" style="display:none;">
+          <div class="chip" onclick="setQuickDate(1)">+1日</div>
+          <div class="chip" onclick="setQuickDate(3)">+3日</div>
+          <div class="chip" onclick="setQuickDate(5)">+5日</div>
+          <div class="chip" onclick="setQuickDate(7)">+7日</div>
+        </div>
+      </div>
+      <div style="grid-column: 1/-1; font-size: 11px; color: var(--text-muted); margin-top: 5px;">
+        * 此日期只作為新增器材時的預設值，加入清單後可個別修改。
+      </div>
+    </div>
 
     <div class="form-group">
       <label for="productSelector">選擇器材 (可多選)</label>
@@ -945,25 +1033,6 @@
 
       <!-- Selected Items Container -->
       <div id="selectedItemsList" class="selected-items-list" style="display:none;"></div>
-    </div>
-
-    <div class="date-row">
-      <div class="form-group">
-        <label for="startDate">取機日期</label>
-        <input type="date" id="startDate" onchange="handleStartDateChange()" />
-      </div>
-      <div class="form-group">
-        <label for="endDate">還機日期</label>
-        <input type="date" id="endDate" onchange="calculatePrice()" />
-        
-        <!-- Quick Select Buttons -->
-        <div class="quick-dates" id="quickDates" style="display:none;">
-          <div class="chip" onclick="setQuickDate(1)">+1日</div>
-          <div class="chip" onclick="setQuickDate(3)">+3日</div>
-          <div class="chip" onclick="setQuickDate(5)">+5日</div>
-          <div class="chip" onclick="setQuickDate(7)">+7日</div>
-        </div>
-      </div>
     </div>
 
     <!-- Deposit Options Section -->
@@ -1254,7 +1323,8 @@
 
     // State
     let currentQuoteText = "";
-    let selectedProducts = []; // Array of product keys
+    // selectedProducts structure: Array<{ id: number, productKey: string, start: string, end: string }>
+    let selectedProducts = []; 
     let currentDepositRate = 1; // 1 = 100%, 0.5 = 50%, 0.2 = 20%
 
     // Init
@@ -1268,26 +1338,26 @@
         
         // Handle URL params
         const params = new URLSearchParams(window.location.search);
-        
-        // If 'products' param exists (comma separated)
-        if (params.has('products')) {
-            const keys = params.get('products').split(',');
-            keys.forEach(k => {
-                if(pricingData[k.trim()]) selectedProducts.push(k.trim());
-            });
-        } 
-        // Backward compatibility for old single 'product' param
-        else if (params.has('product')) {
-            const val = params.get('product');
-            if(pricingData[val]) selectedProducts.push(val);
-        }
-
         if (params.has('start')) elements.start.value = params.get('start');
         if (params.has('end')) elements.end.value = params.get('end');
         
-        renderProductList();
+        // If 'products' param exists, we add them using current global start/end if available
+        if (params.has('products')) {
+            const keys = params.get('products').split(',');
+            keys.forEach(k => {
+                if(pricingData[k.trim()]) {
+                    selectedProducts.push({
+                        id: Date.now() + Math.random(),
+                        productKey: k.trim(),
+                        start: elements.start.value || "",
+                        end: elements.end.value || ""
+                    });
+                }
+            });
+        }
         
-        if (elements.start.value) handleStartDateChange();
+        renderProductList();
+        if (elements.start.value) handleGlobalDateChange();
         calculatePrice();
     });
 
@@ -1303,11 +1373,12 @@
             payment: elements.payment.value,
             depositRate: currentDepositRate
         };
-        localStorage.setItem('rentalCalculatorData_multi_v2', JSON.stringify(data));
+        // Use v3 key because data structure changed significantly
+        localStorage.setItem('rentalCalculatorData_multi_v3', JSON.stringify(data));
     }
 
     function loadFromLocal() {
-        const stored = localStorage.getItem('rentalCalculatorData_multi_v2');
+        const stored = localStorage.getItem('rentalCalculatorData_multi_v3');
         if (stored) {
             try {
                 const data = JSON.parse(stored);
@@ -1332,16 +1403,49 @@
             showToast("請選擇器材", "error");
             return;
         }
-        selectedProducts.push(val);
-        // Removed renderProductList() because calculatePrice() now handles it
+        
+        const newItem = {
+            id: Date.now(),
+            productKey: val,
+            start: elements.start.value || "",
+            end: elements.end.value || ""
+        };
+        
+        selectedProducts.push(newItem);
         calculatePrice();
         elements.productSelector.value = ""; // Reset selector
     }
 
-    function removeProduct(index) {
-        selectedProducts.splice(index, 1);
-        // Removed renderProductList() because calculatePrice() now handles it
+    function removeProduct(id) {
+        selectedProducts = selectedProducts.filter(item => item.id !== id);
         calculatePrice();
+    }
+    
+    function updateItemDate(id, field, value) {
+        const item = selectedProducts.find(p => p.id === id);
+        if (item) {
+            item[field] = value;
+            // Auto correct end date if start > end
+            if (field === 'start' && item.end && item.end < value) {
+                item.end = value;
+            }
+            calculatePrice();
+        }
+    }
+    
+    function applyDatesToAll() {
+        const s = elements.start.value;
+        const e = elements.end.value;
+        if (!s || !e) {
+            showToast("請先設定上方的預設日期", "error");
+            return;
+        }
+        selectedProducts.forEach(item => {
+            item.start = s;
+            item.end = e;
+        });
+        calculatePrice();
+        showToast("已更新所有項目日期", "success");
     }
 
     function renderProductList() {
@@ -1354,26 +1458,24 @@
 
         elements.selectedList.style.display = "flex";
         
-        // Check for dates to calculate item pricing
-        let rentalDays = 0;
-        let validDates = false;
-        
-        if (elements.start.value && elements.end.value && elements.end.value >= elements.start.value) {
-            const start = new Date(elements.start.value);
-            const end = new Date(elements.end.value);
-            rentalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-            if (rentalDays === 0) rentalDays = 1;
-            validDates = true;
-        }
-        
-        selectedProducts.forEach((key, index) => {
-            const data = pricingData[key];
-            const name = document.querySelector(`#productSelector option[value="${key}"]`)?.text || key;
+        selectedProducts.forEach((item, index) => {
+            const data = pricingData[item.productKey];
+            const name = document.querySelector(`#productSelector option[value="${item.productKey}"]`)?.text || item.productKey;
             
+            // Calculate Item Price
             let priceDisplay = `日租: $${data.perDay} (起)`;
-            if (validDates) {
-                const itemCalc = calculateItemPrice(key, elements.start.value, rentalDays);
-                priceDisplay = `租金: $${itemCalc.total.toLocaleString()}`;
+            let rentalDays = 0;
+            
+            if (item.start && item.end && item.end >= item.start) {
+                const s = new Date(item.start);
+                const e = new Date(item.end);
+                rentalDays = Math.ceil((e - s) / (1000 * 60 * 60 * 24));
+                if (rentalDays === 0) rentalDays = 1;
+                
+                const itemCalc = calculateItemPrice(item.productKey, item.start, rentalDays);
+                priceDisplay = `租金: $${itemCalc.total.toLocaleString()} (${rentalDays}日)`;
+            } else {
+                priceDisplay = `請設定日期`;
             }
 
             // Calculate deposit for this item based on rate
@@ -1381,13 +1483,35 @@
 
             const div = document.createElement("div");
             div.className = "selected-item";
+            
+            // Using onchange="event.stopPropagation(); updateItemDate(...)" to prevent bubbling issues
             div.innerHTML = `
-                <div class="item-info">
+                <div class="item-header">
                     <div class="item-name">${name}</div>
-                    <div class="item-price">${priceDisplay}</div>
-                    <div class="item-deposit">按金: $${adjustedDeposit.toLocaleString()} <span style="font-size:10px; color:#999">(${currentDepositRate*100}%)</span></div>
+                    <button class="btn-remove" onclick="removeProduct(${item.id})" title="移除">×</button>
                 </div>
-                <button class="btn-remove" onclick="removeProduct(${index})" title="移除">×</button>
+                
+                <div class="item-dates-row">
+                    <div class="item-date-group">
+                        <span class="item-date-label">取機</span>
+                        <input type="date" class="item-date-input" 
+                               value="${item.start}" 
+                               min="${today}"
+                               onchange="updateItemDate(${item.id}, 'start', this.value)">
+                    </div>
+                    <div class="item-date-group">
+                        <span class="item-date-label">還機</span>
+                        <input type="date" class="item-date-input" 
+                               value="${item.end}" 
+                               min="${item.start || today}"
+                               onchange="updateItemDate(${item.id}, 'end', this.value)">
+                    </div>
+                </div>
+
+                <div class="item-footer">
+                    <div class="item-price">${priceDisplay}</div>
+                    <div class="item-deposit">按金: $${adjustedDeposit.toLocaleString()}</div>
+                </div>
             `;
             elements.selectedList.appendChild(div);
         });
@@ -1408,7 +1532,7 @@
     }
     
     function resetForm() {
-        localStorage.removeItem('rentalCalculatorData_multi_v2'); // Clear storage
+        localStorage.removeItem('rentalCalculatorData_multi_v3'); 
         selectedProducts = [];
         elements.productSelector.value = "";
         elements.start.value = "";
@@ -1427,7 +1551,6 @@
         currentDepositRate = 1;
         updateDepositUI(1);
         
-        // calculatePrice will handle rendering the empty list
         calculatePrice();
 
         if(elements.termsLockHint) elements.termsLockHint.style.display = 'block';
@@ -1453,7 +1576,7 @@
         try { window.history.replaceState({}, '', url); } catch(e) {}
     }
 
-    function handleStartDateChange() {
+    function handleGlobalDateChange() {
       if (!elements.start.value) {
         elements.quickDates.style.display = "none";
         return;
@@ -1463,7 +1586,8 @@
       if (elements.end.value && elements.end.value < elements.start.value) {
         elements.end.value = elements.start.value;
       }
-      calculatePrice(); 
+      // Just save state, don't necessarily update everything unless requested
+      saveToLocal();
     }
 
     function setQuickDate(daysToAdd) {
@@ -1474,19 +1598,17 @@
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
       elements.end.value = `${year}-${month}-${day}`;
-      calculatePrice();
+      saveToLocal();
     }
     
     // Deposit Logic
     function setDepositRate(rate, element) {
         currentDepositRate = rate;
         updateDepositUI(rate);
-        // Removed renderProductList() because calculatePrice() now handles it
         calculatePrice();
     }
     
     function updateDepositUI(rate) {
-        // Update Active Class
         document.querySelectorAll('.deposit-card').forEach(card => {
             card.classList.remove('active');
             if(parseFloat(card.getAttribute('data-rate')) === rate) {
@@ -1497,14 +1619,15 @@
 
     function updateURL() {
         const url = new URL(window.location);
+        // We only save product Keys in URL, not individual dates as it's too complex for URL params
+        // This is a trade-off. Full state is in LocalStorage.
         if (selectedProducts.length > 0) {
-            url.searchParams.set('products', selectedProducts.join(','));
+            const keys = selectedProducts.map(p => p.productKey);
+            url.searchParams.set('products', keys.join(','));
         } else {
             url.searchParams.delete('products');
             url.searchParams.delete('product');
         }
-        url.searchParams.set('start', elements.start.value);
-        url.searchParams.set('end', elements.end.value);
         try { window.history.replaceState({}, '', url); } catch(e) { }
     }
 
@@ -1518,9 +1641,7 @@
     function openTermsModal(e) {
         if(e) e.preventDefault();
         elements.termsModal.classList.add('show');
-        document.body.style.overflow = 'hidden'; // Prevent scrolling bg
-        
-        // Initial Check if scrolling is needed
+        document.body.style.overflow = 'hidden'; 
         setTimeout(checkTermsScroll, 100);
     }
 
@@ -1535,7 +1656,6 @@
         const el = document.getElementById('modalTermsBody');
         const hint = document.getElementById('scrollHint');
         
-        // Check if reached bottom with small tolerance
         if (el.scrollHeight - el.scrollTop - el.clientHeight < 20) {
             if (elements.termsCheck.disabled) {
                 elements.termsCheck.disabled = false;
@@ -1577,42 +1697,26 @@
     }
 
     function calculatePrice() {
-      // 0. Update the product list UI first (The FIX)
+      // 0. Update UI First
       renderProductList();
       
       // 1. Save state
       saveToLocal();
       updateURL();
 
-      const startDateRaw = elements.start.value;
-      const endDateRaw = elements.end.value;
-      
       // 2. Reset UI
       elements.errorBox.innerHTML = "";
       elements.stickyTotal.classList.remove("visible");
       
-      // 3. Validation - Email
+      // 3. Validation
       const emailVal = elements.email.value.trim();
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       elements.emailError.style.display = (emailVal && !emailPattern.test(emailVal)) ? 'block' : 'none';
 
-      // Validation - Phone
       const phoneVal = elements.phone.value.trim();
       elements.phoneError.style.display = (phoneVal && phoneVal.length !== 8) ? 'block' : 'none';
       
-      // Validation - Basic
-      if (selectedProducts.length === 0 || !startDateRaw || !endDateRaw) {
-        elements.result.style.display = "none";
-        elements.termsContainer.style.display = "none";
-        elements.btns.style.display = "none";
-        return;
-      }
-      
-      const startDate = new Date(startDateRaw);
-      const endDate = new Date(endDateRaw);
-
-      if (endDate < startDate) {
-        elements.errorBox.innerHTML = '<div class="error-msg">⚠️ 結束日必須大於或等於開始日</div>';
+      if (selectedProducts.length === 0) {
         elements.result.style.display = "none";
         elements.termsContainer.style.display = "none";
         elements.btns.style.display = "none";
@@ -1620,106 +1724,153 @@
       }
 
       // 4. Calculation Logic
-      let days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
-      if (days === 0) days = 1;
-
       let grandTotal = 0;
       let grandDeposit = 0;
-      let breakdownHtml = "";
+      let totalDaysForAllItems = 0;
       
-      // Calculate All Items Day by Day for Breakdown
-      let currentCalcDate = new Date(startDate);
+      // Breakdown Map: Date -> Total Price
+      let dailyBreakdownMap = {};
       
-      for(let i=1; i<=days; i++) {
-        currentCalcDate.setDate(currentCalcDate.getDate() + 1);
-        const dow = currentCalcDate.getDay(); 
-        const dateStrISO = currentCalcDate.toISOString().split('T')[0];
-        const isHoliday = publicHolidays.includes(dateStrISO);
-        const dateStr = `${currentCalcDate.getMonth()+1}/${currentCalcDate.getDate()}`;
-        
-        let dailySum = 0;
-        let dayType = isHoliday ? "假期" : ((dow === 0 || dow >= 4) ? "假日" : "平日");
-        let typeClass = (isHoliday) ? "badge holiday" : "badge";
+      // Helper to add to breakdown
+      const addToBreakdown = (dateStr, amount, note, type) => {
+          if (!dailyBreakdownMap[dateStr]) {
+              dailyBreakdownMap[dateStr] = { amount: 0, items: [], type: type };
+          }
+          dailyBreakdownMap[dateStr].amount += amount;
+          if (note) dailyBreakdownMap[dateStr].items.push(note);
+          // Prioritize holiday/weekend typing
+          if (type === 'holiday' || type === 'weekend') dailyBreakdownMap[dateStr].type = type;
+      };
 
-        selectedProducts.forEach(key => {
-             const data = pricingData[key];
-             let price = 0;
-             if (i === 1) {
-                const isDay1Weekday = (dow >= 1 && dow <= 3 && !isHoliday);
-                price = isDay1Weekday ? data.weekday1 : data.perDay;
-            } else {
-                const isWeekend = (dow === 0 || dow >= 4 || isHoliday);
-                const tier = isWeekend ? data.weekend : data.weekday;
-                if (i === 2) price = tier[2];
-                else if (i === 3) price = tier[3];
-                else price = tier.more;
-            }
-            dailySum += price;
-        });
+      // Loop through each product
+      let allValid = true;
+      let minStart = null;
+      let maxEnd = null;
 
-        grandTotal += dailySum;
-        
-        breakdownHtml += `
-          <div class="breakdown-item">
-            <div><span class="breakdown-date">${dateStr}</span><span class="${typeClass}">${dayType}</span></div>
-            <span class="breakdown-price">$${dailySum}</span>
-          </div>
-        `;
-      }
-      
-      // Sum Deposit
-      selectedProducts.forEach(key => {
-          grandDeposit += pricingData[key].deposit;
+      selectedProducts.forEach(item => {
+           if (!item.start || !item.end) {
+               allValid = false;
+               return;
+           }
+           if (item.end < item.start) {
+               allValid = false;
+               return; // Skip invalid
+           }
+           
+           // Update global min/max for range context
+           const sDate = new Date(item.start);
+           const eDate = new Date(item.end);
+           if(!minStart || sDate < minStart) minStart = sDate;
+           if(!maxEnd || eDate > maxEnd) maxEnd = eDate;
+
+           const days = Math.ceil((eDate - sDate) / (1000 * 60 * 60 * 24)) || 1;
+           totalDaysForAllItems += days;
+           
+           // Deposit
+           const data = pricingData[item.productKey];
+           grandDeposit += data.deposit;
+           
+           // Price Calculation per item per day
+           let currentCalcDate = new Date(item.start);
+           for(let i=1; i<=days; i++) {
+                currentCalcDate.setDate(currentCalcDate.getDate() + 1);
+                const dow = currentCalcDate.getDay(); 
+                const dateStrISO = currentCalcDate.toISOString().split('T')[0];
+                const isHoliday = publicHolidays.includes(dateStrISO);
+                
+                let price = 0;
+                if (i === 1) {
+                    const isDay1Weekday = (dow >= 1 && dow <= 3 && !isHoliday);
+                    price = isDay1Weekday ? data.weekday1 : data.perDay;
+                } else {
+                    const isWeekend = (dow === 0 || dow >= 4 || isHoliday);
+                    const tier = isWeekend ? data.weekend : data.weekday;
+                    if (i === 2) price = tier[2];
+                    else if (i === 3) price = tier[3];
+                    else price = tier.more;
+                }
+                
+                grandTotal += price;
+                
+                // Add to breakdown
+                const dayType = isHoliday ? "holiday" : ((dow === 0 || dow >= 4) ? "weekend" : "weekday");
+                const name = document.querySelector(`#productSelector option[value="${item.productKey}"]`)?.text || item.productKey;
+                addToBreakdown(dateStrISO, price, null, dayType); // null note to avoid clutter
+           }
       });
+      
+      if (!allValid) {
+          // If any item has incomplete dates
+          // We show partial result or hide? Let's hide result until fixed
+          // But currently we just show $0 for invalid items.
+      }
       
       // Apply Deposit Multiplier
       grandDeposit = grandDeposit * currentDepositRate;
 
-      // Add Optional Services Costs (Now Per Day)
+      // Add Optional Services Costs 
+      // Important: Services are likely per day across the ENTIRE effective rental period?
+      // OR per item?
+      // Prompt doesn't specify. Assuming Services apply to the TOTAL range duration (minStart to maxEnd).
+      // Or simply: Sum of all item days? 
+      // Usually "Star Filter" is per day of usage. If I rent Camera A for 3 days and Camera B for 2 days.
+      // Do I need the filter for 5 days? Or 3 days? 
+      // Let's assume simpler logic: Services apply based on the *Max Duration* of the rental session (earliest start to latest end).
+      
+      let serviceDays = 0;
+      if (minStart && maxEnd) {
+          serviceDays = Math.ceil((maxEnd - minStart) / (1000 * 60 * 60 * 24)) || 1;
+      }
+      
       let starFilterCost = 0;
       let coolingFanCost = 0;
       let hasExtras = false;
 
-      if (elements.starFilter.checked) {
-          starFilterCost = 20 * days;
+      if (elements.starFilter.checked && serviceDays > 0) {
+          starFilterCost = 20 * serviceDays;
           grandTotal += starFilterCost;
           hasExtras = true;
       }
 
-      if (elements.coolingFan.checked) {
-          coolingFanCost = 20 * days;
+      if (elements.coolingFan.checked && serviceDays > 0) {
+          coolingFanCost = 20 * serviceDays;
           grandTotal += coolingFanCost;
           hasExtras = true;
       }
+
+      // Generate Breakdown HTML from Map
+      let breakdownHtml = "";
+      const sortedDates = Object.keys(dailyBreakdownMap).sort();
       
-      // Append Extras to Breakdown HTML
+      sortedDates.forEach(dateKey => {
+          const d = new Date(dateKey);
+          const dateStr = `${d.getMonth()+1}/${d.getDate()}`;
+          const entry = dailyBreakdownMap[dateKey];
+          
+          let dayLabel = "平日";
+          let typeClass = "badge";
+          if(entry.type === 'holiday') { dayLabel = "假期"; typeClass = "badge holiday"; }
+          else if(entry.type === 'weekend') { dayLabel = "假日"; }
+
+          breakdownHtml += `
+          <div class="breakdown-item">
+            <div><span class="breakdown-date">${dateStr}</span><span class="${typeClass}">${dayLabel}</span></div>
+            <span class="breakdown-price">$${entry.amount}</span>
+          </div>
+        `;
+      });
+      
       if (hasExtras) {
            breakdownHtml += `<div style="border-top:1px dashed var(--border-color); margin:8px 0;"></div>`;
-           
            if (elements.starFilter.checked) {
-             breakdownHtml += `
-              <div class="breakdown-item">
-                <div style="color:var(--text-main); font-size:13px;">✨ 星鏡 (Star Filter) x ${days}日</div>
-                <span class="breakdown-price" style="color:var(--text-main);">+$${starFilterCost}</span>
-              </div>`;
+             breakdownHtml += `<div class="breakdown-item"><div style="color:var(--text-main); font-size:13px;">✨ 星鏡 (覆蓋期 ${serviceDays}日)</div><span class="breakdown-price">+$${starFilterCost}</span></div>`;
            }
-           
            if (elements.coolingFan.checked) {
-             breakdownHtml += `
-              <div class="breakdown-item">
-                <div style="color:var(--text-main); font-size:13px;">❄️ 散熱風扇 x ${days}日</div>
-                <span class="breakdown-price" style="color:var(--text-main);">+$${coolingFanCost}</span>
-              </div>`;
+             breakdownHtml += `<div class="breakdown-item"><div style="color:var(--text-main); font-size:13px;">❄️ 散熱風扇 (覆蓋期 ${serviceDays}日)</div><span class="breakdown-price">+$${coolingFanCost}</span></div>`;
            }
       }
 
       // 5. Update View
-      // Generate Product Names list
-      let productNamesList = selectedProducts.map(key => {
-          return document.querySelector(`#productSelector option[value="${key}"]`)?.text || key;
-      });
-
-      // Update Global State for Copy/WhatsApp
       currentQuoteText = `📷 租借查詢\n------------------\n`;
       if(elements.name.value) currentQuoteText += `👤 姓名: ${elements.name.value}\n`;
       if(elements.email.value) currentQuoteText += `📧 電郵: ${elements.email.value}\n`;
@@ -1727,23 +1878,18 @@
       if(elements.payment.value) currentQuoteText += `💳 付款方式: ${elements.payment.value}\n`;
       currentQuoteText += `------------------\n`;
       currentQuoteText += `📦 器材清單:\n`;
-      productNamesList.forEach(name => {
-          currentQuoteText += `   • ${name}\n`;
+      
+      selectedProducts.forEach(item => {
+          const name = document.querySelector(`#productSelector option[value="${item.productKey}"]`)?.text || item.productKey;
+          currentQuoteText += `   • ${name} (${item.start} - ${item.end})\n`;
       });
-      currentQuoteText += `🗓️ 日期: ${startDateRaw} 至 ${endDateRaw}\n⏱️ 天數: 共 ${days} 天\n`;
       
       // Add Services to Text
-      if(elements.photoEdit.checked) {
-          currentQuoteText += `✨ 服務: 試用修圖 (免費)\n`;
-      }
-      if(elements.starFilter.checked) {
-          currentQuoteText += `✨ 服務: 加配星鏡 (+$${starFilterCost})\n`;
-      }
-      if(elements.coolingFan.checked) {
-          currentQuoteText += `❄️ 服務: 散熱風扇 (+$${coolingFanCost}) *需自備供電\n`;
-      }
+      if(elements.photoEdit.checked) currentQuoteText += `✨ 服務: 試用修圖 (免費)\n`;
+      if(elements.starFilter.checked) currentQuoteText += `✨ 服務: 加配星鏡 (+$${starFilterCost})\n`;
+      if(elements.coolingFan.checked) currentQuoteText += `❄️ 服務: 散熱風扇 (+$${coolingFanCost})\n`;
       
-      // Deposit Scheme Text
+      // Deposit Scheme
       let depositSchemeText = "標準按金";
       let depositDocs = "無需文件";
       if (currentDepositRate === 0.5) {
@@ -1760,15 +1906,13 @@
       currentQuoteText += `------------------\n`;
       currentQuoteText += `🔒 按金方案: ${depositSchemeText}\n`;
       currentQuoteText += `📄 所需文件: ${depositDocs}\n`;
-      currentQuoteText += `⚠️ 注意: 所有文件需經 WhatsApp 或 IG DM 提交\n`;
       currentQuoteText += `------------------\n`;
-      
       currentQuoteText += `💰 總價: $${grandTotal.toLocaleString()}\n🔒 總按金: $${grandDeposit.toLocaleString()}`;
       currentQuoteText += `\n\n✅ 本人已閱讀並同意租賃條款及細則，並確認以上資料正確無誤。`;
 
       elements.result.innerHTML = `
         <div class="result-header">
-          <div class="result-days">📅 租借 ${days} 天 (${selectedProducts.length} 項器材) <div style="font-size:12px; font-weight:normal; color:var(--text-muted); margin-top:4px;">取機日不計費</div></div>
+          <div class="result-days">📅 共 ${selectedProducts.length} 項器材 <div style="font-size:12px; font-weight:normal; color:var(--text-muted); margin-top:4px;">取機日不計費</div></div>
           <div class="price-tag">$${grandTotal.toLocaleString()}</div>
         </div>
         
@@ -1790,7 +1934,6 @@
       elements.termsContainer.style.display = "block";
       elements.btns.style.display = "grid";
       
-      // Update Sticky Bar
       elements.stickyPrice.innerText = `$${grandTotal.toLocaleString()}`;
       elements.stickyTotal.classList.add("visible");
     }
