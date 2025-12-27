@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>852camera 租借計算器 (多項器材版)</title>
   <style>
     :root {
@@ -40,7 +40,8 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       margin: 0;
-      padding: 20px 20px 100px 20px; /* Extra padding bottom for sticky bar */
+      padding: 20px;
+      padding-bottom: 100px; /* Extra padding bottom for sticky bar */
       background-color: var(--bg-color);
       color: var(--text-main);
       min-height: 100vh;
@@ -48,18 +49,37 @@
       justify-content: center;
       align-items: flex-start;
       transition: background-color 0.3s ease, color 0.3s ease;
+      line-height: 1.6; /* Improved text readability */
     }
 
     .container {
       width: 100%;
-      max-width: 650px; /* Slightly wider for item dates */
+      max-width: 650px;
       background: var(--card-bg);
       padding: 30px;
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      margin-top: 20px;
+      margin-top: 10px;
       position: relative;
       transition: background-color 0.3s ease;
+    }
+    
+    /* Mobile Optimization for Layout */
+    @media (max-width: 480px) {
+      body {
+        padding: 10px 10px 90px 10px; /* Less outer padding on mobile */
+      }
+      .container {
+        padding: 20px 15px; /* Less container padding to give content more width */
+        width: 100%;
+      }
+      h2 {
+        font-size: 20px;
+      }
+      .date-row {
+        grid-template-columns: 1fr !important; /* Force stack on mobile */
+        gap: 10px;
+      }
     }
 
     /* Theme Toggle */
@@ -138,7 +158,7 @@
     }
     .shop-info-row {
         display: flex;
-        gap: 10px;
+        gap: 12px; /* Increased gap */
         margin-bottom: 8px;
         align-items: flex-start;
     }
@@ -148,6 +168,7 @@
     .shop-info-icon {
         font-size: 16px;
         line-height: 1.4;
+        flex-shrink: 0;
     }
     .shop-info-text {
         color: var(--text-main);
@@ -157,7 +178,7 @@
         color: var(--text-muted);
         font-size: 12px;
         display: block;
-        margin-top: 2px;
+        margin-top: 4px;
     }
 
     .form-group {
@@ -201,18 +222,19 @@
         margin-top: 15px;
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 15px; /* Increased gap between items */
     }
 
     .selected-item {
         display: flex;
-        flex-direction: column; /* Changed to column for embedded dates */
+        flex-direction: column;
         background: var(--bg-color);
-        padding: 12px 15px;
-        border-radius: 10px;
+        padding: 15px; /* Increased padding */
+        border-radius: 12px;
         border: 1px solid var(--border-color);
         animation: fadeIn 0.3s ease;
         position: relative;
+        gap: 10px; /* Gap between sections inside card */
     }
     
     .item-header {
@@ -220,41 +242,41 @@
         justify-content: space-between;
         align-items: flex-start;
         width: 100%;
-        margin-bottom: 8px;
+        padding-right: 25px; /* Space for delete button */
     }
 
     .item-name {
         font-size: 15px;
         font-weight: 700;
         color: var(--text-main);
+        line-height: 1.4;
     }
     
     .item-dates-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 8px;
+        gap: 12px;
         width: 100%;
         background: rgba(0,0,0,0.03);
-        padding: 8px;
+        padding: 10px;
         border-radius: 8px;
-        margin-bottom: 8px;
     }
     
     .item-date-group {
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: 4px;
     }
     .item-date-label {
-        font-size: 10px;
+        font-size: 11px;
         color: var(--text-muted);
         font-weight: 600;
     }
     
     .item-date-input {
         width: 100%;
-        padding: 6px 8px;
-        font-size: 13px;
+        padding: 8px 10px;
+        font-size: 14px; /* Slightly larger to prevent feeling packed */
         border: 1px solid var(--border-color);
         border-radius: 6px;
         background: var(--card-bg);
@@ -266,7 +288,9 @@
         align-items: flex-end;
         width: 100%;
         border-top: 1px dashed var(--border-color);
-        padding-top: 8px;
+        padding-top: 10px;
+        flex-wrap: wrap; /* Allow wrapping on very small screens */
+        gap: 5px;
     }
 
     .item-price {
@@ -293,6 +317,11 @@
         position: absolute;
         top: 10px;
         right: 10px;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     .btn-remove:hover {
         color: var(--danger-color);
@@ -309,12 +338,6 @@
       border-radius: 12px;
       margin-bottom: 20px;
       border: 1px solid var(--border-color);
-    }
-
-    @media (max-width: 480px) {
-      .date-row {
-        grid-template-columns: 1fr;
-      }
     }
 
     /* Unified Input Styles */
@@ -373,9 +396,9 @@
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       color: var(--text-muted);
-      padding: 4px 10px;
+      padding: 6px 12px;
       border-radius: 20px;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 500;
       cursor: pointer;
       transition: var(--transition);
@@ -396,8 +419,8 @@
     .deposit-grid {
       display: grid;
       grid-template-columns: 1fr 1fr; /* 2 Columns */
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 12px;
+      margin-bottom: 15px;
     }
     
     .deposit-card {
@@ -412,7 +435,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      min-height: 80px;
+      min-height: 85px;
     }
 
     .deposit-card:hover {
@@ -443,28 +466,28 @@
     }
     
     .deposit-note {
-        font-size: 12px;
+        font-size: 13px;
         color: var(--danger-color);
         background: rgba(239, 68, 68, 0.05);
-        padding: 10px;
+        padding: 12px;
         border-radius: 8px;
         border: 1px dashed rgba(239, 68, 68, 0.2);
         margin-bottom: 25px;
-        text-align: center;
-        line-height: 1.5;
+        text-align: left;
+        line-height: 1.6;
     }
 
     /* Action Buttons */
     .btn-group {
       display: grid;
-      gap: 10px;
-      margin-top: 15px;
+      gap: 12px;
+      margin-top: 20px;
     }
     
     .btn-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
+        gap: 12px;
     }
 
     button.btn-main {
@@ -485,7 +508,7 @@
     }
     
     button.btn-sm {
-        padding: 4px 10px;
+        padding: 6px 12px;
         font-size: 12px;
         border-radius: 6px;
         background-color: var(--bg-color);
@@ -561,6 +584,8 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
+      flex-wrap: wrap; /* Allow wrapping */
+      gap: 10px;
     }
 
     .result-days {
@@ -621,7 +646,7 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      padding: 8px 0;
+      padding: 10px 0;
     }
     .breakdown-toggle:hover {
       color: var(--primary-color);
@@ -631,7 +656,7 @@
       display: none;
       background: var(--bg-color);
       border-radius: 8px;
-      padding: 10px;
+      padding: 15px;
       margin-top: 5px;
       max-height: 250px;
       overflow-y: auto;
@@ -645,9 +670,10 @@
       display: flex;
       justify-content: space-between;
       font-size: 13px;
-      padding: 6px 0;
+      padding: 8px 0;
       border-bottom: 1px solid var(--border-color);
       color: var(--text-main);
+      align-items: center;
     }
     .breakdown-item:last-child {
       border-bottom: none;
@@ -709,30 +735,30 @@
     .toast.error { background-color: var(--danger-color); }
 
     .section-label {
-      font-size: 13px;
-      font-weight: 600;
-      margin: 25px 0 15px;
+      font-size: 14px;
+      font-weight: 700;
+      margin: 30px 0 15px;
       color: var(--text-main);
-      opacity: 0.9;
+      opacity: 0.95;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border-color);
-      padding-bottom: 5px;
+      padding-bottom: 8px;
     }
 
     /* Checkbox Styles */
     .checkbox-wrapper {
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin-bottom: 12px; 
+        gap: 12px;
+        margin-bottom: 15px; 
         cursor: pointer;
         position: relative;
     }
     .checkbox-wrapper input {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
         margin: 0; /* Align fix */
         flex-shrink: 0;
     }
@@ -751,14 +777,14 @@
     .checkbox-text {
         font-size: 14px;
         color: var(--text-main);
-        line-height: 1.4;
+        line-height: 1.5;
         display: block;
     }
     .checkbox-subtext {
         font-size: 12px;
         color: var(--text-muted);
         display: block;
-        margin-top: 2px;
+        margin-top: 4px;
     }
 
     /* FAQ Section */
@@ -1066,7 +1092,7 @@
     <!-- Customer Info -->
     <div class="section-label">
         <span>👤 租用者資料</span>
-        <span style="font-size: 11px; color: var(--text-muted); font-weight: normal;">(可留空查詢，填寫可加速預約)</span>
+        <span style="font-size: 11px; color: var(--text-muted); font-weight: normal; margin-left: 8px;">(可留空查詢)</span>
     </div>
     <div class="form-group">
       <label>姓名</label>
