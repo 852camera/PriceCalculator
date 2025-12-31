@@ -1000,7 +1000,6 @@
         <label for="endDate">還機日期</label>
         <input type="date" id="endDate" />
         
-        <!-- Quick Select Buttons -->
         <div class="quick-dates" id="quickDates" style="display:none;">
           <div class="chip" onclick="setQuickDate(1)">+1日</div>
           <div class="chip" onclick="setQuickDate(3)">+3日</div>
@@ -1057,11 +1056,9 @@
         <button type="button" class="btn-add" onclick="addProduct()">+ 加入</button>
       </div>
 
-      <!-- Selected Items Container -->
       <div id="selectedItemsList" class="selected-items-list" style="display:none;"></div>
     </div>
 
-    <!-- Deposit Options Section -->
     <div class="section-label">💰 選擇按金方案</div>
     <div class="deposit-grid">
       <div class="deposit-card active" onclick="setDepositRate(1, this)" data-rate="1">
@@ -1089,7 +1086,6 @@
         • 提供嘅證件必須於有效期內
     </div>
 
-    <!-- Customer Info -->
     <div class="section-label">
         <span>👤 租用者資料</span>
         <span style="font-size: 11px; color: var(--text-muted); font-weight: normal; margin-left: 8px;">(可留空查詢)</span>
@@ -1120,7 +1116,6 @@
       </div>
     </div>
 
-    <!-- Optional Services -->
     <div class="section-label">⚙️ 額外服務 (Optional)</div>
     <label class="checkbox-wrapper" style="align-items: flex-start;">
         <input type="checkbox" id="photoEditToggle" onchange="calculatePrice()">
@@ -1143,14 +1138,11 @@
         </div>
     </label>
 
-    <!-- Error container -->
     <div id="error-box"></div>
 
     <div id="result">
-      <!-- Results injected here -->
-    </div>
+      </div>
     
-    <!-- Terms Checkbox (Only visible when result is shown) -->
     <div id="termsContainer" style="display:none; margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
         <label class="checkbox-wrapper" style="margin-bottom: 5px;">
             <input type="checkbox" id="termsCheck" disabled onchange="toggleButtons()">
@@ -1161,7 +1153,6 @@
         </div>
     </div>
 
-    <!-- Action Buttons -->
     <div class="btn-group" id="actionButtons" style="display:none; margin-top: 20px;">
         <button id="btnWhatsapp" class="btn-main btn-whatsapp" disabled onclick="sendWhatsapp()">
           <span>💬</span> WhatsApp 預約
@@ -1177,7 +1168,6 @@
         </div>
     </div>
 
-    <!-- FAQ Section -->
     <div class="faq-container">
         <div class="faq-title">❓ 常見問題 (FAQ)</div>
         <details>
@@ -1196,7 +1186,6 @@
 
   </div>
   
-  <!-- Sticky Total for Mobile -->
   <div id="stickyTotal" class="sticky-total">
       <div style="font-weight:bold; font-size:16px;">總價: <span id="stickyPrice" style="color:var(--primary-color)">$0</span></div>
       <button class="btn-main" style="width: auto; padding: 8px 16px; font-size: 14px;" onclick="document.getElementById('actionButtons').scrollIntoView({behavior: 'smooth'})">
@@ -1204,10 +1193,8 @@
       </button>
   </div>
   
-  <!-- Toast Element -->
   <div id="toast" class="toast">訊息提示</div>
 
-  <!-- Terms Modal -->
   <div id="termsModal" class="modal-overlay" onclick="closeTermsModal(event)">
       <div class="modal-content">
           <div class="modal-header">
@@ -1282,7 +1269,6 @@
               <h4>🤝 如需由他人代取器材</h4>
               <p>請提前通知我們，否則系統將自動登記您本人電話號碼為取機人。</p>
               
-              <!-- Scroll Hint Inside Body -->
               <div id="scrollHint" class="scroll-hint">請向下捲動以閱讀完整條款 ⬇️</div>
           </div>
       </div>
@@ -1364,6 +1350,7 @@
         
         // Handle URL params
         const params = new URLSearchParams(window.location.search);
+        // Force update input fields if URL has dates
         if (params.has('start')) elements.start.value = params.get('start');
         if (params.has('end')) elements.end.value = params.get('end');
         
@@ -1645,8 +1632,8 @@
 
     function updateURL() {
         const url = new URL(window.location);
-        // We only save product Keys in URL, not individual dates as it's too complex for URL params
-        // This is a trade-off. Full state is in LocalStorage.
+        
+        // 1. Add Products
         if (selectedProducts.length > 0) {
             const keys = selectedProducts.map(p => p.productKey);
             url.searchParams.set('products', keys.join(','));
@@ -1654,6 +1641,20 @@
             url.searchParams.delete('products');
             url.searchParams.delete('product');
         }
+
+        // 2. Add Dates (Fixed: Now includes start/end date in URL)
+        if (elements.start.value) {
+            url.searchParams.set('start', elements.start.value);
+        } else {
+            url.searchParams.delete('start');
+        }
+
+        if (elements.end.value) {
+            url.searchParams.set('end', elements.end.value);
+        } else {
+            url.searchParams.delete('end');
+        }
+
         try { window.history.replaceState({}, '', url); } catch(e) { }
     }
 
@@ -1726,9 +1727,9 @@
       // 0. Update UI First
       renderProductList();
       
-      // 1. Save state
+      // 1. Save state & Update URL
       saveToLocal();
-      updateURL();
+      updateURL(); // This now saves dates too
 
       // 2. Reset UI
       elements.errorBox.innerHTML = "";
@@ -1835,13 +1836,7 @@
       grandDeposit = grandDeposit * currentDepositRate;
 
       // Add Optional Services Costs 
-      // Important: Services are likely per day across the ENTIRE effective rental period?
-      // OR per item?
-      // Prompt doesn't specify. Assuming Services apply to the TOTAL range duration (minStart to maxEnd).
-      // Or simply: Sum of all item days? 
-      // Usually "Star Filter" is per day of usage. If I rent Camera A for 3 days and Camera B for 2 days.
-      // Do I need the filter for 5 days? Or 3 days? 
-      // Let's assume simpler logic: Services apply based on the *Max Duration* of the rental session (earliest start to latest end).
+      // Services apply based on the *Max Duration* of the rental session
       
       let serviceDays = 0;
       if (minStart && maxEnd) {
@@ -1987,38 +1982,61 @@
         setTimeout(() => { toast.className = "toast"; }, 3000);
     }
 
-    function copyToClipboard(btn, text) {
-      const textArea = document.createElement("textarea");
-      textArea.value = text;
-      textArea.style.position = "fixed";
-      textArea.style.left = "-9999px";
-      textArea.style.fontSize = "16px";
-      textArea.setAttribute("readonly", "");
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      textArea.setSelectionRange(0, 99999);
-      
+    async function copyToClipboard(btn, text) {
+      // 1. Success Handler
+      const handleSuccess = () => {
+        showToast("✅ 已複製內容", "success");
+        if(btn) {
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = "<span>✅</span> 已複製";
+            btn.style.backgroundColor = "var(--border-color)";
+            setTimeout(() => { 
+                btn.innerHTML = originalHtml; 
+                btn.style.backgroundColor = ""; 
+            }, 2000);
+        }
+      };
+
+      // 2. Modern Clipboard API (Fixes Emoji Issue)
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          handleSuccess();
+          return; 
+        } catch (err) {
+          console.warn('Clipboard API failed, falling back to legacy', err);
+        }
+      }
+
+      // 3. Fallback for older devices
       try {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        textArea.style.top = "0";
+        textArea.setAttribute("readonly", "");
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        textArea.setSelectionRange(0, 99999); 
+
         const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+
         if (successful) {
-            showToast("✅ 已複製內容", "success");
-            if(btn) {
-                const originalHtml = btn.innerHTML;
-                btn.innerHTML = "<span>✅</span> 已複製";
-                btn.style.backgroundColor = "var(--border-color)";
-                setTimeout(() => { btn.innerHTML = originalHtml; btn.style.backgroundColor = ""; }, 2000);
-            }
+            handleSuccess();
         } else {
-             showToast("❌ 複製失敗", "error");
+            showToast("❌ 複製失敗 (瀏覽器不支援)", "error");
         }
       } catch (err) {
         showToast("❌ 複製失敗", "error");
       }
-      document.body.removeChild(textArea);
     }
     
     function copyPageUrl(btn) {
+        // Ensure URL is up to date before copying
+        updateURL();
         copyToClipboard(btn, window.location.href);
     }
   </script>
