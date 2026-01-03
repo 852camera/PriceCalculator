@@ -1079,6 +1079,17 @@
       </div>
     </div>
     
+    <div class="form-group" id="depositPaymentGroup">
+      <label>按金支付方式 (Deposit Payment)</label>
+      <div class="select-wrapper">
+        <select id="depositPaymentMethod" onchange="calculatePrice()">
+          <option value="Credit Card">信用卡預授權 (Credit Card Hold)</option>
+          <option value="FPS">FPS 轉數快</option>
+        </select>
+      </div>
+      <div id="depositHint" style="font-size:11px; color:var(--text-muted); margin-top:5px;"></div>
+    </div>
+
     <div class="deposit-note">
         ⚠️ <strong>請注意：</strong>所需證明文件需租用最少前一日經 WhatsApp / Instagram 傳送給我們。<br>
         • 住址證明需為最近 2 個月內<br>
@@ -1105,7 +1116,7 @@
       <div id="phoneError" style="display:none; color: var(--danger-color); font-size: 12px; margin-top: 5px;">⚠️ 請輸入有效的8位數字電話號碼</div>
     </div>
     <div class="form-group">
-      <label>付款方式</label>
+      <label>租金付款方式 (Rental Fee Payment)</label>
       <div class="select-wrapper">
         <select id="paymentMethod" onchange="calculatePrice()">
           <option value="">-- 請選擇 --</option>
@@ -1314,6 +1325,8 @@
         email: document.getElementById("customerEmail"),
         phone: document.getElementById("customerPhone"),
         payment: document.getElementById("paymentMethod"),
+        depositMethod: document.getElementById("depositPaymentMethod"), // New Field
+        depositGroup: document.getElementById("depositPaymentGroup"), // New ID
         photoEdit: document.getElementById("photoEditToggle"),
         starFilter: document.getElementById("starFilterToggle"),
         coolingFan: document.getElementById("coolingFanToggle"), 
@@ -1384,14 +1397,15 @@
             email: elements.email.value,
             phone: elements.phone.value,
             payment: elements.payment.value,
+            depositMethod: elements.depositMethod.value, // Save Deposit Method
             depositRate: currentDepositRate
         };
-        // Use v3 key because data structure changed significantly
-        localStorage.setItem('rentalCalculatorData_multi_v3', JSON.stringify(data));
+        // Use v4 key because data structure changed (Added deposit method)
+        localStorage.setItem('rentalCalculatorData_multi_v4', JSON.stringify(data));
     }
 
     function loadFromLocal() {
-        const stored = localStorage.getItem('rentalCalculatorData_multi_v3');
+        const stored = localStorage.getItem('rentalCalculatorData_multi_v4');
         if (stored) {
             try {
                 const data = JSON.parse(stored);
@@ -1402,6 +1416,7 @@
                 if (data.email) elements.email.value = data.email;
                 if (data.phone) elements.phone.value = data.phone;
                 if (data.payment) elements.payment.value = data.payment;
+                if (data.depositMethod) elements.depositMethod.value = data.depositMethod;
                 if (data.depositRate !== undefined) {
                     currentDepositRate = data.depositRate;
                     updateDepositUI(currentDepositRate);
@@ -1545,7 +1560,7 @@
     }
     
     function resetForm() {
-        localStorage.removeItem('rentalCalculatorData_multi_v3'); 
+        localStorage.removeItem('rentalCalculatorData_multi_v4'); 
         selectedProducts = [];
         elements.productSelector.value = "";
         elements.start.value = "";
@@ -1554,6 +1569,7 @@
         elements.email.value = "";
         elements.phone.value = "";
         elements.payment.value = "";
+        elements.depositMethod.value = "Credit Card"; // Default
         elements.photoEdit.checked = false;
         elements.starFilter.checked = false;
         elements.coolingFan.checked = false; 
@@ -1622,6 +1638,13 @@
     }
     
     function updateDepositUI(rate) {
+        // Toggle Deposit Payment Select Visibility
+        if (rate === 0) {
+            elements.depositGroup.style.display = "none";
+        } else {
+            elements.depositGroup.style.display = "block";
+        }
+
         document.querySelectorAll('.deposit-card').forEach(card => {
             card.classList.remove('active');
             if(parseFloat(card.getAttribute('data-rate')) === rate) {
@@ -1642,7 +1665,7 @@
             url.searchParams.delete('product');
         }
 
-        // 2. Add Dates (Fixed: Now includes start/end date in URL)
+        // 2. Add Dates
         if (elements.start.value) {
             url.searchParams.set('start', elements.start.value);
         } else {
@@ -1700,16 +1723,25 @@
         let total = 0;
         let currentCalcDate = new Date(startDate);
         
+        // Calculate Pickup Day of Week (Local Time Logic safe approach)
+        // Split YYYY-MM-DD to ensure we get local day, not UTC
+        const parts = startDate.split('-');
+        const pickupDateObj = new Date(parts[0], parts[1]-1, parts[2]);
+        const pickupDow = pickupDateObj.getDay();
+
         for (let i = 1; i <= days; i++) {
             currentCalcDate.setDate(currentCalcDate.getDate() + 1);
-            const dow = currentCalcDate.getDay(); 
+            const dow = currentCalcDate.getDay(); // 0 is Sunday, 1 is Monday
             const dateStrISO = currentCalcDate.toISOString().split('T')[0];
             const isHoliday = publicHolidays.includes(dateStrISO);
             
-            let dailyPrice = 0;
+            let price = 0;
 
             if (i === 1) {
-                const isDay1Weekday = (dow >= 1 && dow <= 3 && !isHoliday);
+                // FIXED LOGIC: Strict check for Weekday discount based on PICKUP DATE
+                // We check if PICKUP day (pickupDow) was Mon(1), Tue(2), or Wed(3).
+                // If Pickup was Sun(0), this returns false -> Standard Price.
+                const isDay1Weekday = (pickupDow >= 1 && pickupDow <= 3 && !isHoliday); 
                 dailyPrice = isDay1Weekday ? data.weekday1 : data.perDay;
             } else {
                 const isWeekend = (dow === 0 || dow >= 4 || isHoliday);
@@ -1729,7 +1761,7 @@
       
       // 1. Save state & Update URL
       saveToLocal();
-      updateURL(); // This now saves dates too
+      updateURL(); 
 
       // 2. Reset UI
       elements.errorBox.innerHTML = "";
@@ -1799,6 +1831,12 @@
            
            // Price Calculation per item per day
            let currentCalcDate = new Date(item.start);
+           
+           // Calculate Pickup Day of Week (Local Time Logic)
+           const parts = item.start.split('-');
+           const pickupDateObj = new Date(parts[0], parts[1]-1, parts[2]);
+           const pickupDow = pickupDateObj.getDay();
+
            for(let i=1; i<=days; i++) {
                 currentCalcDate.setDate(currentCalcDate.getDate() + 1);
                 const dow = currentCalcDate.getDay(); 
@@ -1807,7 +1845,9 @@
                 
                 let price = 0;
                 if (i === 1) {
-                    const isDay1Weekday = (dow >= 1 && dow <= 3 && !isHoliday);
+                    // Logic Logic Check: Check PICKUP DATE dow (pickupDow)
+                    // If pickup is Sunday(0), returns false -> Standard Price
+                    const isDay1Weekday = (pickupDow >= 1 && pickupDow <= 3 && !isHoliday);
                     price = isDay1Weekday ? data.weekday1 : data.perDay;
                 } else {
                     const isWeekend = (dow === 0 || dow >= 4 || isHoliday);
@@ -1822,14 +1862,12 @@
                 // Add to breakdown
                 const dayType = isHoliday ? "holiday" : ((dow === 0 || dow >= 4) ? "weekend" : "weekday");
                 const name = document.querySelector(`#productSelector option[value="${item.productKey}"]`)?.text || item.productKey;
-                addToBreakdown(dateStrISO, price, null, dayType); // null note to avoid clutter
+                addToBreakdown(dateStrISO, price, null, dayType); 
            }
       });
       
       if (!allValid) {
-          // If any item has incomplete dates
-          // We show partial result or hide? Let's hide result until fixed
-          // But currently we just show $0 for invalid items.
+          // If any item has incomplete dates, skip
       }
       
       // Apply Deposit Multiplier
@@ -1892,11 +1930,16 @@
       }
 
       // 5. Update View
+      const depMethod = elements.depositMethod.value;
+      let refundText = "";
+      if (depMethod === 'FPS') refundText = "歸還後即日/翌日退回";
+      else refundText = "信用卡預授權 T+7 自動解除";
+
       currentQuoteText = `📷 租借查詢\n------------------\n`;
       if(elements.name.value) currentQuoteText += `👤 姓名: ${elements.name.value}\n`;
       if(elements.email.value) currentQuoteText += `📧 電郵: ${elements.email.value}\n`;
       if(elements.phone.value) currentQuoteText += `📞 電話: ${elements.phone.value}\n`;
-      if(elements.payment.value) currentQuoteText += `💳 付款方式: ${elements.payment.value}\n`;
+      if(elements.payment.value) currentQuoteText += `💳 租金付款: ${elements.payment.value}\n`;
       currentQuoteText += `------------------\n`;
       currentQuoteText += `📦 器材清單:\n`;
       
@@ -1926,10 +1969,18 @@
       
       currentQuoteText += `------------------\n`;
       currentQuoteText += `🔒 按金方案: ${depositSchemeText}\n`;
+      if (currentDepositRate !== 0) {
+          currentQuoteText += `💳 按金支付: ${depMethod}\n`;
+      }
       currentQuoteText += `📄 所需文件: ${depositDocs}\n`;
       currentQuoteText += `------------------\n`;
       currentQuoteText += `💰 總價: $${grandTotal.toLocaleString()}\n🔒 總按金: $${grandDeposit.toLocaleString()}`;
       currentQuoteText += `\n\n✅ 本人已閱讀並同意租賃條款及細則，並確認以上資料正確無誤。`;
+
+      let depositInfoHtml = "";
+      if (currentDepositRate !== 0) {
+          depositInfoHtml = `<div class="info-desc"><strong>${depMethod}:</strong> ${refundText}</div>`;
+      }
 
       elements.result.innerHTML = `
         <div class="result-header">
@@ -1941,7 +1992,8 @@
           <div class="info-icon">🔒</div>
           <div class="info-content">
             <div class="info-title">總按金: $${grandDeposit.toLocaleString()} (${currentDepositRate * 100}%)</div>
-            <div class="info-desc">所需文件：${depositDocs}</div>
+            ${depositInfoHtml}
+            <div class="info-desc" style="margin-top:4px;">所需文件：${depositDocs}</div>
           </div>
         </div>
 
