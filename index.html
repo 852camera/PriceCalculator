@@ -418,9 +418,16 @@
     /* Deposit Options Grid */
     .deposit-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr; /* 2 Columns */
+      grid-template-columns: repeat(3, 1fr); /* 3 Columns for single row on desktop */
       gap: 12px;
       margin-bottom: 15px;
+    }
+
+    /* Mobile handling for deposit grid */
+    @media (max-width: 600px) {
+      .deposit-grid {
+        grid-template-columns: 1fr; /* Stack vertically on mobile for readability */
+      }
     }
     
     .deposit-card {
@@ -1067,10 +1074,6 @@
       </div>
       <div class="deposit-card" onclick="setDepositRate(0.5, this)" data-rate="0.5">
         <div class="dep-percent">50% 按金</div>
-        <div class="dep-desc">身份證 + 2個月內住址</div>
-      </div>
-      <div class="deposit-card" onclick="setDepositRate(0.2, this)" data-rate="0.2">
-        <div class="dep-percent">20% 按金</div>
         <div class="dep-desc">身份證 + 2個月內住址 + 門票</div>
       </div>
       <div class="deposit-card" onclick="setDepositRate(0, this)" data-rate="0">
@@ -1419,6 +1422,8 @@
                 if (data.depositMethod) elements.depositMethod.value = data.depositMethod;
                 if (data.depositRate !== undefined) {
                     currentDepositRate = data.depositRate;
+                    // Safety check: if user had old 0.2 rate stored, reset to 1
+                    if (currentDepositRate === 0.2) currentDepositRate = 1;
                     updateDepositUI(currentDepositRate);
                 }
             } catch(e) {}
@@ -1958,9 +1963,6 @@
       let depositDocs = "無需文件";
       if (currentDepositRate === 0.5) {
           depositSchemeText = "50% 按金方案";
-          depositDocs = "身份證 + 住址證明 (2個月內)";
-      } else if (currentDepositRate === 0.2) {
-          depositSchemeText = "20% 按金方案";
           depositDocs = "身份證 + 住址證明 (2個月內) + 活動門票";
       } else if (currentDepositRate === 0) {
           depositSchemeText = "學生按金 0% 方案";
