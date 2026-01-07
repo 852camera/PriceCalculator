@@ -1360,10 +1360,8 @@
     elements.start.min = today;
     elements.end.min = today;
 
-    // Load from LocalStorage on mount
+    // Load URL params ONLY on mount (No LocalStorage)
     window.addEventListener('DOMContentLoaded', () => {
-        loadFromLocal();
-        
         // Handle URL params
         const params = new URLSearchParams(window.location.search);
         // Force update input fields if URL has dates
@@ -1389,46 +1387,6 @@
         if (elements.start.value) handleGlobalDateChange();
         calculatePrice();
     });
-
-    // Save to LocalStorage helper
-    function saveToLocal() {
-        const data = {
-            products: selectedProducts,
-            start: elements.start.value,
-            end: elements.end.value,
-            name: elements.name.value,
-            email: elements.email.value,
-            phone: elements.phone.value,
-            payment: elements.payment.value,
-            depositMethod: elements.depositMethod.value, // Save Deposit Method
-            depositRate: currentDepositRate
-        };
-        // Use v4 key because data structure changed (Added deposit method)
-        localStorage.setItem('rentalCalculatorData_multi_v4', JSON.stringify(data));
-    }
-
-    function loadFromLocal() {
-        const stored = localStorage.getItem('rentalCalculatorData_multi_v4');
-        if (stored) {
-            try {
-                const data = JSON.parse(stored);
-                if (data.products && Array.isArray(data.products)) selectedProducts = data.products;
-                if (data.start) elements.start.value = data.start;
-                if (data.end) elements.end.value = data.end;
-                if (data.name) elements.name.value = data.name;
-                if (data.email) elements.email.value = data.email;
-                if (data.phone) elements.phone.value = data.phone;
-                if (data.payment) elements.payment.value = data.payment;
-                if (data.depositMethod) elements.depositMethod.value = data.depositMethod;
-                if (data.depositRate !== undefined) {
-                    currentDepositRate = data.depositRate;
-                    // Safety check: if user had old 0.2 rate stored, reset to 1
-                    if (currentDepositRate === 0.2) currentDepositRate = 1;
-                    updateDepositUI(currentDepositRate);
-                }
-            } catch(e) {}
-        }
-    }
 
     function addProduct() {
         const val = elements.productSelector.value;
@@ -1565,7 +1523,6 @@
     }
     
     function resetForm() {
-        localStorage.removeItem('rentalCalculatorData_multi_v4'); 
         selectedProducts = [];
         elements.productSelector.value = "";
         elements.start.value = "";
@@ -1620,8 +1577,6 @@
       if (elements.end.value && elements.end.value < elements.start.value) {
         elements.end.value = elements.start.value;
       }
-      // Just save state, don't necessarily update everything unless requested
-      saveToLocal();
     }
 
     function setQuickDate(daysToAdd) {
@@ -1632,7 +1587,6 @@
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
       elements.end.value = `${year}-${month}-${day}`;
-      saveToLocal();
     }
     
     // Deposit Logic
@@ -1764,8 +1718,7 @@
       // 0. Update UI First
       renderProductList();
       
-      // 1. Save state & Update URL
-      saveToLocal();
+      // 1. Update URL (Keeps "Copy Link" feature working without saving to disk)
       updateURL(); 
 
       // 2. Reset UI
