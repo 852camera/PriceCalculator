@@ -18,6 +18,7 @@
       --whatsapp-color: #25D366;
       --whatsapp-hover: #128C7E;
       --danger-color: #ef4444;
+      --instagram-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
       --radius: 16px;
       --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
       --transition: all 0.2s ease;
@@ -41,7 +42,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       margin: 0;
       padding: 20px;
-      padding-bottom: 100px; /* Extra padding bottom for sticky bar */
+      padding-bottom: 120px; /* Increased for larger bottom buttons */
       background-color: var(--bg-color);
       color: var(--text-main);
       min-height: 100vh;
@@ -49,7 +50,7 @@
       justify-content: center;
       align-items: flex-start;
       transition: background-color 0.3s ease, color 0.3s ease;
-      line-height: 1.6; /* Improved text readability */
+      line-height: 1.6;
     }
 
     .container {
@@ -67,17 +68,17 @@
     /* Mobile Optimization for Layout */
     @media (max-width: 480px) {
       body {
-        padding: 10px 10px 90px 10px; /* Less outer padding on mobile */
+        padding: 10px 10px 110px 10px;
       }
       .container {
-        padding: 20px 15px; /* Less container padding to give content more width */
+        padding: 20px 15px;
         width: 100%;
       }
       h2 {
         font-size: 20px;
       }
       .date-row {
-        grid-template-columns: 1fr !important; /* Force stack on mobile */
+        grid-template-columns: 1fr !important;
         gap: 10px;
       }
     }
@@ -158,7 +159,7 @@
     }
     .shop-info-row {
         display: flex;
-        gap: 12px; /* Increased gap */
+        gap: 12px;
         margin-bottom: 8px;
         align-items: flex-start;
     }
@@ -222,19 +223,19 @@
         margin-top: 15px;
         display: flex;
         flex-direction: column;
-        gap: 15px; /* Increased gap between items */
+        gap: 15px;
     }
 
     .selected-item {
         display: flex;
         flex-direction: column;
         background: var(--bg-color);
-        padding: 15px; /* Increased padding */
+        padding: 15px;
         border-radius: 12px;
         border: 1px solid var(--border-color);
         animation: fadeIn 0.3s ease;
         position: relative;
-        gap: 10px; /* Gap between sections inside card */
+        gap: 10px;
     }
     
     .item-header {
@@ -242,7 +243,7 @@
         justify-content: space-between;
         align-items: flex-start;
         width: 100%;
-        padding-right: 25px; /* Space for delete button */
+        padding-right: 25px;
     }
 
     .item-name {
@@ -276,7 +277,7 @@
     .item-date-input {
         width: 100%;
         padding: 8px 10px;
-        font-size: 14px; /* Slightly larger to prevent feeling packed */
+        font-size: 14px;
         border: 1px solid var(--border-color);
         border-radius: 6px;
         background: var(--card-bg);
@@ -289,7 +290,7 @@
         width: 100%;
         border-top: 1px dashed var(--border-color);
         padding-top: 10px;
-        flex-wrap: wrap; /* Allow wrapping on very small screens */
+        flex-wrap: wrap;
         gap: 5px;
     }
 
@@ -418,15 +419,14 @@
     /* Deposit Options Grid */
     .deposit-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr); /* 3 Columns for single row on desktop */
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
       margin-bottom: 15px;
     }
 
-    /* Mobile handling for deposit grid */
     @media (max-width: 600px) {
       .deposit-grid {
-        grid-template-columns: 1fr; /* Stack vertically on mobile for readability */
+        grid-template-columns: 1fr;
       }
     }
     
@@ -484,26 +484,27 @@
         line-height: 1.6;
     }
 
-    /* Action Buttons */
+    /* IMPROVED ACTION BUTTONS */
     .btn-group {
       display: grid;
       gap: 12px;
       margin-top: 20px;
     }
     
+    /* Layout: WhatsApp full width on top, others split below */
     .btn-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 12px;
     }
+    @media (max-width: 500px) {
+        /* On very small screens, maybe stack everything if text is too long?
+           Keeping grid for now but allowing height growth */
+    }
 
     button.btn-main {
       width: 100%;
-      padding: 14px;
-      font-size: 16px;
-      font-weight: 600;
-      color: white;
-      background-color: var(--primary-color);
+      padding: 12px;
       border: none;
       border-radius: 10px;
       cursor: pointer;
@@ -511,7 +512,31 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      text-align: left; /* Align text block left inside button */
+      min-height: 60px; /* Ensure consistency */
+    }
+    
+    /* Inner content wrapper for text stacking */
+    .btn-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        line-height: 1.2;
+    }
+    
+    .btn-title {
+        font-size: 16px;
+        font-weight: 700;
+        display: block;
+    }
+    
+    .btn-subtitle {
+        font-size: 11px;
+        opacity: 0.85;
+        font-weight: 400;
+        display: block;
+        margin-top: 2px;
     }
     
     button.btn-sm {
@@ -528,16 +553,17 @@
     }
 
     button.btn-main:hover {
-      background-color: var(--primary-hover);
       transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     
     button.btn-main:disabled {
-        background-color: var(--border-color);
+        background-color: var(--border-color) !important;
         cursor: not-allowed;
         transform: none;
-        opacity: 0.7;
-        color: var(--text-muted);
+        box-shadow: none;
+        opacity: 0.6;
+        color: var(--text-muted) !important;
     }
 
     button.btn-main:active {
@@ -546,30 +572,38 @@
 
     .btn-whatsapp {
       background-color: var(--whatsapp-color);
+      color: white;
     }
     .btn-whatsapp:hover {
       background-color: var(--whatsapp-hover);
     }
 
+    /* Style for the "Copy Content" button to imply IG */
     .btn-copy {
       background-color: var(--bg-color);
       color: var(--text-main);
-      border: 1px solid var(--border-color);
+      border: 2px solid var(--border-color); /* Thicker border */
     }
     .btn-copy:hover {
-      background-color: var(--border-color);
-      transform: translateY(-1px);
+      border-color: var(--primary-color);
+      background-color: #f0f7ff;
+    }
+    [data-theme="dark"] .btn-copy:hover {
+        background-color: #1e3a8a;
     }
     
     .btn-link {
       background-color: var(--bg-color);
       color: var(--text-muted);
       border: 1px dashed var(--border-color);
-      font-size: 14px;
     }
     .btn-link:hover {
         background-color: var(--border-color);
         color: var(--text-main);
+    }
+    
+    .btn-icon {
+        font-size: 24px; /* Larger icons */
     }
 
     /* Result Section */
@@ -591,7 +625,7 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-      flex-wrap: wrap; /* Allow wrapping */
+      flex-wrap: wrap;
       gap: 10px;
     }
 
@@ -735,7 +769,7 @@
     .toast.show {
       visibility: visible;
       opacity: 1;
-      bottom: 80px; /* Elevated to avoid sticky bar */
+      bottom: 100px; /* Elevated */
     }
     
     .toast.success { background-color: var(--success-color); }
@@ -766,7 +800,7 @@
     .checkbox-wrapper input {
         width: 20px;
         height: 20px;
-        margin: 0; /* Align fix */
+        margin: 0;
         flex-shrink: 0;
     }
     
@@ -851,7 +885,7 @@
         border-top: 1px solid var(--border-color);
         padding: 15px 20px;
         box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
-        display: none; /* Shown via JS if needed or Media Query */
+        display: none;
         z-index: 900;
         justify-content: space-between;
         align-items: center;
@@ -1167,19 +1201,36 @@
         </div>
     </div>
 
+    <!-- UPDATED ACTION BUTTONS WITH CLEARER LABELS -->
     <div class="btn-group" id="actionButtons" style="display:none; margin-top: 20px;">
-        <button id="btnWhatsapp" class="btn-main btn-whatsapp" disabled onclick="sendWhatsapp()">
-          <span>💬</span> WhatsApp 預約
-        </button>
-        
         <div class="btn-row">
-          <button id="btnCopy" class="btn-main btn-copy" disabled onclick="copyQuote()">
-              <span>📋</span> 複製內容
-          </button>
-          <button class="btn-main btn-link" onclick="copyPageUrl(this)">
-              <span>🔗</span> 複製連結
-          </button>
+            <!-- Whatsapp Button -->
+            <button id="btnWhatsapp" class="btn-main btn-whatsapp" disabled onclick="sendWhatsapp()">
+              <span class="btn-icon">💬</span> 
+              <div class="btn-content">
+                  <span class="btn-title">WhatsApp 提交預約</span>
+                  <span class="btn-subtitle">直接傳送資料</span>
+              </div>
+            </button>
+            
+            <!-- Copy Content (Targeting IG Users) -->
+            <button id="btnCopy" class="btn-main btn-copy" disabled onclick="copyQuote()">
+                <span class="btn-icon">📋</span>
+                <div class="btn-content">
+                    <span class="btn-title">複製資料 (IG DM)</span>
+                    <span class="btn-subtitle">貼上至 Instagram 提交</span>
+                </div>
+            </button>
         </div>
+
+        <!-- Copy Link (Targeting Availability Check) -->
+        <button class="btn-main btn-link" onclick="copyPageUrl(this)">
+            <span class="btn-icon">🔗</span>
+            <div class="btn-content">
+                <span class="btn-title">查詢器材存貨</span>
+                <span class="btn-subtitle">Send Link 問有無貨</span>
+            </div>
+        </button>
     </div>
 
     <div class="faq-container">
@@ -1202,7 +1253,7 @@
   
   <div id="stickyTotal" class="sticky-total">
       <div style="font-weight:bold; font-size:16px;">總價: <span id="stickyPrice" style="color:var(--primary-color)">$0</span></div>
-      <button class="btn-main" style="width: auto; padding: 8px 16px; font-size: 14px;" onclick="document.getElementById('actionButtons').scrollIntoView({behavior: 'smooth'})">
+      <button class="btn-main" style="width: auto; padding: 8px 16px; font-size: 14px; min-height: 40px;" onclick="document.getElementById('actionButtons').scrollIntoView({behavior: 'smooth'})">
           前往預約
       </button>
   </div>
@@ -1328,8 +1379,8 @@
         email: document.getElementById("customerEmail"),
         phone: document.getElementById("customerPhone"),
         payment: document.getElementById("paymentMethod"),
-        depositMethod: document.getElementById("depositPaymentMethod"), // New Field
-        depositGroup: document.getElementById("depositPaymentGroup"), // New ID
+        depositMethod: document.getElementById("depositPaymentMethod"), 
+        depositGroup: document.getElementById("depositPaymentGroup"), 
         photoEdit: document.getElementById("photoEditToggle"),
         starFilter: document.getElementById("starFilterToggle"),
         coolingFan: document.getElementById("coolingFanToggle"), 
@@ -1994,13 +2045,18 @@
       const handleSuccess = () => {
         showToast("✅ 已複製內容", "success");
         if(btn) {
-            const originalHtml = btn.innerHTML;
-            btn.innerHTML = "<span>✅</span> 已複製";
-            btn.style.backgroundColor = "var(--border-color)";
+            const originalTitle = btn.querySelector('.btn-title').innerText;
+            const originalSub = btn.querySelector('.btn-subtitle').innerText;
+            
+            btn.querySelector('.btn-title').innerText = "✅ 已複製";
+            btn.querySelector('.btn-subtitle').innerText = "請前往 Instagram 貼上";
+            btn.style.borderColor = "var(--success-color)";
+            
             setTimeout(() => { 
-                btn.innerHTML = originalHtml; 
-                btn.style.backgroundColor = ""; 
-            }, 2000);
+                btn.querySelector('.btn-title').innerText = originalTitle;
+                btn.querySelector('.btn-subtitle').innerText = originalSub;
+                btn.style.borderColor = ""; 
+            }, 3000);
         }
       };
 
