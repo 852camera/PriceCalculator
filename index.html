@@ -558,7 +558,7 @@
     }
     
     button.btn-main:disabled {
-        background-color: var(--border-color) !important;
+        background: var(--border-color) !important; /* Changed from background-color to background to override gradients */
         cursor: not-allowed;
         transform: none;
         box-shadow: none;
@@ -580,26 +580,23 @@
 
     /* Style for the "Copy Content" button to imply IG */
     .btn-copy {
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      border: 2px solid var(--border-color); /* Thicker border */
+      background: var(--instagram-gradient);
+      color: white;
+      border: none;
     }
     .btn-copy:hover {
-      border-color: var(--primary-color);
-      background-color: #f0f7ff;
-    }
-    [data-theme="dark"] .btn-copy:hover {
-        background-color: #1e3a8a;
+      opacity: 0.95;
+      box-shadow: 0 4px 12px rgba(220, 39, 67, 0.25);
     }
     
     .btn-link {
-      background-color: var(--bg-color);
-      color: var(--text-muted);
-      border: 1px dashed var(--border-color);
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
     }
     .btn-link:hover {
-        background-color: var(--border-color);
-        color: var(--text-main);
+        background-color: var(--primary-hover);
+        color: white;
     }
     
     .btn-icon {
@@ -1064,7 +1061,8 @@
               <option value="S25U">Samsung S25U</option>
             </optgroup>
             <optgroup label="Vivo 手機">
-              <option value="X200 Ultra">Vivo X200 Ultra / X300 Pro + 專業攝影套裝</option>
+              <option value="X200 Ultra">Vivo X200 Ultra + 專業攝影套裝</option>
+              <option value="X300 Pro">Vivo X300 Pro + 專業攝影套裝</option>
             </optgroup>
             <optgroup label="Canon 相機">
               <option value="R5">Canon R5</option>
@@ -1351,6 +1349,7 @@
       "S24U": { deposit: 4000, perDay: 180, weekday1: 160, weekend: { 2: 110, 3: 50, more: 50 }, weekday: { 2: 100, 3: 50, more: 50 } },
       "S25U": { deposit: 8000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70 }, weekday: { 2: 150, 3: 70, more: 60 } },
       "X200 Ultra": { deposit: 8000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70 }, weekday: { 2: 150, 3: 70, more: 60 } },
+      "X300 Pro": { deposit: 8000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70 }, weekday: { 2: 150, 3: 70, more: 60 } },
       "R5": { deposit: 16000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90 }, weekday: { 2: 190, 3: 100, more: 80 } },
       "R5ii": { deposit: 20000, perDay: 500, weekday1: 450, weekend: { 2: 300, 3: 150, more: 130 }, weekday: { 2: 270, 3: 140, more: 120 } },
       "R6ii": { deposit: 12000, perDay: 300, weekday1: 270, weekend: { 2: 180, 3: 90, more: 80 }, weekday: { 2: 160, 3: 80, more: 70 } },
@@ -1814,6 +1813,7 @@
       let allValid = true;
       let minStart = null;
       let maxEnd = null;
+      let itemDetails = []; // Store item details including individual price
 
       selectedProducts.forEach(item => {
            if (!item.start || !item.end) {
@@ -1840,6 +1840,7 @@
            
            // Price Calculation per item per day
            let currentCalcDate = new Date(item.start);
+           let thisItemTotal = 0;
            
            // Calculate Pickup Day of Week (Local Time Logic)
            const parts = item.start.split('-');
@@ -1866,13 +1867,19 @@
                     else price = tier.more;
                 }
                 
+                thisItemTotal += price;
                 grandTotal += price;
                 
                 // Add to breakdown
                 const dayType = isHoliday ? "holiday" : ((dow === 0 || dow >= 4) ? "weekend" : "weekday");
-                const name = document.querySelector(`#productSelector option[value="${item.productKey}"]`)?.text || item.productKey;
                 addToBreakdown(dateStrISO, price, null, dayType); 
            }
+           
+           // Capture item details for the final text
+           itemDetails.push({
+               ...item,
+               total: thisItemTotal
+           });
       });
       
       if (!allValid) {
@@ -1952,9 +1959,10 @@
       currentQuoteText += `------------------\n`;
       currentQuoteText += `📦 器材清單:\n`;
       
-      selectedProducts.forEach(item => {
+      itemDetails.forEach(item => {
           const name = document.querySelector(`#productSelector option[value="${item.productKey}"]`)?.text || item.productKey;
-          currentQuoteText += `   • ${name} (${item.start} - ${item.end})\n`;
+          // Updated: Added individual item price to the text
+          currentQuoteText += `   • ${name} (${item.start} - ${item.end}) : $${item.total}\n`;
       });
       
       // Add Services to Text
@@ -2050,12 +2058,15 @@
             
             btn.querySelector('.btn-title').innerText = "✅ 已複製";
             btn.querySelector('.btn-subtitle').innerText = "請前往 Instagram 貼上";
-            btn.style.borderColor = "var(--success-color)";
+            
+            // Store original background to restore later (handles gradients/solid colors)
+            const originalBackground = btn.style.background;
+            btn.style.background = "var(--success-color)";
             
             setTimeout(() => { 
                 btn.querySelector('.btn-title').innerText = originalTitle;
                 btn.querySelector('.btn-subtitle').innerText = originalSub;
-                btn.style.borderColor = ""; 
+                btn.style.background = originalBackground; 
             }, 3000);
         }
       };
