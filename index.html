@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>852camera 租借計算器 (多項器材版)</title>
+  <title>852camera 租借計算器</title>
   <style>
     :root {
       --primary-color: #2563eb;
@@ -34,15 +34,13 @@
       --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
     }
 
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
+    *, *::before, *::after { box-sizing: border-box; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       margin: 0;
       padding: 20px;
-      padding-bottom: 120px; /* Increased for larger bottom buttons */
+      padding-bottom: 120px;
       background-color: var(--bg-color);
       color: var(--text-main);
       min-height: 100vh;
@@ -65,923 +63,268 @@
       transition: background-color 0.3s ease;
     }
     
-    /* Mobile Optimization for Layout */
     @media (max-width: 480px) {
-      body {
-        padding: 10px 10px 110px 10px;
-      }
-      .container {
-        padding: 20px 15px;
-        width: 100%;
-      }
-      h2 {
-        font-size: 20px;
-      }
-      .date-row {
-        grid-template-columns: 1fr !important;
-        gap: 10px;
-      }
+      body { padding: 10px 10px 110px 10px; }
+      .container { padding: 20px 15px; width: 100%; }
+      h2 { font-size: 20px; }
+      .date-row { grid-template-columns: 1fr !important; gap: 10px; }
     }
 
-    /* Theme Toggle */
-    .theme-toggle {
+    .theme-toggle, .reset-btn {
       position: absolute;
       top: 25px;
-      right: 25px;
       background: none;
       border: none;
       cursor: pointer;
-      font-size: 20px;
       color: var(--text-muted);
-      padding: 5px;
-      border-radius: 50%;
-      width: auto;
-      margin: 0;
       display: flex;
       align-items: center;
-      justify-content: center;
     }
-    .theme-toggle:hover {
-      background-color: rgba(0,0,0,0.05);
-      color: var(--primary-color);
-    }
-    [data-theme="dark"] .theme-toggle:hover {
-      background-color: rgba(255,255,255,0.1);
-    }
+    .theme-toggle { right: 25px; font-size: 20px; padding: 5px; border-radius: 50%; justify-content: center; }
+    .reset-btn { left: 25px; font-size: 14px; gap: 4px; padding: 5px; }
+    .theme-toggle:hover { background-color: rgba(0,0,0,0.05); color: var(--primary-color); }
+    .reset-btn:hover { color: var(--danger-color); text-decoration: underline; }
 
-    /* Reset Button */
-    .reset-btn {
-      position: absolute;
-      top: 25px;
-      left: 25px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-      color: var(--text-muted);
-      padding: 5px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .reset-btn:hover {
-      color: var(--danger-color);
-      text-decoration: underline;
-    }
+    header { text-align: center; margin-bottom: 25px; }
+    h2 { margin: 0; font-size: 24px; color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; }
+    .subtitle { font-size: 14px; color: var(--text-muted); margin-top: 5px; }
 
-    header {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    h2 {
-      margin: 0;
-      font-size: 24px;
-      color: var(--text-main);
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-top: 5px;
-    }
-
-    /* Shop Info Section */
     .shop-info {
-        background: var(--bg-color);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        padding: 15px;
-        margin-bottom: 25px;
-        font-size: 13px;
+        background: var(--bg-color); border: 1px solid var(--border-color);
+        border-radius: 12px; padding: 15px; margin-bottom: 25px; font-size: 13px;
     }
-    .shop-info-row {
-        display: flex;
-        gap: 12px;
-        margin-bottom: 8px;
-        align-items: flex-start;
-    }
-    .shop-info-row:last-child {
-        margin-bottom: 0;
-    }
-    .shop-info-icon {
-        font-size: 16px;
-        line-height: 1.4;
-        flex-shrink: 0;
-    }
-    .shop-info-text {
-        color: var(--text-main);
-        line-height: 1.5;
-    }
-    .shop-info-sub {
-        color: var(--text-muted);
-        font-size: 12px;
-        display: block;
-        margin-top: 4px;
-    }
+    .shop-info-row { display: flex; gap: 12px; margin-bottom: 8px; align-items: flex-start; }
+    .shop-info-row:last-child { margin-bottom: 0; }
+    .shop-info-icon { font-size: 16px; line-height: 1.4; flex-shrink: 0; }
+    .shop-info-text { color: var(--text-main); line-height: 1.5; }
+    .shop-info-sub { color: var(--text-muted); font-size: 12px; display: block; margin-top: 4px; }
 
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      display: block;
-      color: var(--text-main);
-      opacity: 0.9;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    /* Product Selection Styles */
-    .product-selector-group {
+    /* =========================================
+       NEW: Mode Selector (Inquiry vs Booking)
+       ========================================= */
+    .mode-selector {
         display: flex;
         gap: 10px;
-        align-items: stretch;
+        margin-bottom: 25px;
+        background: var(--bg-color);
+        padding: 6px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
     }
-    
-    .btn-add {
-        background-color: var(--primary-color);
-        color: white;
+    .mode-btn {
+        flex: 1;
+        padding: 12px;
         border: none;
-        padding: 0 20px;
-        border-radius: 10px;
-        font-weight: 600;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text-muted);
+        font-weight: 700;
+        font-size: 14px;
         cursor: pointer;
         transition: var(--transition);
-        white-space: nowrap;
-    }
-    .btn-add:hover {
-        background-color: var(--primary-hover);
-    }
-
-    .selected-items-list {
-        margin-top: 15px;
         display: flex;
         flex-direction: column;
-        gap: 15px;
-    }
-
-    .selected-item {
-        display: flex;
-        flex-direction: column;
-        background: var(--bg-color);
-        padding: 15px;
-        border-radius: 12px;
-        border: 1px solid var(--border-color);
-        animation: fadeIn 0.3s ease;
-        position: relative;
-        gap: 10px;
-    }
-    
-    .item-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        width: 100%;
-        padding-right: 25px;
-    }
-
-    .item-name {
-        font-size: 15px;
-        font-weight: 700;
-        color: var(--text-main);
-        line-height: 1.4;
-    }
-    
-    .item-dates-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        width: 100%;
-        background: rgba(0,0,0,0.03);
-        padding: 10px;
-        border-radius: 8px;
-    }
-    
-    .item-date-group {
-        display: flex;
-        flex-direction: column;
+        align-items: center;
         gap: 4px;
     }
-    .item-date-label {
-        font-size: 11px;
-        color: var(--text-muted);
-        font-weight: 600;
-    }
-    
-    .item-date-input {
-        width: 100%;
-        padding: 8px 10px;
-        font-size: 14px;
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
+    .mode-btn span { font-size: 11px; font-weight: normal; opacity: 0.8; }
+    .mode-btn.active {
         background: var(--card-bg);
-    }
-
-    .item-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        width: 100%;
-        border-top: 1px dashed var(--border-color);
-        padding-top: 10px;
-        flex-wrap: wrap;
-        gap: 5px;
-    }
-
-    .item-price {
-        font-size: 16px;
-        font-weight: 700;
         color: var(--primary-color);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
 
-    .item-deposit {
-        font-size: 12px;
-        color: var(--text-muted);
+    /* =========================================
+       NEW: Step Headers
+       ========================================= */
+    .step-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 35px 0 20px;
+        border-bottom: 2px solid var(--bg-color);
+        padding-bottom: 10px;
     }
-
-    .btn-remove {
-        background: none;
-        border: none;
-        color: var(--text-muted);
-        cursor: pointer;
-        padding: 5px;
-        font-size: 20px;
-        line-height: 1;
+    .step-number {
+        background: var(--primary-color);
+        color: white;
+        width: 28px;
+        height: 28px;
         border-radius: 50%;
-        transition: var(--transition);
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        width: 30px;
-        height: 30px;
         display: flex;
         align-items: center;
         justify-content: center;
-    }
-    .btn-remove:hover {
-        color: var(--danger-color);
-        background: rgba(239, 68, 68, 0.1);
-    }
-
-    /* Grid for Dates */
-    .date-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      background: var(--bg-color);
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      border: 1px solid var(--border-color);
-    }
-
-    /* Unified Input Styles */
-    select, 
-    input[type="date"], 
-    input[type="text"], 
-    input[type="email"], 
-    input[type="tel"] {
-      width: 100%;
-      padding: 12px 15px;
-      font-size: 16px;
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      background-color: var(--card-bg);
-      transition: var(--transition);
-      appearance: none;
-      -webkit-appearance: none;
-      color: var(--text-main);
-    }
-
-    /* Custom Arrow for Select */
-    .select-wrapper {
-      position: relative;
-      width: 100%;
-    }
-    .select-wrapper::after {
-      content: "▼";
-      font-size: 10px;
-      color: var(--text-muted);
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      pointer-events: none;
-    }
-
-    select:focus, input:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-    }
-    
-    input.invalid {
-        border-color: var(--danger-color);
-    }
-
-    /* Quick Date Chips */
-    .quick-dates {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-      flex-wrap: wrap;
-    }
-    
-    .chip {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      color: var(--text-muted);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-      user-select: none;
-    }
-
-    .chip:hover {
-      background: var(--primary-color);
-      color: white;
-      border-color: var(--primary-color);
-    }
-
-    .chip:active {
-      transform: scale(0.95);
-    }
-
-    /* Deposit Options Grid */
-    .deposit-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 15px;
-    }
-
-    @media (max-width: 600px) {
-      .deposit-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-    
-    .deposit-card {
-      background: var(--bg-color);
-      border: 2px solid var(--border-color);
-      border-radius: 12px;
-      padding: 15px 10px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 85px;
-    }
-
-    .deposit-card:hover {
-      border-color: #93c5fd;
-    }
-
-    .deposit-card.active {
-      border-color: var(--primary-color);
-      background-color: rgba(37, 99, 235, 0.05);
-      box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1);
-    }
-
-    .dep-percent {
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 4px;
-    }
-
-    .deposit-card.active .dep-percent {
-      color: var(--primary-color);
-    }
-
-    .dep-desc {
-      font-size: 11px;
-      color: var(--text-muted);
-      line-height: 1.3;
-    }
-    
-    .deposit-note {
-        font-size: 13px;
-        color: var(--danger-color);
-        background: rgba(239, 68, 68, 0.05);
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px dashed rgba(239, 68, 68, 0.2);
-        margin-bottom: 25px;
-        text-align: left;
-        line-height: 1.6;
-    }
-
-    /* IMPROVED ACTION BUTTONS */
-    .btn-group {
-      display: grid;
-      gap: 12px;
-      margin-top: 20px;
-    }
-    
-    /* Layout: WhatsApp full width on top, others split below */
-    .btn-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-    }
-    @media (max-width: 500px) {
-        /* On very small screens, maybe stack everything if text is too long?
-           Keeping grid for now but allowing height growth */
-    }
-
-    button.btn-main {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      text-align: left; /* Align text block left inside button */
-      min-height: 60px; /* Ensure consistency */
-    }
-    
-    /* Inner content wrapper for text stacking */
-    .btn-content {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        line-height: 1.2;
-    }
-    
-    .btn-title {
         font-size: 16px;
-        font-weight: 700;
-        display: block;
+        font-weight: 900;
+        flex-shrink: 0;
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
     }
-    
-    .btn-subtitle {
-        font-size: 11px;
-        opacity: 0.85;
-        font-weight: 400;
-        display: block;
-        margin-top: 2px;
-    }
-    
-    button.btn-sm {
-        padding: 6px 12px;
-        font-size: 12px;
-        border-radius: 6px;
-        background-color: var(--bg-color);
+    .step-title {
+        font-size: 18px;
+        font-weight: 800;
         color: var(--text-main);
-        border: 1px solid var(--border-color);
+    }
+
+    .form-group { margin-bottom: 20px; }
+    label { font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block; color: var(--text-main); opacity: 0.9; text-transform: uppercase; }
+
+    /* Product Selection Styles */
+    .product-selector-group { display: flex; gap: 10px; align-items: stretch; }
+    .btn-add { background-color: var(--primary-color); color: white; border: none; padding: 0 20px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: var(--transition); white-space: nowrap; }
+    .btn-add:hover { background-color: var(--primary-hover); }
+
+    .selected-items-list { margin-top: 15px; display: flex; flex-direction: column; gap: 15px; }
+    .selected-item { display: flex; flex-direction: column; background: var(--bg-color); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); animation: fadeIn 0.3s ease; position: relative; gap: 10px; }
+    .item-header { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; padding-right: 25px; }
+    .item-name { font-size: 15px; font-weight: 700; color: var(--text-main); line-height: 1.4; }
+    
+    .item-dates-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; background: rgba(0,0,0,0.03); padding: 10px; border-radius: 8px; }
+    .item-date-group { display: flex; flex-direction: column; gap: 4px; }
+    .item-date-label { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+    .item-date-input { width: 100%; padding: 8px 10px; font-size: 14px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--card-bg); }
+
+    .item-footer { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; border-top: 1px dashed var(--border-color); padding-top: 10px; flex-wrap: wrap; gap: 5px; }
+    .item-price { font-size: 16px; font-weight: 700; color: var(--primary-color); }
+    .item-deposit { font-size: 12px; color: var(--text-muted); }
+
+    .btn-remove { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 5px; font-size: 20px; line-height: 1; border-radius: 50%; transition: var(--transition); position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
+    .btn-remove:hover { color: var(--danger-color); background: rgba(239, 68, 68, 0.1); }
+
+    .date-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: var(--bg-color); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); }
+
+    select, input[type="date"], input[type="text"], input[type="email"], input[type="tel"] { width: 100%; padding: 12px 15px; font-size: 16px; border: 1px solid var(--border-color); border-radius: 10px; background-color: var(--card-bg); transition: var(--transition); appearance: none; -webkit-appearance: none; color: var(--text-main); }
+    .select-wrapper { position: relative; width: 100%; }
+    .select-wrapper::after { content: "▼"; font-size: 10px; color: var(--text-muted); position: absolute; right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+    select:focus, input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+    input.invalid { border-color: var(--danger-color); background-color: rgba(239,68,68,0.05); }
+
+    .quick-dates { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    .chip { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; transition: var(--transition); user-select: none; }
+    .chip:hover { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+    .chip:active { transform: scale(0.95); }
+
+    .deposit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 15px; }
+    @media (max-width: 600px) { .deposit-grid { grid-template-columns: 1fr; } }
+    .deposit-card { background: var(--bg-color); border: 2px solid var(--border-color); border-radius: 12px; padding: 15px 10px; text-align: center; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 85px; }
+    .deposit-card:hover { border-color: #93c5fd; }
+    .deposit-card.active { border-color: var(--primary-color); background-color: rgba(37, 99, 235, 0.05); box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1); }
+    .dep-percent { font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
+    .deposit-card.active .dep-percent { color: var(--primary-color); }
+    .dep-desc { font-size: 11px; color: var(--text-muted); line-height: 1.3; }
+    
+    .deposit-note { font-size: 13px; color: var(--danger-color); background: rgba(239, 68, 68, 0.05); padding: 12px; border-radius: 8px; border: 1px dashed rgba(239, 68, 68, 0.2); margin-bottom: 25px; text-align: left; line-height: 1.6; }
+
+    .btn-group { display: grid; gap: 12px; margin-top: 20px; }
+    .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    button.btn-main { width: 100%; padding: 12px; border: none; border-radius: 10px; cursor: pointer; transition: var(--transition); display: flex; justify-content: center; align-items: center; gap: 10px; text-align: left; min-height: 60px; }
+    .btn-content { display: flex; flex-direction: column; justify-content: center; line-height: 1.2; }
+    .btn-title { font-size: 16px; font-weight: 700; display: block; }
+    .btn-subtitle { font-size: 11px; opacity: 0.85; font-weight: 400; display: block; margin-top: 2px; }
+    button.btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; background-color: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); cursor: pointer; }
+    button.btn-sm:hover { background-color: var(--border-color); }
+    button.btn-main:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    button.btn-main:disabled { background: var(--border-color) !important; cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.6; color: var(--text-muted) !important; }
+    button.btn-main:active:not(:disabled) { transform: translateY(1px); }
+
+    .btn-whatsapp { background-color: var(--whatsapp-color); color: white; }
+    .btn-whatsapp:hover:not(:disabled) { background-color: var(--whatsapp-hover); }
+    .btn-copy { background: var(--instagram-gradient); color: white; border: none; }
+    .btn-copy:hover:not(:disabled) { opacity: 0.95; box-shadow: 0 4px 12px rgba(220, 39, 67, 0.25); }
+    .btn-link { background-color: var(--primary-color); color: white; border: none; }
+    .btn-link:hover { background-color: var(--primary-hover); }
+    .btn-icon { font-size: 24px; }
+
+    /* =========================================
+       NEW: T&C Big Button Alert
+       ========================================= */
+    .tnc-read-btn {
+        width: 100%;
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger-color);
+        border: 2px dashed var(--danger-color);
+        padding: 15px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: bold;
         cursor: pointer;
+        transition: all 0.3s;
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
     }
-    button.btn-sm:hover {
-        background-color: var(--border-color);
-    }
-
-    button.btn-main:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    
-    button.btn-main:disabled {
-        background: var(--border-color) !important; /* Changed from background-color to background to override gradients */
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-        opacity: 0.6;
-        color: var(--text-muted) !important;
+    .tnc-read-btn:hover { background: rgba(239, 68, 68, 0.2); }
+    .tnc-read-btn.done {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success-color);
+    border-color: var(--success-color);
     }
 
-    button.btn-main:active {
-      transform: translateY(1px);
-    }
+    #result { margin-top: 30px; border-top: 2px dashed var(--border-color); padding-top: 20px; display: none; animation: fadeIn 0.4s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    .btn-whatsapp {
-      background-color: var(--whatsapp-color);
-      color: white;
-    }
-    .btn-whatsapp:hover {
-      background-color: var(--whatsapp-hover);
-    }
+    .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+    .result-days { font-weight: 600; color: var(--text-main); font-size: 16px; }
+    .price-tag { font-size: 32px; font-weight: 800; color: var(--primary-color); letter-spacing: -1px; }
 
-    /* Style for the "Copy Content" button to imply IG */
-    .btn-copy {
-      background: var(--instagram-gradient);
-      color: white;
-      border: none;
-    }
-    .btn-copy:hover {
-      opacity: 0.95;
-      box-shadow: 0 4px 12px rgba(220, 39, 67, 0.25);
-    }
-    
-    .btn-link {
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-    }
-    .btn-link:hover {
-        background-color: var(--primary-hover);
-        color: white;
-    }
-    
-    .btn-icon {
-        font-size: 24px; /* Larger icons */
-    }
+    .info-card { background: var(--bg-color); padding: 15px; border-radius: 8px; margin-bottom: 12px; display: flex; gap: 12px; align-items: flex-start; border: 1px solid var(--border-color); }
+    .info-icon { font-size: 20px; padding-top: 2px; }
+    .info-content { flex: 1; }
+    .info-title { font-weight: 700; color: var(--text-main); margin-bottom: 4px; font-size: 14px; }
+    .info-desc { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
 
-    /* Result Section */
-    #result {
-      margin-top: 30px;
-      border-top: 2px dashed var(--border-color);
-      padding-top: 20px;
-      display: none;
-      animation: fadeIn 0.4s ease forwards;
-    }
+    .breakdown-section { margin: 15px 0; }
+    .breakdown-toggle { font-size: 13px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 5px; padding: 10px 0; }
+    .breakdown-toggle:hover { color: var(--primary-color); }
+    .breakdown-list { display: none; background: var(--bg-color); border-radius: 8px; padding: 15px; margin-top: 5px; max-height: 250px; overflow-y: auto; }
+    .breakdown-list.open { display: block; }
+    .breakdown-item { display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--border-color); color: var(--text-main); align-items: center; }
+    .breakdown-item:last-child { border-bottom: none; }
+    .badge { font-size: 10px; background: var(--border-color); color: var(--text-muted); padding: 2px 6px; border-radius: 4px; margin-left: 5px; text-transform: uppercase; }
+    .badge.holiday { background: #fee2e2; color: #dc2626; }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .result-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .result-days {
-      font-weight: 600;
-      color: var(--text-main);
-      font-size: 16px;
-    }
-
-    .price-tag {
-      font-size: 32px;
-      font-weight: 800;
-      color: var(--primary-color);
-      letter-spacing: -1px;
-    }
-
-    .info-card {
-      background: var(--bg-color);
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      border: 1px solid var(--border-color);
-    }
-
-    .info-icon {
-      font-size: 20px;
-      padding-top: 2px;
-    }
-
-    .info-content {
-      flex: 1;
-    }
-    
-    .info-title {
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 4px;
-      font-size: 14px;
-    }
-
-    .info-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.4;
-    }
-
-    /* Breakdown Toggle */
-    .breakdown-section {
-      margin: 15px 0;
-    }
-    
-    .breakdown-toggle {
-      font-size: 13px;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      padding: 10px 0;
-    }
-    .breakdown-toggle:hover {
-      color: var(--primary-color);
-    }
-    
-    .breakdown-list {
-      display: none;
-      background: var(--bg-color);
-      border-radius: 8px;
-      padding: 15px;
-      margin-top: 5px;
-      max-height: 250px;
-      overflow-y: auto;
-    }
-    
-    .breakdown-list.open {
-      display: block;
-    }
-
-    .breakdown-item {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border-color);
-      color: var(--text-main);
-      align-items: center;
-    }
-    .breakdown-item:last-child {
-      border-bottom: none;
-    }
-    .badge {
-      font-size: 10px;
-      background: var(--border-color);
-      color: var(--text-muted);
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin-left: 5px;
-      text-transform: uppercase;
-    }
-    
-    .badge.holiday {
-        background: #fee2e2;
-        color: #dc2626;
-    }
-
-    .error-msg {
-      color: #ef4444;
-      background: rgba(239, 68, 68, 0.1);
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      text-align: center;
-      border: 1px solid rgba(239, 68, 68, 0.2);
-      margin-top: 10px;
-    }
-
-    /* Toast Notification */
-    .toast {
-      visibility: hidden;
-      min-width: 200px;
-      margin-left: -100px;
-      background-color: #333;
-      color: #fff;
-      text-align: center;
-      border-radius: 50px;
-      padding: 12px 20px;
-      position: fixed;
-      z-index: 1000;
-      left: 50%;
-      bottom: 30px;
-      font-size: 14px;
-      font-weight: 500;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      opacity: 0;
-      transition: opacity 0.3s, bottom 0.3s ease-in-out;
-    }
-
-    .toast.show {
-      visibility: visible;
-      opacity: 1;
-      bottom: 100px; /* Elevated */
-    }
-    
+    .error-msg { color: #ef4444; background: rgba(239, 68, 68, 0.1); padding: 12px; border-radius: 8px; font-size: 14px; text-align: center; border: 1px solid rgba(239, 68, 68, 0.2); margin-top: 10px; }
+    .toast { visibility: hidden; min-width: 200px; margin-left: -100px; background-color: #333; color: #fff; text-align: center; border-radius: 50px; padding: 12px 20px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s, bottom 0.3s ease-in-out; }
+    .toast.show { visibility: visible; opacity: 1; bottom: 100px; }
     .toast.success { background-color: var(--success-color); }
     .toast.error { background-color: var(--danger-color); }
 
-    .section-label {
-      font-size: 14px;
-      font-weight: 700;
-      margin: 30px 0 15px;
-      color: var(--text-main);
-      opacity: 0.95;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 8px;
-    }
+    .checkbox-wrapper { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; cursor: pointer; position: relative; }
+    .checkbox-wrapper input { width: 20px; height: 20px; margin: 0; flex-shrink: 0; }
+    .checkbox-wrapper input:disabled { cursor: not-allowed; opacity: 0.6; }
+    .checkbox-wrapper input:disabled + .checkbox-text, .checkbox-wrapper input:disabled + div .checkbox-text { color: var(--text-muted); cursor: not-allowed; }
+    .checkbox-text { font-size: 14px; color: var(--text-main); line-height: 1.5; display: block; }
+    .checkbox-subtext { font-size: 12px; color: var(--text-muted); display: block; margin-top: 4px; }
 
-    /* Checkbox Styles */
-    .checkbox-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 15px; 
-        cursor: pointer;
-        position: relative;
-    }
-    .checkbox-wrapper input {
-        width: 20px;
-        height: 20px;
-        margin: 0;
-        flex-shrink: 0;
-    }
-    
-    /* Disabled Checkbox Styles */
-    .checkbox-wrapper input:disabled {
-        cursor: not-allowed;
-        opacity: 0.6;
-    }
-    .checkbox-wrapper input:disabled + .checkbox-text, 
-    .checkbox-wrapper input:disabled + div .checkbox-text {
-        color: var(--text-muted);
-        cursor: not-allowed;
-    }
-    
-    .checkbox-text {
-        font-size: 14px;
-        color: var(--text-main);
-        line-height: 1.5;
-        display: block;
-    }
-    .checkbox-subtext {
-        font-size: 12px;
-        color: var(--text-muted);
-        display: block;
-        margin-top: 4px;
-    }
+    .faq-container { margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px; }
+    .faq-title { font-size: 16px; font-weight: 700; margin-bottom: 15px; color: var(--text-main); text-align: center; }
+    details { margin-bottom: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-color); }
+    summary { padding: 12px; cursor: pointer; font-size: 14px; font-weight: 600; outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+    summary::after { content: '+'; font-size: 16px; }
+    details[open] summary::after { content: '-'; }
+    .faq-content { padding: 0 12px 12px; font-size: 13px; line-height: 1.5; color: var(--text-muted); border-top: 1px dashed var(--border-color); margin-top: 5px; padding-top: 10px; }
 
-    /* FAQ Section */
-    .faq-container {
-        margin-top: 40px;
-        border-top: 1px solid var(--border-color);
-        padding-top: 20px;
-    }
-    .faq-title {
-        font-size: 16px;
-        font-weight: 700;
-        margin-bottom: 15px;
-        color: var(--text-main);
-        text-align: center;
-    }
-    details {
-        margin-bottom: 10px;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        background: var(--bg-color);
-    }
-    summary {
-        padding: 12px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 600;
-        outline: none;
-        list-style: none;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    summary::after {
-        content: '+';
-        font-size: 16px;
-    }
-    details[open] summary::after {
-        content: '-';
-    }
-    .faq-content {
-        padding: 0 12px 12px;
-        font-size: 13px;
-        line-height: 1.5;
-        color: var(--text-muted);
-        border-top: 1px dashed var(--border-color);
-        margin-top: 5px;
-        padding-top: 10px;
-    }
+    .sticky-total { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); border-top: 1px solid var(--border-color); padding: 15px 20px; box-shadow: 0 -4px 10px rgba(0,0,0,0.05); display: none; z-index: 900; justify-content: space-between; align-items: center; }
+    @media (max-width: 600px) { .sticky-total.visible { display: flex; } }
 
-    /* Sticky Bottom Bar for Mobile */
-    .sticky-total {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: var(--card-bg);
-        border-top: 1px solid var(--border-color);
-        padding: 15px 20px;
-        box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
-        display: none;
-        z-index: 900;
-        justify-content: space-between;
-        align-items: center;
-    }
-    @media (max-width: 600px) {
-        .sticky-total.visible {
-            display: flex;
-        }
-    }
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+    .modal-overlay.show { display: flex; }
+    .modal-content { background: var(--card-bg); width: 90%; max-width: 500px; max-height: 80vh; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    .modal-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h3 { margin: 0; font-size: 18px; color: var(--text-main); }
+    .close-modal { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted); padding: 0; line-height: 1; }
+    .modal-body { padding: 20px; overflow-y: auto; font-size: 14px; line-height: 1.6; color: var(--text-main); position: relative; }
+    .modal-body ul { padding-left: 20px; margin: 10px 0; }
+    .modal-body li { margin-bottom: 8px; }
+    .scroll-hint { background: #f3f4f6; color: var(--text-muted); text-align: center; padding: 12px; font-size: 13px; font-weight: 600; border-top: 1px solid var(--border-color); position: sticky; bottom: 0; margin: 0 -20px -20px -20px; transition: background-color 0.3s; }
+    .scroll-hint.done { background: var(--success-color); color: white; }
 
-    /* Modal Styles */
-    .modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 2000;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(2px);
-    }
-    .modal-overlay.show {
-        display: flex;
-    }
-    .modal-content {
-        background: var(--card-bg);
-        width: 90%;
-        max-width: 500px;
-        max-height: 80vh;
-        border-radius: 12px;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
-    .modal-header {
-        padding: 15px 20px;
-        border-bottom: 1px solid var(--border-color);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .modal-header h3 {
-        margin: 0;
-        font-size: 18px;
-        color: var(--text-main);
-    }
-    .close-modal {
-        background: none;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        color: var(--text-muted);
-        padding: 0;
-        line-height: 1;
-    }
-    .modal-body {
-        padding: 20px;
-        overflow-y: auto;
-        font-size: 14px;
-        line-height: 1.6;
-        color: var(--text-main);
-        position: relative;
-    }
-    .modal-body ul {
-        padding-left: 20px;
-        margin: 10px 0;
-    }
-    .modal-body li {
-        margin-bottom: 8px;
-    }
-    
-    /* Scroll Hint Bar in Modal */
-    .scroll-hint {
-        background: #f3f4f6;
-        color: var(--text-muted);
-        text-align: center;
-        padding: 12px;
-        font-size: 13px;
-        font-weight: 600;
-        border-top: 1px solid var(--border-color);
-        position: sticky;
-        bottom: 0;
-        margin: 0 -20px -20px -20px; /* Offset parent padding */
-        transition: background-color 0.3s;
-    }
-    .scroll-hint.done {
-        background: var(--success-color);
-        color: white;
-    }
-
-    /* Print Styles */
     @media print {
         body { background: white; padding: 0; color: black; }
         .container { box-shadow: none; border: none; max-width: 100%; margin: 0; padding: 0; }
-        .theme-toggle, .reset-btn, .btn-group, .sticky-total, .faq-container, .btn-add, .btn-remove { display: none !important; }
+        .theme-toggle, .reset-btn, .btn-group, .sticky-total, .faq-container, .btn-add, .btn-remove, .mode-selector, .step-number { display: none !important; }
         input, select { border: none; background: none; padding: 0; font-weight: bold; -webkit-appearance: none; }
         .select-wrapper::after { display: none; }
         #result { display: block !important; border-top: 2px solid #000; }
@@ -989,23 +332,17 @@
         .info-card { border: 1px solid #ccc; }
         .shop-info { border: 1px solid #000; }
     }
-
   </style>
 </head>
 <body>
 
   <div class="container">
-    <button class="reset-btn" onclick="resetForm()" title="重置表格">
-      ↻ 重置
-    </button>
-    
-    <button class="theme-toggle" onclick="toggleTheme()" title="切換深色模式">
-      <span id="theme-icon">🌙</span>
-    </button>
+    <button class="reset-btn" onclick="resetForm()" title="重置表格">↻ 重置</button>
+    <button class="theme-toggle" onclick="toggleTheme()" title="切換深色模式"><span id="theme-icon">🌙</span></button>
 
     <header>
       <h2>📷 852Camera</h2>
-      <div class="subtitle">專業攝影器材租賃計算</div>
+      <div class="subtitle">專業攝影器材租賃</div>
     </header>
 
     <div class="shop-info">
@@ -1024,11 +361,26 @@
             </div>
         </div>
     </div>
+
+    <div class="mode-selector">
+        <button class="mode-btn active" onclick="setMode('inquiry')" id="btnModeInquiry">
+            🔍 查詢存貨
+            <span>只看價錢 / 查詢檔期</span>
+        </button>
+        <button class="mode-btn" onclick="setMode('booking')" id="btnModeBooking">
+            📝 提交預約
+            <span>填寫資料 / 正式預約</span>
+        </button>
+    </div>
     
+    <div class="step-header">
+        <div class="step-number">1</div>
+        <div class="step-title">選擇租借日期</div>
+    </div>
     <div class="date-row">
-      <div class="section-label" style="grid-column: 1/-1; margin: 0 0 10px 0; border: none;">
-        <span>📅 預設租用日期 (用於新增項目)</span>
-        <button class="btn-sm" onclick="applyDatesToAll()">套用到所有項目</button>
+      <div style="grid-column: 1/-1; display: flex; justify-content: space-between; align-items: center; margin-bottom: -10px;">
+        <span style="font-size:13px; font-weight:600;">預設日期 (套用至新器材)</span>
+        <button class="btn-sm" onclick="applyDatesToAll()">套用到現有項目</button>
       </div>
       <div class="form-group" style="margin-bottom:0;">
         <label for="startDate">取機日期</label>
@@ -1036,7 +388,7 @@
       </div>
       <div class="form-group" style="margin-bottom:0;">
         <label for="endDate">還機日期</label>
-        <input type="date" id="endDate" />
+        <input type="date" id="endDate" onchange="calculatePrice()"/>
         
         <div class="quick-dates" id="quickDates" style="display:none;">
           <div class="chip" onclick="setQuickDate(1)">+1日</div>
@@ -1045,24 +397,24 @@
           <div class="chip" onclick="setQuickDate(7)">+7日</div>
         </div>
       </div>
-      <div style="grid-column: 1/-1; font-size: 11px; color: var(--text-muted); margin-top: 5px;">
-        * 此日期只作為新增器材時的預設值，加入清單後可個別修改。
-      </div>
     </div>
 
+    <div class="step-header">
+        <div class="step-number">2</div>
+        <div class="step-title">選擇所需器材</div>
+    </div>
     <div class="form-group">
-      <label for="productSelector">選擇器材 (可多選)</label>
       <div class="product-selector-group">
         <div class="select-wrapper">
           <select id="productSelector">
-            <option value="">-- 請選擇 --</option>
+            <option value="">-- 請選擇器材 --</option>
             <optgroup label="Samsung 手機">
               <option value="S24U">Samsung S24U</option>
               <option value="S25U">Samsung S25U</option>
             </optgroup>
             <optgroup label="Vivo 手機">
-              <option value="X200 Ultra">Vivo X200 Ultra + 專業攝影套裝</option>
-              <option value="X300 Pro">Vivo X300 Pro + 專業攝影套裝</option>
+              <option value="X200 Ultra">Vivo X200 Ultra + 專業套裝</option>
+              <option value="X300 Pro">Vivo X300 Pro + 專業套裝</option>
             </optgroup>
             <optgroup label="Canon 相機">
               <option value="R5">Canon R5</option>
@@ -1088,21 +440,42 @@
               <option value="FE 200-600">FE 200-600</option>
               <option value="1.4x Extender">1.4x 遠攝增距鏡</option>
             </optgroup>
-            <optgroup label="Fujifilm">
+            <optgroup label="Fujifilm / Leica">
               <option value="X100VI">Fujifilm X100VI</option>
-            </optgroup>
-            <optgroup label="Leica">
               <option value="Leica Q2">Leica Q2</option>
             </optgroup>
           </select>
         </div>
-        <button type="button" class="btn-add" onclick="addProduct()">+ 加入</button>
+        <button type="button" class="btn-add" onclick="addProduct()">+ 加入清單</button>
       </div>
-
       <div id="selectedItemsList" class="selected-items-list" style="display:none;"></div>
     </div>
 
-    <div class="section-label">💰 選擇按金方案</div>
+    <div style="background:var(--bg-color); padding:15px; border-radius:12px; margin-bottom:20px; border:1px solid var(--border-color);">
+        <label style="font-size:12px; margin-bottom:10px;">⚙️ 額外配件及服務 (Optional)</label>
+        <label class="checkbox-wrapper" style="align-items: flex-start; margin-bottom:10px;">
+            <input type="checkbox" id="photoEditToggle" onchange="calculatePrice()">
+            <div>
+                <span class="checkbox-text">✨ 免費試用演唱會修圖 (最多5張)</span>
+            </div>
+        </label>
+        <label class="checkbox-wrapper" style="margin-bottom:10px;">
+            <input type="checkbox" id="starFilterToggle" onchange="calculatePrice()">
+            <span class="checkbox-text">✨ 加配星鏡 (+HKD$20/日)</span>
+        </label>
+        <label class="checkbox-wrapper" style="align-items: flex-start; margin-bottom:0;">
+            <input type="checkbox" id="coolingFanToggle" onchange="calculatePrice()">
+            <div>
+                <span class="checkbox-text">❄️ 加配散熱風扇 (推薦R5/拍4K) (+HKD$20/日)</span>
+                <span class="checkbox-subtext" style="color:var(--text-muted);">需自備行動電源供電</span>
+            </div>
+        </label>
+    </div>
+
+    <div class="step-header">
+        <div class="step-number">3</div>
+        <div class="step-title">選擇按金方案</div>
+    </div>
     <div class="deposit-grid">
       <div class="deposit-card active" onclick="setDepositRate(1, this)" data-rate="1">
         <div class="dep-percent">標準按金</div>
@@ -1110,128 +483,116 @@
       </div>
       <div class="deposit-card" onclick="setDepositRate(0.5, this)" data-rate="0.5">
         <div class="dep-percent">50% 按金</div>
-        <div class="dep-desc">身份證 + 2個月內住址 + 門票</div>
+        <div class="dep-desc">身份證+住址+門票</div>
       </div>
       <div class="deposit-card" onclick="setDepositRate(0, this)" data-rate="0">
-        <div class="dep-percent">0% 按金</div>
-        <div class="dep-desc">身份證 + 學生證 + 門票</div>
+        <div class="dep-percent">0% 按金 (學生)</div>
+        <div class="dep-desc">身份證+學生證+門票</div>
       </div>
     </div>
     
     <div class="form-group" id="depositPaymentGroup">
-      <label>按金支付方式 (Deposit Payment)</label>
+      <label>按金支付方式 (Deposit Method)</label>
       <div class="select-wrapper">
         <select id="depositPaymentMethod" onchange="calculatePrice()">
-          <option value="Credit Card">信用卡預授權 (Credit Card Hold)</option>
-          <option value="FPS">FPS 轉數快</option>
-        </select>
-      </div>
-      <div id="depositHint" style="font-size:11px; color:var(--text-muted); margin-top:5px;"></div>
-    </div>
-
-    <div class="deposit-note">
-        ⚠️ <strong>請注意：</strong>所需證明文件需租用最少前一日經 WhatsApp / Instagram 傳送給我們。<br>
-        • 住址證明需為最近 2 個月內<br>
-        • 活動門票需為租用期內進行之活動<br>
-        • 提供嘅證件必須於有效期內
-    </div>
-
-    <div class="section-label">
-        <span>👤 租用者資料</span>
-        <span style="font-size: 11px; color: var(--text-muted); font-weight: normal; margin-left: 8px;">(可留空查詢)</span>
-    </div>
-    <div class="form-group">
-      <label>姓名</label>
-      <input type="text" id="customerName" placeholder="輸入您的稱呼" oninput="calculatePrice()">
-    </div>
-    <div class="form-group">
-      <label>電郵</label>
-      <input type="email" id="customerEmail" placeholder="example@email.com" oninput="calculatePrice()">
-      <div id="emailError" style="display:none; color: var(--danger-color); font-size: 12px; margin-top: 5px;">⚠️ 請輸入有效的電郵格式</div>
-    </div>
-    <div class="form-group">
-      <label>取機人電話號碼</label>
-      <input type="tel" id="customerPhone" placeholder="8位數字電話號碼" maxlength="8" oninput="this.value = this.value.replace(/\D/g,''); calculatePrice()">
-      <div id="phoneError" style="display:none; color: var(--danger-color); font-size: 12px; margin-top: 5px;">⚠️ 請輸入有效的8位數字電話號碼</div>
-    </div>
-    <div class="form-group">
-      <label>租金付款方式 (Rental Fee Payment)</label>
-      <div class="select-wrapper">
-        <select id="paymentMethod" onchange="calculatePrice()">
-          <option value="">-- 請選擇 --</option>
-          <option value="FPS">FPS 轉數快</option>
-          <option value="Alipay">AlipayHK</option>
-          <option value="Credit Card">信用卡 (Credit Card)</option>
+          <option value="Credit Card">信用卡預授權 (Credit Card Hold) - 推薦</option>
+          <option value="FPS">FPS 轉數快 / 銀行轉帳</option>
         </select>
       </div>
     </div>
 
-    <div class="section-label">⚙️ 額外服務 (Optional)</div>
-    <label class="checkbox-wrapper" style="align-items: flex-start;">
-        <input type="checkbox" id="photoEditToggle" onchange="calculatePrice()">
-        <div>
-            <span class="checkbox-text">✨ 試用演唱會調色服務 (Photo Editing)</span>
-            <span class="checkbox-subtext" style="color:var(--text-muted);">免費試用 (最多5張)。此乃測試功能，不包含在租賃費用/服務範圍內。</span>
+    <div id="step4Container" style="display:none; animation: fadeIn 0.4s ease;">
+        <div class="step-header">
+            <div class="step-number">4</div>
+            <div class="step-title">填寫租用者資料</div>
         </div>
-    </label>
-    <label class="checkbox-wrapper">
-        <input type="checkbox" id="starFilterToggle" onchange="calculatePrice()">
-        <span class="checkbox-text">✨ 加配星鏡 (+HKD$20/日)</span>
-    </label>
-
-    <label class="checkbox-wrapper" style="align-items: flex-start;">
-        <input type="checkbox" id="coolingFanToggle" onchange="calculatePrice()">
-        <div>
-            <span class="checkbox-text">❄️ 加配散熱風扇 推薦用於R5/需長時間錄影4K的相機 (+HKD$20/日)</span>
-            <span class="checkbox-subtext" style="color:var(--text-muted);">需自備行動電源(Power Bank)供電</span>
+        <div class="deposit-note" style="margin-bottom: 15px;">
+            ⚠️ 請確保資料填寫正確
         </div>
-    </label>
+        <div class="form-group">
+            <label>姓名</label>
+            <input type="text" id="customerName" placeholder="輸入您的稱呼" oninput="validateBookingForm()">
+        </div>
+        <div class="form-group">
+            <label>電郵</label>
+            <input type="email" id="customerEmail" placeholder="example@email.com" oninput="validateBookingForm()">
+            <div id="emailError" style="display:none; color: var(--danger-color); font-size: 12px; margin-top: 5px;">⚠️ 請輸入有效的電郵格式</div>
+        </div>
+        <div class="form-group">
+            <label>取機人電話號碼</label>
+            <input type="tel" id="customerPhone" placeholder="8位數字電話號碼" maxlength="8" oninput="this.value = this.value.replace(/\D/g,''); validateBookingForm()">
+            <div id="phoneError" style="display:none; color: var(--danger-color); font-size: 12px; margin-top: 5px;">⚠️ 請輸入有效的8位數字</div>
+        </div>
+        <div class="form-group">
+            <label>租金付款方式 (Rental Fee Payment)</label>
+            <div class="select-wrapper">
+                <select id="paymentMethod" onchange="validateBookingForm()">
+                <option value="">-- 請選擇 --</option>
+                <option value="FPS">FPS 轉數快</option>
+                <option value="Alipay">AlipayHK</option>
+                <option value="Credit Card">信用卡 (Credit Card)</option>
+                </select>
+            </div>
+        </div>
+    </div>
 
-    <div id="error-box"></div>
+    <div id="result"></div>
 
-    <div id="result">
-      </div>
-    
-    <div id="termsContainer" style="display:none; margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-        <label class="checkbox-wrapper" style="margin-bottom: 5px;">
-            <input type="checkbox" id="termsCheck" disabled onchange="toggleButtons()">
-            <span class="checkbox-text" style="font-size: 13px;">本人已閱讀並同意 <a href="javascript:void(0)" onclick="openTermsModal(event)" style="color:var(--primary-color); text-decoration:underline; font-weight:bold;">租賃條款及細則</a>，並確認以上資料正確無誤。</span>
+    <div id="step5Container" style="display:none; animation: fadeIn 0.4s ease; margin-top: 30px; border-top: 2px dashed var(--border-color); padding-top:20px;">
+        <div class="step-header" style="margin-top:0;">
+            <div class="step-number">5</div>
+            <div class="step-title">閱讀及同意條款 <span style="color:var(--danger-color); font-size:14px;">(必須)</span></div>
+        </div>
+        
+        <button id="btnReadTNC" class="tnc-read-btn" onclick="openTermsModal(event)">
+            👉 點擊閱讀《租賃條款》以解鎖提交
+        </button>
+
+        <label class="checkbox-wrapper" id="termsWrapper" style="opacity: 0.6; pointer-events: none;">
+            <input type="checkbox" id="termsCheck" disabled onchange="validateBookingForm()">
+            <span class="checkbox-text" style="font-size: 13px; font-weight:bold;">本人已閱讀並同意租賃條款及細則，並確認以上資料正確無誤。</span>
         </label>
-        <div id="termsLockHint" style="font-size: 12px; color: var(--danger-color); margin-left: 28px;">
-            ⚠️ 需點擊連結並閱讀至底部方可勾選
-        </div>
     </div>
 
-    <!-- UPDATED ACTION BUTTONS WITH CLEARER LABELS -->
-    <div class="btn-group" id="actionButtons" style="display:none; margin-top: 20px;">
+    <div class="btn-group" id="actionButtonsInquiry" style="display:none; margin-top: 20px;">
         <div class="btn-row">
-            <!-- Whatsapp Button -->
-            <button id="btnWhatsapp" class="btn-main btn-whatsapp" disabled onclick="sendWhatsapp()">
+            <button id="btnWhatsappInquiry" class="btn-main btn-whatsapp" onclick="sendWhatsapp()">
               <span class="btn-icon">💬</span> 
               <div class="btn-content">
-                  <span class="btn-title">WhatsApp 提交預約</span>
-                  <span class="btn-subtitle">直接傳送資料</span>
+                  <span class="btn-title">WhatsApp 查詢</span>
+                  <span class="btn-subtitle">直接傳送清單</span>
               </div>
             </button>
-            
-            <!-- Copy Content (Targeting IG Users) -->
-            <button id="btnCopy" class="btn-main btn-copy" disabled onclick="copyQuote()">
+            <button id="btnCopyInquiry" class="btn-main btn-copy" onclick="copyQuote(this)">
                 <span class="btn-icon">📋</span>
                 <div class="btn-content">
-                    <span class="btn-title">複製資料 (IG DM)</span>
-                    <span class="btn-subtitle">貼上至 Instagram 提交</span>
+                    <span class="btn-title">複製清單 (IG)</span>
+                    <span class="btn-subtitle">貼上至 IG DM 查詢</span>
                 </div>
             </button>
         </div>
+    </div>
 
-        <!-- Copy Link (Targeting Availability Check) -->
-        <button class="btn-main btn-link" onclick="copyPageUrl(this)">
-            <span class="btn-icon">🔗</span>
-            <div class="btn-content">
-                <span class="btn-title">查詢器材存貨</span>
-                <span class="btn-subtitle">Send Link 問有無貨</span>
-            </div>
-        </button>
+    <div class="btn-group" id="actionButtonsBooking" style="display:none; margin-top: 20px;">
+        <div class="deposit-note" id="bookingValidationHint" style="margin-bottom:0; text-align:center;">
+            請完成上方步驟 4 及步驟 5 以解鎖預約按鈕
+        </div>
+        <div class="btn-row">
+            <button id="btnWhatsapp" class="btn-main btn-whatsapp" disabled onclick="sendWhatsapp()">
+              <span class="btn-icon">💬</span> 
+              <div class="btn-content">
+                  <span class="btn-title">WhatsApp 預約</span>
+                  <span class="btn-subtitle">直接傳送資料表</span>
+              </div>
+            </button>
+            <button id="btnCopy" class="btn-main btn-copy" disabled onclick="copyQuote(this)">
+                <span class="btn-icon">📋</span>
+                <div class="btn-content">
+                    <span class="btn-title">複製資料表 (IG)</span>
+                    <span class="btn-subtitle">貼上至 IG DM 預約</span>
+                </div>
+            </button>
+        </div>
     </div>
 
     <div class="faq-container">
@@ -1242,21 +603,14 @@
         </details>
         <details>
             <summary>按金何時退還？</summary>
-            <div class="faq-content">檢查器材無誤後，FPS按金會即日/+1日退還。信用卡預授權於付款後7個工作天解除鎖定。</div>
-        </details>
-        <details>
-            <summary>如果遲還會怎樣？</summary>
-            <div class="faq-content">遲還將收取額外日租及逾期行政費。請務必準時歸還以免影響下一位客人。</div>
+            <div class="faq-content">還機後通知客服，檢查無誤後，FPS按金即日/+1日退還。信用卡預授權付款後7個工作天解除。</div>
         </details>
     </div>
-
   </div>
   
   <div id="stickyTotal" class="sticky-total">
-      <div style="font-weight:bold; font-size:16px;">總價: <span id="stickyPrice" style="color:var(--primary-color)">$0</span></div>
-      <button class="btn-main" style="width: auto; padding: 8px 16px; font-size: 14px; min-height: 40px;" onclick="document.getElementById('actionButtons').scrollIntoView({behavior: 'smooth'})">
-          前往預約
-      </button>
+      <div style="font-weight:bold; font-size:16px;">總計: <span id="stickyPrice" style="color:var(--primary-color)">$0</span></div>
+      <button class="btn-main" style="width: auto; padding: 8px 16px; font-size: 14px; min-height: 40px;" onclick="scrollToActions()">前往下一步</button>
   </div>
   
   <div id="toast" class="toast">訊息提示</div>
@@ -1264,77 +618,31 @@
   <div id="termsModal" class="modal-overlay" onclick="closeTermsModal(event)">
       <div class="modal-content">
           <div class="modal-header">
-              <h3>租賃條款及細則</h3>
+              <h3>📜 租賃條款及細則</h3>
               <button class="close-modal" onclick="closeTermsModal(event)">×</button>
           </div>
           <div class="modal-body" id="modalTermsBody" onscroll="checkTermsScroll()">
-              <h4 style="margin-top:0;">📜 租賃條款</h4>
               <ul>
-                  <li>如租借期間遺失/損壞任何器材或配件，承租人須根據本公司所列之價目表作出賠償。</li>
-                  <li>如器材或配件出現故障，承租人需承擔相關維修費用；本公司有權暫時保留按金，直至完成維修程序。 相關維修款項將於按金中扣除。</li>
-                  <li>若交收時未能提供所需按金，交易將被取消，已繳付之費用將不予退還。</li>
-                  <li>以信用卡繳付按金涉及信用卡授權預留額度，該預留僅作保證用途，並不構成實際交易。歸還器材且驗收無誤後，預留將被取消。</li>
-                  <li>學生按金計劃所附之活動門票，其活動日期必須安排於租借期間內，否則視為無效。</li>
-                  <li>歸還器材時，設備電量須達80%或以上。如無法達標，將收取港幣$10之服務費。</li>
-                  <li>還機前請自行將記憶卡格式化。如未格式化，可能影響後續使用，承租人需承擔相關責任。</li>
-                  <li>取機時請仔細檢查器材狀態，如發現任何損壞或異常，請即時透過WhatsApp或Instagram私訊並提供照片備案。否則將視為交收時器材狀況良好。</li>
-                  <li>所提供之記憶卡僅為方便顧客存取及傳輸檔案之用。如記憶卡發生故障導致檔案損失或無法讀取，本公司概不負責。</li>
-                  <li>如記憶卡出現讀取問題，請勿擅自交由第三方進行數據修復或維修。否則視同損壞記憶卡，承租人需按原價作出賠償。</li>
-                  <li>付款後預約一經確認恕不作退款</li>
+                  <li>如租借期間遺失/損壞任何器材或配件，承租人須根據價目表賠償。</li>
+                  <li>如器材出現故障，承租人需承擔相關維修費用；本公司有權暫時保留按金，直至完成維修。</li>
+                  <li>客人需支付維修期間無法租出器材的租金損失，每日價錢以過去平均三個月營收計算</li>
+                  <li>客人有責任確保歸還時沒有遺漏個人物品，本店不對遺失個人物品負責</li>
+                  <li>若交收時未能提供所需按金，交易將被取消，已繳費用不予退還。</li>
+                  <li>信用卡繳付按金僅作額度保證，並不構成實際交易。歸還無誤後，預留將被取消。</li>
+                  <li>學生按金附帶之活動門票日期必須於租借期間內。</li>
+                  <li>歸還時設備電量須達80%或以上，否則收取港幣$10服務費。</li>
+                  <li>還機前請自行將記憶卡格式化。本店不對任何資料外流負責</li>
+                  <li>付款後預約一經確認恕不作退款。</li>
               </ul>
-
-              <h4>🛠️ 器材損壞／遺失賠償價目表</h4>
+              <h4>🛠️ 器材損壞／遺失賠償</h4>
               <ul>
-                  <li>刮花 HKD$200+/每條</li>
-                  <li>撞凹 HKD$500+/每條</li>
+                  <li>刮花 HKD$200+ / 撞凹 HKD$500+</li>
                   <li>機身蓋/鏡頭蓋：HKD$200</li>
-                  <li>電池：HKD$700</li>
-                  <li>充電器：HKD$500</li>
-                  <li>相機袋：HKD$100</li>
+                  <li>電池：HKD$700 / 充電器：HKD$500</li>
                   <li>記憶卡: HKD$350(128GB) / $700(256GB) / $1200(CFB)</li>
               </ul>
-
-              <h4>💳 按金繳付方式</h4>
-              <div style="background:#f9f9f9; padding:10px; border-radius:8px; margin-bottom:10px; font-size:13px;">
-                  請前往 852.camera 網店：<br>
-                  👉 <a href="https://o852camerarental.booking-radar.com" target="_blank" style="color:var(--primary-color);">https://o852camerarental.booking-radar.com</a><br>
-                  點選 「按金」 分類，選擇相應器材，任選一天進行付款。
-              </div>
-
-              <strong>1. 信用卡預授權（Hold Limit）</strong>
-              <p style="margin:5px 0;">請選擇以下其中一種方式付款：信用卡 / Apple Pay / Google Pay</p>
-              <p style="font-size:12px; color:#666; margin-bottom:10px;">
-                  📌 注意事項：如租借期超過 7 日，將收取 4% 處理費，該費用將直接由按金中扣除。<br>
-                  建議於取機前完成付款，以免因系統延誤未能即時收到確認電郵。
-              </p>
-
-              <strong>2. FPS / 銀行轉帳</strong>
-              <p style="margin:5px 0;">請選擇 FPS 方式完成付款，並保留交易記錄以供核實。</p>
-
-              <h4>📅 建議付款時間</h4>
-              <p>建議於取機前一日完成按金繳付，以免當日取機時出現延誤或問題。如選擇於交收中心現場付款，請務必向職員出示付款證明。</p>
-
-              <h4>💸 按金退回方式</h4>
-              <p>器材歸還後如無任何損壞或問題，按金(FPS/Alipay)將於即日/翌日退回。信用卡將於付款日+7日後自動取消。</p>
-
-              <h4>❗ 重要提醒</h4>
-              <p style="color:var(--danger-color); font-weight:bold;">
-                  交收中心職員並非 852Camera 員工，請於還機後直接 WhatsApp 或 IG DM 通知我們已成功歸還器材。
-              </p>
-
-              <h4>👩🏻‍🎓👨🏻‍🎓 學生按金計劃</h4>
-              <p>如欲選用學生按金方案，請於 <u>取機前最少一天</u> 提交以下資料至我們的 WhatsApp 或 IG：</p>
-              <ul style="margin-bottom:5px;">
-                  <li>身份證副本</li>
-                  <li>有效學生證副本</li>
-                  <li>活動門票（活動必須於租借期間舉行）</li>
-              </ul>
-              <p style="font-size:13px; color:var(--success-hover);">✅ 建議於學生證及身份證上加上水印，註明「僅供 852Camera 器材租用用途」。</p>
-              <p style="font-size:12px; color:#666;">📌 如未能提前提交上述資料，將視為放棄學生按金計劃，需按一般按金方式處理。</p>
-
-              <h4>🤝 如需由他人代取器材</h4>
-              <p>請提前通知我們，否則系統將自動登記您本人電話號碼為取機人。</p>
-              
+              <br><br><br>
+              <div style="text-align:center; color:var(--text-muted); font-size:12px;">-- 滑動到底部以同意條款 --</div>
               <div id="scrollHint" class="scroll-hint">請向下捲動以閱讀完整條款 ⬇️</div>
           </div>
       </div>
@@ -1342,11 +650,7 @@
 
   <script>
     const WHATSAPP_PHONE = "85257409553"; 
-    
-    const publicHolidays = [
-        "2024-12-25", "2024-12-26", "2025-01-01", 
-        "2025-01-29", "2025-01-30", "2025-01-31" 
-    ];
+    const publicHolidays = [ "2024-12-25", "2024-12-26", "2025-01-01", "2025-01-29", "2025-01-30", "2025-01-31" ];
 
     const pricingData = {
       "S24U": { deposit: 4000, perDay: 180, weekday1: 160, weekend: { 2: 110, 3: 50, more: 50 }, weekday: { 2: 100, 3: 50, more: 50 } },
@@ -1373,7 +677,6 @@
       "Leica Q2": { deposit: 18000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100 }, weekday: { 2: 220, 3: 110, more: 90 } }
     };
 
-    // DOM Elements
     const elements = {
         productSelector: document.getElementById("productSelector"),
         selectedList: document.getElementById("selectedItemsList"),
@@ -1389,77 +692,101 @@
         starFilter: document.getElementById("starFilterToggle"),
         coolingFan: document.getElementById("coolingFanToggle"), 
         result: document.getElementById("result"),
-        errorBox: document.getElementById("error-box"),
         quickDates: document.getElementById("quickDates"),
-        emailError: document.getElementById("emailError"),
-        phoneError: document.getElementById("phoneError"),
-        termsContainer: document.getElementById("termsContainer"),
         termsCheck: document.getElementById("termsCheck"),
-        termsLockHint: document.getElementById("termsLockHint"),
-        btns: document.getElementById("actionButtons"),
         btnWhatsapp: document.getElementById("btnWhatsapp"),
         btnCopy: document.getElementById("btnCopy"),
         stickyTotal: document.getElementById("stickyTotal"),
         stickyPrice: document.getElementById("stickyPrice"),
-        termsModal: document.getElementById("termsModal")
+        termsModal: document.getElementById("termsModal"),
+        step4Container: document.getElementById("step4Container"),
+        step5Container: document.getElementById("step5Container"),
+        actionInquiry: document.getElementById("actionButtonsInquiry"),
+        actionBooking: document.getElementById("actionButtonsBooking"),
+        btnReadTNC: document.getElementById("btnReadTNC"),
+        termsWrapper: document.getElementById("termsWrapper"),
+        bookingValidationHint: document.getElementById("bookingValidationHint")
     };
 
-    // State
     let currentQuoteText = "";
-    // selectedProducts structure: Array<{ id: number, productKey: string, start: string, end: string }>
     let selectedProducts = []; 
-    let currentDepositRate = 1; // 1 = 100%, 0.5 = 50%, 0.2 = 20%
+    let currentDepositRate = 1;
+    let currentMode = 'inquiry'; // 'inquiry' or 'booking'
 
-    // Init
     const today = new Date().toISOString().split("T")[0];
     elements.start.min = today;
     elements.end.min = today;
 
-    // Load URL params ONLY on mount (No LocalStorage)
     window.addEventListener('DOMContentLoaded', () => {
-        // Handle URL params
         const params = new URLSearchParams(window.location.search);
-        // Force update input fields if URL has dates
         if (params.has('start')) elements.start.value = params.get('start');
         if (params.has('end')) elements.end.value = params.get('end');
-        
-        // If 'products' param exists, we add them using current global start/end if available
         if (params.has('products')) {
             const keys = params.get('products').split(',');
             keys.forEach(k => {
                 if(pricingData[k.trim()]) {
-                    selectedProducts.push({
-                        id: Date.now() + Math.random(),
-                        productKey: k.trim(),
-                        start: elements.start.value || "",
-                        end: elements.end.value || ""
-                    });
+                    selectedProducts.push({ id: Date.now() + Math.random(), productKey: k.trim(), start: elements.start.value || "", end: elements.end.value || "" });
                 }
             });
         }
-        
-        renderProductList();
+        setMode('inquiry'); // Default mode
         if (elements.start.value) handleGlobalDateChange();
         calculatePrice();
     });
 
+    // MODE SWITCHER LOGIC
+    function setMode(mode) {
+        currentMode = mode;
+        document.getElementById('btnModeInquiry').classList.toggle('active', mode === 'inquiry');
+        document.getElementById('btnModeBooking').classList.toggle('active', mode === 'booking');
+        
+        if (mode === 'inquiry') {
+            elements.step4Container.style.display = 'none';
+            elements.step5Container.style.display = 'none';
+        } else {
+            elements.step4Container.style.display = 'block';
+            elements.step5Container.style.display = 'block';
+        }
+        calculatePrice(); // Update UI buttons based on mode
+    }
+
+    // FORM VALIDATION FOR BOOKING MODE
+    function validateBookingForm() {
+        if(currentMode === 'inquiry') return;
+        
+        let isValid = true;
+        
+        // Check text fields
+        if(!elements.name.value.trim()) isValid = false;
+        if(!elements.phone.value.trim() || elements.phone.value.length !== 8) isValid = false;
+        if(!elements.payment.value) isValid = false;
+        
+        // Email check
+        const emailVal = elements.email.value.trim();
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if(!emailVal || !emailPattern.test(emailVal)) isValid = false;
+        
+        // Terms check
+        if(!elements.termsCheck.checked) isValid = false;
+
+        // Toggle Buttons
+        if(isValid) {
+            elements.btnWhatsapp.disabled = false;
+            elements.btnCopy.disabled = false;
+            elements.bookingValidationHint.style.display = 'none';
+        } else {
+            elements.btnWhatsapp.disabled = true;
+            elements.btnCopy.disabled = true;
+            elements.bookingValidationHint.style.display = 'block';
+        }
+    }
+
     function addProduct() {
         const val = elements.productSelector.value;
-        if (!val) {
-            showToast("請選擇器材", "error");
-            return;
-        }
-        
-        const newItem = {
-            id: Date.now(),
-            productKey: val,
-            start: elements.start.value || "",
-            end: elements.end.value || ""
-        };
-        
-        selectedProducts.push(newItem);
+        if (!val) { showToast("請選擇器材", "error"); return; }
+        selectedProducts.push({ id: Date.now(), productKey: val, start: elements.start.value || "", end: elements.end.value || "" });
         calculatePrice();
-        elements.productSelector.value = ""; // Reset selector
+        elements.productSelector.value = ""; 
     }
 
     function removeProduct(id) {
@@ -1471,89 +798,57 @@
         const item = selectedProducts.find(p => p.id === id);
         if (item) {
             item[field] = value;
-            // Auto correct end date if start > end
-            if (field === 'start' && item.end && item.end < value) {
-                item.end = value;
-            }
+            if (field === 'start' && item.end && item.end < value) item.end = value;
             calculatePrice();
         }
     }
     
     function applyDatesToAll() {
-        const s = elements.start.value;
-        const e = elements.end.value;
-        if (!s || !e) {
-            showToast("請先設定上方的預設日期", "error");
-            return;
-        }
-        selectedProducts.forEach(item => {
-            item.start = s;
-            item.end = e;
-        });
+        const s = elements.start.value; const e = elements.end.value;
+        if (!s || !e) { showToast("請先設定上方的預設日期", "error"); return; }
+        selectedProducts.forEach(item => { item.start = s; item.end = e; });
         calculatePrice();
         showToast("已更新所有項目日期", "success");
     }
 
     function renderProductList() {
         elements.selectedList.innerHTML = "";
-        
-        if (selectedProducts.length === 0) {
-            elements.selectedList.style.display = "none";
-            return;
-        }
-
+        if (selectedProducts.length === 0) { elements.selectedList.style.display = "none"; return; }
         elements.selectedList.style.display = "flex";
         
-        selectedProducts.forEach((item, index) => {
+        selectedProducts.forEach((item) => {
             const data = pricingData[item.productKey];
             const name = document.querySelector(`#productSelector option[value="${item.productKey}"]`)?.text || item.productKey;
             
-            // Calculate Item Price
             let priceDisplay = `日租: $${data.perDay} (起)`;
             let rentalDays = 0;
             
             if (item.start && item.end && item.end >= item.start) {
-                const s = new Date(item.start);
-                const e = new Date(item.end);
-                rentalDays = Math.ceil((e - s) / (1000 * 60 * 60 * 24));
-                if (rentalDays === 0) rentalDays = 1;
-                
+                const s = new Date(item.start); const e = new Date(item.end);
+                rentalDays = Math.ceil((e - s) / (1000 * 60 * 60 * 24)) || 1;
                 const itemCalc = calculateItemPrice(item.productKey, item.start, rentalDays);
                 priceDisplay = `租金: $${itemCalc.total.toLocaleString()} (${rentalDays}日)`;
-            } else {
-                priceDisplay = `請設定日期`;
-            }
+            } else { priceDisplay = `請設定日期`; }
 
-            // Calculate deposit for this item based on rate
             const adjustedDeposit = data.deposit * currentDepositRate;
 
             const div = document.createElement("div");
             div.className = "selected-item";
-            
-            // Using onchange="event.stopPropagation(); updateItemDate(...)" to prevent bubbling issues
             div.innerHTML = `
                 <div class="item-header">
                     <div class="item-name">${name}</div>
                     <button class="btn-remove" onclick="removeProduct(${item.id})" title="移除">×</button>
                 </div>
-                
                 <div class="item-dates-row">
                     <div class="item-date-group">
                         <span class="item-date-label">取機</span>
-                        <input type="date" class="item-date-input" 
-                               value="${item.start}" 
-                               min="${today}"
-                               onchange="updateItemDate(${item.id}, 'start', this.value)">
+                        <input type="date" class="item-date-input" value="${item.start}" min="${today}" onchange="updateItemDate(${item.id}, 'start', this.value)">
                     </div>
                     <div class="item-date-group">
                         <span class="item-date-label">還機</span>
-                        <input type="date" class="item-date-input" 
-                               value="${item.end}" 
-                               min="${item.start || today}"
-                               onchange="updateItemDate(${item.id}, 'end', this.value)">
+                        <input type="date" class="item-date-input" value="${item.end}" min="${item.start || today}" onchange="updateItemDate(${item.id}, 'end', this.value)">
                     </div>
                 </div>
-
                 <div class="item-footer">
                     <div class="item-price">${priceDisplay}</div>
                     <div class="item-deposit">按金: $${adjustedDeposit.toLocaleString()}</div>
@@ -1565,143 +860,81 @@
 
     function toggleTheme() {
       const body = document.body;
-      const currentTheme = body.getAttribute("data-theme");
-      const icon = document.getElementById("theme-icon");
-      
-      if (currentTheme === "dark") {
-        body.removeAttribute("data-theme");
-        icon.innerText = "🌙";
+      if (body.getAttribute("data-theme") === "dark") {
+        body.removeAttribute("data-theme"); document.getElementById("theme-icon").innerText = "🌙";
       } else {
-        body.setAttribute("data-theme", "dark");
-        icon.innerText = "☀️";
+        body.setAttribute("data-theme", "dark"); document.getElementById("theme-icon").innerText = "☀️";
       }
     }
     
     function resetForm() {
-        selectedProducts = [];
-        elements.productSelector.value = "";
-        elements.start.value = "";
-        elements.end.value = "";
-        elements.name.value = "";
-        elements.email.value = "";
-        elements.phone.value = "";
-        elements.payment.value = "";
-        elements.depositMethod.value = "Credit Card"; // Default
-        elements.photoEdit.checked = false;
-        elements.starFilter.checked = false;
-        elements.coolingFan.checked = false; 
-        elements.termsCheck.checked = false;
-        elements.termsCheck.disabled = true; 
+        selectedProducts = []; elements.productSelector.value = ""; elements.start.value = ""; elements.end.value = "";
+        elements.name.value = ""; elements.email.value = ""; elements.phone.value = ""; elements.payment.value = "";
+        elements.depositMethod.value = "Credit Card"; elements.photoEdit.checked = false; elements.starFilter.checked = false;
+        elements.coolingFan.checked = false; elements.termsCheck.checked = false; elements.termsCheck.disabled = true; 
         
-        // Reset Deposit
-        currentDepositRate = 1;
-        updateDepositUI(1);
-        
-        calculatePrice();
+        currentDepositRate = 1; updateDepositUI(1); calculatePrice();
 
-        if(elements.termsLockHint) elements.termsLockHint.style.display = 'block';
+        elements.btnReadTNC.className = "tnc-read-btn";
+        elements.btnReadTNC.innerText = "👉 點擊閱讀《租賃條款》以解鎖提交";
+        elements.termsWrapper.style.opacity = "0.6";
+        elements.termsWrapper.style.pointerEvents = "none";
         
         const hint = document.getElementById('scrollHint');
-        if(hint) {
-            hint.innerText = "請向下捲動以閱讀完整條款 ⬇️";
-            hint.classList.remove('done');
-        }
+        if(hint) { hint.innerText = "請向下捲動以閱讀完整條款 ⬇️"; hint.classList.remove('done'); }
         
-        elements.emailError.style.display = "none";
-        elements.phoneError.style.display = "none";
-
+        document.getElementById('emailError').style.display = "none";
+        document.getElementById('phoneError').style.display = "none";
         elements.quickDates.style.display = "none";
         elements.result.style.display = "none";
-        elements.termsContainer.style.display = "none";
-        elements.btns.style.display = "none";
+        elements.actionInquiry.style.display = "none";
+        elements.actionBooking.style.display = "none";
         elements.stickyTotal.classList.remove("visible");
-        elements.errorBox.innerHTML = "";
         
-        const url = new URL(window.location);
-        url.search = "";
+        const url = new URL(window.location); url.search = "";
         try { window.history.replaceState({}, '', url); } catch(e) {}
     }
 
     function handleGlobalDateChange() {
-      if (!elements.start.value) {
-        elements.quickDates.style.display = "none";
-        return;
-      }
+      if (!elements.start.value) { elements.quickDates.style.display = "none"; return; }
       elements.quickDates.style.display = "flex";
       elements.end.min = elements.start.value;
-      if (elements.end.value && elements.end.value < elements.start.value) {
-        elements.end.value = elements.start.value;
-      }
+      if (elements.end.value && elements.end.value < elements.start.value) elements.end.value = elements.start.value;
+      calculatePrice();
     }
 
     function setQuickDate(daysToAdd) {
       if (!elements.start.value) return;
       const date = new Date(elements.start.value);
       date.setDate(date.getDate() + daysToAdd);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
+      const year = date.getFullYear(); const month = String(date.getMonth() + 1).padStart(2, '0'); const day = String(date.getDate()).padStart(2, '0');
       elements.end.value = `${year}-${month}-${day}`;
+      calculatePrice();
     }
     
-    // Deposit Logic
     function setDepositRate(rate, element) {
-        currentDepositRate = rate;
-        updateDepositUI(rate);
-        calculatePrice();
+        currentDepositRate = rate; updateDepositUI(rate); calculatePrice();
     }
     
     function updateDepositUI(rate) {
-        // Toggle Deposit Payment Select Visibility
-        if (rate === 0) {
-            elements.depositGroup.style.display = "none";
-        } else {
-            elements.depositGroup.style.display = "block";
-        }
-
+        elements.depositGroup.style.display = (rate === 0) ? "none" : "block";
         document.querySelectorAll('.deposit-card').forEach(card => {
             card.classList.remove('active');
-            if(parseFloat(card.getAttribute('data-rate')) === rate) {
-                card.classList.add('active');
-            }
+            if(parseFloat(card.getAttribute('data-rate')) === rate) card.classList.add('active');
         });
     }
 
     function updateURL() {
         const url = new URL(window.location);
-        
-        // 1. Add Products
-        if (selectedProducts.length > 0) {
-            const keys = selectedProducts.map(p => p.productKey);
-            url.searchParams.set('products', keys.join(','));
-        } else {
-            url.searchParams.delete('products');
-            url.searchParams.delete('product');
-        }
-
-        // 2. Add Dates
-        if (elements.start.value) {
-            url.searchParams.set('start', elements.start.value);
-        } else {
-            url.searchParams.delete('start');
-        }
-
-        if (elements.end.value) {
-            url.searchParams.set('end', elements.end.value);
-        } else {
-            url.searchParams.delete('end');
-        }
-
+        if (selectedProducts.length > 0) url.searchParams.set('products', selectedProducts.map(p => p.productKey).join(','));
+        else { url.searchParams.delete('products'); url.searchParams.delete('product'); }
+        if (elements.start.value) url.searchParams.set('start', elements.start.value);
+        else url.searchParams.delete('start');
+        if (elements.end.value) url.searchParams.set('end', elements.end.value);
+        else url.searchParams.delete('end');
         try { window.history.replaceState({}, '', url); } catch(e) { }
     }
 
-    function toggleButtons() {
-        const agreed = elements.termsCheck.checked;
-        elements.btnWhatsapp.disabled = !agreed;
-        elements.btnCopy.disabled = !agreed;
-    }
-
-    // Modal Functions
     function openTermsModal(e) {
         if(e) e.preventDefault();
         elements.termsModal.classList.add('show');
@@ -1716,16 +949,34 @@
         }
     }
     
+    // Auto check T&C when scroll to bottom
     function checkTermsScroll() {
-        const el = document.getElementById('modalTermsBody');
-        const hint = document.getElementById('scrollHint');
-        
-        if (el.scrollHeight - el.scrollTop - el.clientHeight < 20) {
-            if (elements.termsCheck.disabled) {
-                elements.termsCheck.disabled = false;
-                if(elements.termsLockHint) elements.termsLockHint.style.display = 'none';
-                hint.innerText = "✅ 已閱讀完畢，現在可以勾選同意條款";
-                hint.classList.add('done');
+    const el = document.getElementById('modalTermsBody');
+    const hint = document.getElementById('scrollHint');
+    
+    // 如果視窗還沒渲染好，先不執行
+    if (!el || el.clientHeight === 0) return;
+
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < 20) {
+        if (elements.termsCheck.disabled) {
+            // UI Magic: Auto check and enable
+            elements.termsCheck.disabled = false;
+            elements.termsCheck.checked = true;
+            
+            elements.btnReadTNC.className = "tnc-read-btn done";
+            // 加上「(點擊可重溫)」，讓客人知道還能再打開
+            elements.btnReadTNC.innerHTML = "✅ 條款已閱讀並同意 (點擊可重溫)";
+            
+            elements.termsWrapper.style.opacity = "1";
+            elements.termsWrapper.style.pointerEvents = "auto";
+            
+            hint.innerText = "✅ 已經解鎖下方預約按鈕！";
+            hint.classList.add('done');
+            
+            validateBookingForm(); // Trigger validation to enable submit buttons
+            
+            // 【修復】已經移除了 setTimeout 的 auto close
+            // 讓客人自己按右上角的 "X" 或點擊背景來關閉，才不會看到一半突然消失
             }
         }
     }
@@ -1736,25 +987,17 @@
 
         let total = 0;
         let currentCalcDate = new Date(startDate);
-        
-        // Calculate Pickup Day of Week (Local Time Logic safe approach)
-        // Split YYYY-MM-DD to ensure we get local day, not UTC
         const parts = startDate.split('-');
-        const pickupDateObj = new Date(parts[0], parts[1]-1, parts[2]);
-        const pickupDow = pickupDateObj.getDay();
+        const pickupDow = new Date(parts[0], parts[1]-1, parts[2]).getDay();
 
         for (let i = 1; i <= days; i++) {
             currentCalcDate.setDate(currentCalcDate.getDate() + 1);
-            const dow = currentCalcDate.getDay(); // 0 is Sunday, 1 is Monday
+            const dow = currentCalcDate.getDay(); 
             const dateStrISO = currentCalcDate.toISOString().split('T')[0];
             const isHoliday = publicHolidays.includes(dateStrISO);
             
-            let price = 0;
-
+            let dailyPrice = 0;
             if (i === 1) {
-                // FIXED LOGIC: Strict check for Weekday discount based on PICKUP DATE
-                // We check if PICKUP day (pickupDow) was Mon(1), Tue(2), or Wed(3).
-                // If Pickup was Sun(0), this returns false -> Standard Price.
                 const isDay1Weekday = (pickupDow >= 1 && pickupDow <= 3 && !isHoliday); 
                 dailyPrice = isDay1Weekday ? data.weekday1 : data.perDay;
             } else {
@@ -1770,87 +1013,51 @@
     }
 
     function calculatePrice() {
-      // 0. Update UI First
       renderProductList();
-      
-      // 1. Update URL (Keeps "Copy Link" feature working without saving to disk)
       updateURL(); 
-
-      // 2. Reset UI
-      elements.errorBox.innerHTML = "";
       elements.stickyTotal.classList.remove("visible");
       
-      // 3. Validation
       const emailVal = elements.email.value.trim();
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      elements.emailError.style.display = (emailVal && !emailPattern.test(emailVal)) ? 'block' : 'none';
+      document.getElementById('emailError').style.display = (emailVal && !emailPattern.test(emailVal)) ? 'block' : 'none';
 
       const phoneVal = elements.phone.value.trim();
-      elements.phoneError.style.display = (phoneVal && phoneVal.length !== 8) ? 'block' : 'none';
+      document.getElementById('phoneError').style.display = (phoneVal && phoneVal.length !== 8) ? 'block' : 'none';
       
       if (selectedProducts.length === 0) {
         elements.result.style.display = "none";
-        elements.termsContainer.style.display = "none";
-        elements.btns.style.display = "none";
+        elements.actionInquiry.style.display = "none";
+        elements.actionBooking.style.display = "none";
         return;
       }
 
-      // 4. Calculation Logic
       let grandTotal = 0;
       let grandDeposit = 0;
-      let totalDaysForAllItems = 0;
-      
-      // Breakdown Map: Date -> Total Price
+      let minStart = null; let maxEnd = null;
+      let itemDetails = [];
       let dailyBreakdownMap = {};
       
-      // Helper to add to breakdown
       const addToBreakdown = (dateStr, amount, note, type) => {
-          if (!dailyBreakdownMap[dateStr]) {
-              dailyBreakdownMap[dateStr] = { amount: 0, items: [], type: type };
-          }
+          if (!dailyBreakdownMap[dateStr]) dailyBreakdownMap[dateStr] = { amount: 0, items: [], type: type };
           dailyBreakdownMap[dateStr].amount += amount;
           if (note) dailyBreakdownMap[dateStr].items.push(note);
-          // Prioritize holiday/weekend typing
           if (type === 'holiday' || type === 'weekend') dailyBreakdownMap[dateStr].type = type;
       };
 
-      // Loop through each product
-      let allValid = true;
-      let minStart = null;
-      let maxEnd = null;
-      let itemDetails = []; // Store item details including individual price
-
       selectedProducts.forEach(item => {
-           if (!item.start || !item.end) {
-               allValid = false;
-               return;
-           }
-           if (item.end < item.start) {
-               allValid = false;
-               return; // Skip invalid
-           }
-           
-           // Update global min/max for range context
-           const sDate = new Date(item.start);
-           const eDate = new Date(item.end);
+           if (!item.start || !item.end || item.end < item.start) return;
+           const sDate = new Date(item.start); const eDate = new Date(item.end);
            if(!minStart || sDate < minStart) minStart = sDate;
            if(!maxEnd || eDate > maxEnd) maxEnd = eDate;
 
            const days = Math.ceil((eDate - sDate) / (1000 * 60 * 60 * 24)) || 1;
-           totalDaysForAllItems += days;
-           
-           // Deposit
            const data = pricingData[item.productKey];
            grandDeposit += data.deposit;
            
-           // Price Calculation per item per day
            let currentCalcDate = new Date(item.start);
            let thisItemTotal = 0;
-           
-           // Calculate Pickup Day of Week (Local Time Logic)
            const parts = item.start.split('-');
-           const pickupDateObj = new Date(parts[0], parts[1]-1, parts[2]);
-           const pickupDow = pickupDateObj.getDay();
+           const pickupDow = new Date(parts[0], parts[1]-1, parts[2]).getDay();
 
            for(let i=1; i<=days; i++) {
                 currentCalcDate.setDate(currentCalcDate.getDate() + 1);
@@ -1860,8 +1067,6 @@
                 
                 let price = 0;
                 if (i === 1) {
-                    // Logic Logic Check: Check PICKUP DATE dow (pickupDow)
-                    // If pickup is Sunday(0), returns false -> Standard Price
                     const isDay1Weekday = (pickupDow >= 1 && pickupDow <= 3 && !isHoliday);
                     price = isDay1Weekday ? data.weekday1 : data.perDay;
                 } else {
@@ -1871,142 +1076,75 @@
                     else if (i === 3) price = tier[3];
                     else price = tier.more;
                 }
-                
-                thisItemTotal += price;
-                grandTotal += price;
-                
-                // Add to breakdown
+                thisItemTotal += price; grandTotal += price;
                 const dayType = isHoliday ? "holiday" : ((dow === 0 || dow >= 4) ? "weekend" : "weekday");
                 addToBreakdown(dateStrISO, price, null, dayType); 
            }
-           
-           // Capture item details for the final text
-           itemDetails.push({
-               ...item,
-               total: thisItemTotal
-           });
+           itemDetails.push({ ...item, total: thisItemTotal });
       });
       
-      if (!allValid) {
-          // If any item has incomplete dates, skip
-      }
-      
-      // Apply Deposit Multiplier
       grandDeposit = grandDeposit * currentDepositRate;
 
-      // Add Optional Services Costs 
-      // Services apply based on the *Max Duration* of the rental session
-      
       let serviceDays = 0;
-      if (minStart && maxEnd) {
-          serviceDays = Math.ceil((maxEnd - minStart) / (1000 * 60 * 60 * 24)) || 1;
-      }
-      
-      let starFilterCost = 0;
-      let coolingFanCost = 0;
-      let hasExtras = false;
+      if (minStart && maxEnd) serviceDays = Math.ceil((maxEnd - minStart) / (1000 * 60 * 60 * 24)) || 1;
+      let starFilterCost = 0; let coolingFanCost = 0; let hasExtras = false;
 
-      if (elements.starFilter.checked && serviceDays > 0) {
-          starFilterCost = 20 * serviceDays;
-          grandTotal += starFilterCost;
-          hasExtras = true;
-      }
+      if (elements.starFilter.checked && serviceDays > 0) { starFilterCost = 20 * serviceDays; grandTotal += starFilterCost; hasExtras = true; }
+      if (elements.coolingFan.checked && serviceDays > 0) { coolingFanCost = 20 * serviceDays; grandTotal += coolingFanCost; hasExtras = true; }
 
-      if (elements.coolingFan.checked && serviceDays > 0) {
-          coolingFanCost = 20 * serviceDays;
-          grandTotal += coolingFanCost;
-          hasExtras = true;
-      }
-
-      // Generate Breakdown HTML from Map
       let breakdownHtml = "";
-      const sortedDates = Object.keys(dailyBreakdownMap).sort();
-      
-      sortedDates.forEach(dateKey => {
-          const d = new Date(dateKey);
-          const dateStr = `${d.getMonth()+1}/${d.getDate()}`;
-          const entry = dailyBreakdownMap[dateKey];
-          
-          let dayLabel = "平日";
-          let typeClass = "badge";
-          if(entry.type === 'holiday') { dayLabel = "假期"; typeClass = "badge holiday"; }
-          else if(entry.type === 'weekend') { dayLabel = "假日"; }
-
-          breakdownHtml += `
-          <div class="breakdown-item">
-            <div><span class="breakdown-date">${dateStr}</span><span class="${typeClass}">${dayLabel}</span></div>
-            <span class="breakdown-price">$${entry.amount}</span>
-          </div>
-        `;
+      Object.keys(dailyBreakdownMap).sort().forEach(dateKey => {
+          const d = new Date(dateKey); const dateStr = `${d.getMonth()+1}/${d.getDate()}`; const entry = dailyBreakdownMap[dateKey];
+          let dayLabel = "平日"; let typeClass = "badge";
+          if(entry.type === 'holiday') { dayLabel = "假期"; typeClass = "badge holiday"; } else if(entry.type === 'weekend') { dayLabel = "假日"; }
+          breakdownHtml += `<div class="breakdown-item"><div><span class="breakdown-date">${dateStr}</span><span class="${typeClass}">${dayLabel}</span></div><span class="breakdown-price">$${entry.amount}</span></div>`;
       });
-      
       if (hasExtras) {
            breakdownHtml += `<div style="border-top:1px dashed var(--border-color); margin:8px 0;"></div>`;
-           if (elements.starFilter.checked) {
-             breakdownHtml += `<div class="breakdown-item"><div style="color:var(--text-main); font-size:13px;">✨ 星鏡 (覆蓋期 ${serviceDays}日)</div><span class="breakdown-price">+$${starFilterCost}</span></div>`;
-           }
-           if (elements.coolingFan.checked) {
-             breakdownHtml += `<div class="breakdown-item"><div style="color:var(--text-main); font-size:13px;">❄️ 散熱風扇 (覆蓋期 ${serviceDays}日)</div><span class="breakdown-price">+$${coolingFanCost}</span></div>`;
-           }
+           if (elements.starFilter.checked) breakdownHtml += `<div class="breakdown-item"><div style="color:var(--text-main); font-size:13px;">✨ 星鏡 (覆蓋期 ${serviceDays}日)</div><span class="breakdown-price">+$${starFilterCost}</span></div>`;
+           if (elements.coolingFan.checked) breakdownHtml += `<div class="breakdown-item"><div style="color:var(--text-main); font-size:13px;">❄️ 散熱風扇 (覆蓋期 ${serviceDays}日)</div><span class="breakdown-price">+$${coolingFanCost}</span></div>`;
       }
 
-      // 5. Update View
       const depMethod = elements.depositMethod.value;
-      let refundText = "";
-      if (depMethod === 'FPS') refundText = "歸還並通知我哋後即日/翌日退回";
-      else refundText = "信用卡預授權 T+7 自動解除";
+      const refundText = depMethod === 'FPS' ? "歸還並通知後即日/翌日退回" : "信用卡預授權 T+7 自動解除";
 
-      currentQuoteText = `📷 租借查詢\n------------------\n`;
-      if(elements.name.value) currentQuoteText += `👤 姓名: ${elements.name.value}\n`;
-      if(elements.email.value) currentQuoteText += `📧 電郵: ${elements.email.value}\n`;
-      if(elements.phone.value) currentQuoteText += `📞 電話: ${elements.phone.value}\n`;
-      if(elements.payment.value) currentQuoteText += `💳 租金付款: ${elements.payment.value}\n`;
-      currentQuoteText += `------------------\n`;
+      currentQuoteText = `📷 租借${currentMode === 'booking' ? '預約' : '查詢'}\n------------------\n`;
+      if(currentMode === 'booking') {
+          if(elements.name.value) currentQuoteText += `👤 姓名: ${elements.name.value}\n`;
+          if(elements.email.value) currentQuoteText += `📧 電郵: ${elements.email.value}\n`;
+          if(elements.phone.value) currentQuoteText += `📞 電話: ${elements.phone.value}\n`;
+          if(elements.payment.value) currentQuoteText += `💳 租金付款: ${elements.payment.value}\n`;
+          currentQuoteText += `------------------\n`;
+      }
       currentQuoteText += `📦 器材清單:\n`;
-      
       itemDetails.forEach(item => {
           const name = document.querySelector(`#productSelector option[value="${item.productKey}"]`)?.text || item.productKey;
-          // Updated: Added individual item price to the text
           currentQuoteText += `   • ${name} (${item.start} - ${item.end}) : $${item.total}\n`;
       });
       
-      // Add Services to Text
       if(elements.photoEdit.checked) currentQuoteText += `✨ 服務: 試用修圖 (免費)\n`;
       if(elements.starFilter.checked) currentQuoteText += `✨ 服務: 加配星鏡 (+$${starFilterCost})\n`;
       if(elements.coolingFan.checked) currentQuoteText += `❄️ 服務: 散熱風扇 (+$${coolingFanCost})\n`;
       
-      // Deposit Scheme
-      let depositSchemeText = "標準按金";
-      let depositDocs = "無需文件";
-      if (currentDepositRate === 0.5) {
-          depositSchemeText = "50% 按金方案";
-          depositDocs = "身份證 + 住址證明 (2個月內) + 活動門票";
-      } else if (currentDepositRate === 0) {
-          depositSchemeText = "學生按金 0% 方案";
-          depositDocs = "身份證 + 學生證 + 活動門票 (需於租借期內)";
-      }
+      let depositSchemeText = "標準按金"; let depositDocs = "無需文件";
+      if (currentDepositRate === 0.5) { depositSchemeText = "50% 按金"; depositDocs = "身份證+住址證明+活動門票"; }
+      else if (currentDepositRate === 0) { depositSchemeText = "0% 學生按金"; depositDocs = "身份證+學生證+活動門票"; }
       
       currentQuoteText += `------------------\n`;
       currentQuoteText += `🔒 按金方案: ${depositSchemeText}\n`;
-      if (currentDepositRate !== 0) {
-          currentQuoteText += `💳 按金支付: ${depMethod}\n`;
-      }
+      if (currentDepositRate !== 0) currentQuoteText += `💳 按金支付: ${depMethod}\n`;
       currentQuoteText += `📄 所需文件: ${depositDocs}\n`;
       currentQuoteText += `------------------\n`;
       currentQuoteText += `💰 總價: $${grandTotal.toLocaleString()}\n🔒 總按金: $${grandDeposit.toLocaleString()}`;
-      currentQuoteText += `\n\n✅ 本人已閱讀並同意租賃條款及細則，並確認以上資料正確無誤。`;
+      if(currentMode === 'booking') currentQuoteText += `\n\n✅ 本人已閱讀並同意租賃條款及細則，並確認以上資料正確無誤。`;
 
-      let depositInfoHtml = "";
-      if (currentDepositRate !== 0) {
-          depositInfoHtml = `<div class="info-desc"><strong>${depMethod}:</strong> ${refundText}</div>`;
-      }
+      let depositInfoHtml = currentDepositRate !== 0 ? `<div class="info-desc"><strong>${depMethod}:</strong> ${refundText}</div>` : "";
 
       elements.result.innerHTML = `
         <div class="result-header">
-          <div class="result-days">📅 共 ${selectedProducts.length} 項器材 <div style="font-size:12px; font-weight:normal; color:var(--text-muted); margin-top:4px;">取機日不計費</div></div>
+          <div class="result-days">📅 共 ${selectedProducts.length} 項器材</div>
           <div class="price-tag">$${grandTotal.toLocaleString()}</div>
         </div>
-        
         <div class="info-card">
           <div class="info-icon">🔒</div>
           <div class="info-content">
@@ -2015,7 +1153,6 @@
             <div class="info-desc" style="margin-top:4px;">所需文件：${depositDocs}</div>
           </div>
         </div>
-
         <div class="breakdown-section">
            <div class="breakdown-toggle" onclick="toggleBreakdown()"><span>📋 查看每日總價詳情</span><span>▼</span></div>
            <div class="breakdown-list" id="breakdownList">${breakdownHtml}</div>
@@ -2023,25 +1160,26 @@
       `;
       
       elements.result.style.display = "block";
-      elements.termsContainer.style.display = "block";
-      elements.btns.style.display = "grid";
-      
       elements.stickyPrice.innerText = `$${grandTotal.toLocaleString()}`;
       elements.stickyTotal.classList.add("visible");
+      
+      // Update action button visibility based on mode
+      if(currentMode === 'inquiry') {
+          elements.actionInquiry.style.display = "grid";
+          elements.actionBooking.style.display = "none";
+      } else {
+          elements.actionInquiry.style.display = "none";
+          elements.actionBooking.style.display = "grid";
+          validateBookingForm(); // validate immediately to setup disabled states
+      }
     }
 
-    function toggleBreakdown() {
-      const list = document.getElementById("breakdownList");
-      list.classList.toggle("open");
-    }
-
-    function sendWhatsapp() {
-        const url = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(currentQuoteText)}`;
-        window.open(url, '_blank');
-    }
-
-    function copyQuote() {
-        copyToClipboard(elements.btnCopy, currentQuoteText);
+    function toggleBreakdown() { document.getElementById("breakdownList").classList.toggle("open"); }
+    function sendWhatsapp() { window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(currentQuoteText)}`, '_blank'); }
+    function copyQuote(btn) { copyToClipboard(btn || elements.btnCopy, currentQuoteText); }
+    function scrollToActions() { 
+        if(currentMode === 'inquiry') document.getElementById('actionButtonsInquiry').scrollIntoView({behavior: 'smooth'});
+        else document.getElementById('actionButtonsBooking').scrollIntoView({behavior: 'smooth'});
     }
 
     function showToast(message, type = 'normal') {
@@ -2054,20 +1192,15 @@
     }
 
     async function copyToClipboard(btn, text) {
-      // 1. Success Handler
       const handleSuccess = () => {
         showToast("✅ 已複製內容", "success");
         if(btn) {
             const originalTitle = btn.querySelector('.btn-title').innerText;
             const originalSub = btn.querySelector('.btn-subtitle').innerText;
-            
             btn.querySelector('.btn-title').innerText = "✅ 已複製";
-            btn.querySelector('.btn-subtitle').innerText = "請前往 Instagram 貼上";
-            
-            // Store original background to restore later (handles gradients/solid colors)
+            btn.querySelector('.btn-subtitle').innerText = "請前往貼上";
             const originalBackground = btn.style.background;
             btn.style.background = "var(--success-color)";
-            
             setTimeout(() => { 
                 btn.querySelector('.btn-title').innerText = originalTitle;
                 btn.querySelector('.btn-subtitle').innerText = originalSub;
@@ -2076,47 +1209,21 @@
         }
       };
 
-      // 2. Modern Clipboard API (Fixes Emoji Issue)
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        try {
-          await navigator.clipboard.writeText(text);
-          handleSuccess();
-          return; 
-        } catch (err) {
-          console.warn('Clipboard API failed, falling back to legacy', err);
-        }
+        try { await navigator.clipboard.writeText(text); handleSuccess(); return; } catch (err) {}
       }
-
-      // 3. Fallback for older devices
       try {
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-9999px";
-        textArea.style.top = "0";
-        textArea.setAttribute("readonly", "");
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        textArea.setSelectionRange(0, 99999); 
-
-        const successful = document.execCommand('copy');
+        const textArea = document.createElement("textarea"); textArea.value = text;
+        textArea.style.position = "fixed"; textArea.style.left = "-9999px"; textArea.style.top = "0";
+        textArea.setAttribute("readonly", ""); document.body.appendChild(textArea);
+        textArea.focus(); textArea.select(); textArea.setSelectionRange(0, 99999); 
+        if (document.execCommand('copy')) handleSuccess();
         document.body.removeChild(textArea);
-
-        if (successful) {
-            handleSuccess();
-        } else {
-            showToast("❌ 複製失敗 (瀏覽器不支援)", "error");
-        }
-      } catch (err) {
-        showToast("❌ 複製失敗", "error");
-      }
+      } catch (err) { showToast("❌ 複製失敗", "error"); }
     }
     
     function copyPageUrl(btn) {
-        // Ensure URL is up to date before copying
-        updateURL();
-        copyToClipboard(btn, window.location.href);
+        updateURL(); copyToClipboard(btn, window.location.href);
     }
   </script>
 </body>
