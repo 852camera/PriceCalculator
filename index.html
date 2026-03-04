@@ -257,9 +257,9 @@
     }
     .tnc-read-btn:hover { background: rgba(239, 68, 68, 0.2); }
     .tnc-read-btn.done {
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--success-color);
-    border-color: var(--success-color);
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success-color);
+        border-color: var(--success-color);
     }
 
     #result { margin-top: 30px; border-top: 2px dashed var(--border-color); padding-top: 20px; display: none; animation: fadeIn 0.4s ease forwards; }
@@ -954,7 +954,6 @@
     const el = document.getElementById('modalTermsBody');
     const hint = document.getElementById('scrollHint');
     
-    // 如果視窗還沒渲染好，先不執行
     if (!el || el.clientHeight === 0) return;
 
     if (el.scrollHeight - el.scrollTop - el.clientHeight < 20) {
@@ -964,7 +963,6 @@
             elements.termsCheck.checked = true;
             
             elements.btnReadTNC.className = "tnc-read-btn done";
-            // 加上「(點擊可重溫)」，讓客人知道還能再打開
             elements.btnReadTNC.innerHTML = "✅ 條款已閱讀並同意 (點擊可重溫)";
             
             elements.termsWrapper.style.opacity = "1";
@@ -974,9 +972,6 @@
             hint.classList.add('done');
             
             validateBookingForm(); // Trigger validation to enable submit buttons
-            
-            // 【修復】已經移除了 setTimeout 的 auto close
-            // 讓客人自己按右上角的 "X" 或點擊背景來關閉，才不會看到一半突然消失
             }
         }
     }
@@ -1108,15 +1103,11 @@
       const depMethod = elements.depositMethod.value;
       const refundText = depMethod === 'FPS' ? "歸還並通知後即日/翌日退回" : "信用卡預授權 T+7 自動解除";
 
+      // 更新這裡：使用 {{PERSONAL_INFO}} 佔位符
       currentQuoteText = `📷 租借${currentMode === 'booking' ? '預約' : '查詢'}\n------------------\n`;
-      if(currentMode === 'booking') {
-          if(elements.name.value) currentQuoteText += `👤 姓名: ${elements.name.value}\n`;
-          if(elements.email.value) currentQuoteText += `📧 電郵: ${elements.email.value}\n`;
-          if(elements.phone.value) currentQuoteText += `📞 電話: ${elements.phone.value}\n`;
-          if(elements.payment.value) currentQuoteText += `💳 租金付款: ${elements.payment.value}\n`;
-          currentQuoteText += `------------------\n`;
-      }
+      currentQuoteText += `{{PERSONAL_INFO}}`;
       currentQuoteText += `📦 器材清單:\n`;
+      
       itemDetails.forEach(item => {
           const name = document.querySelector(`#productSelector option[value="${item.productKey}"]`)?.text || item.productKey;
           currentQuoteText += `   • ${name} (${item.start} - ${item.end}) : $${item.total}\n`;
@@ -1175,8 +1166,23 @@
     }
 
     function toggleBreakdown() { document.getElementById("breakdownList").classList.toggle("open"); }
-    function sendWhatsapp() { window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(currentQuoteText)}`, '_blank'); }
-    function copyQuote(btn) { copyToClipboard(btn || elements.btnCopy, currentQuoteText); }
+    
+    // 動態抓取最新個人資料並替換佔位符
+    function getFinalQuoteText() {
+        let personalInfo = "";
+        if(currentMode === 'booking') {
+            if(elements.name.value) personalInfo += `👤 姓名: ${elements.name.value}\n`;
+            if(elements.email.value) personalInfo += `📧 電郵: ${elements.email.value}\n`;
+            if(elements.phone.value) personalInfo += `📞 電話: ${elements.phone.value}\n`;
+            if(elements.payment.value) personalInfo += `💳 租金付款: ${elements.payment.value}\n`;
+            personalInfo += `------------------\n`;
+        }
+        return currentQuoteText.replace('{{PERSONAL_INFO}}', personalInfo);
+    }
+
+    function sendWhatsapp() { window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(getFinalQuoteText())}`, '_blank'); }
+    function copyQuote(btn) { copyToClipboard(btn || elements.btnCopy, getFinalQuoteText()); }
+
     function scrollToActions() { 
         if(currentMode === 'inquiry') document.getElementById('actionButtonsInquiry').scrollIntoView({behavior: 'smooth'});
         else document.getElementById('actionButtonsBooking').scrollIntoView({behavior: 'smooth'});
@@ -1220,10 +1226,6 @@
         if (document.execCommand('copy')) handleSuccess();
         document.body.removeChild(textArea);
       } catch (err) { showToast("❌ 複製失敗", "error"); }
-    }
-    
-    function copyPageUrl(btn) {
-        updateURL(); copyToClipboard(btn, window.location.href);
     }
   </script>
 </body>
