@@ -100,38 +100,64 @@
     .shop-info-sub { color: var(--text-muted); font-size: 12px; display: block; margin-top: 4px; }
 
     /* =========================================
-       NEW: Mode Selector (Inquiry vs Booking)
+       UPDATED: Mode Selector (Inquiry vs Booking)
        ========================================= */
+    .mode-container {
+        background: rgba(37, 99, 235, 0.05);
+        border: 2px solid rgba(37, 99, 235, 0.2);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    .mode-title {
+        text-align: center;
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+    }
     .mode-selector {
         display: flex;
-        gap: 10px;
-        margin-bottom: 25px;
-        background: var(--bg-color);
-        padding: 6px;
-        border-radius: 12px;
-        border: 1px solid var(--border-color);
+        gap: 15px;
     }
     .mode-btn {
         flex: 1;
-        padding: 12px;
-        border: none;
-        border-radius: 8px;
-        background: transparent;
+        padding: 15px 10px;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        background: var(--card-bg);
         color: var(--text-muted);
-        font-weight: 700;
-        font-size: 14px;
         cursor: pointer;
         transition: var(--transition);
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 4px;
+        position: relative;
     }
-    .mode-btn span { font-size: 11px; font-weight: normal; opacity: 0.8; }
+    .mode-btn:hover {
+        border-color: #93c5fd;
+    }
+    /* 當按鈕被選中時，呈現顯眼的高對比度實心藍色 */
     .mode-btn.active {
-        background: var(--card-bg);
-        color: var(--primary-color);
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+        box-shadow: 0 8px 16px -4px rgba(37, 99, 235, 0.3);
+        transform: translateY(-2px);
+    }
+    .mode-btn-icon {
+        font-size: 24px;
+        margin-bottom: 2px;
+    }
+    .mode-btn-title {
+        font-size: 15px;
+        font-weight: 800;
+    }
+    .mode-btn-sub {
+        font-size: 11px;
+        font-weight: normal;
+        opacity: 0.9;
     }
 
     /* =========================================
@@ -324,7 +350,7 @@
     @media print {
         body { background: white; padding: 0; color: black; }
         .container { box-shadow: none; border: none; max-width: 100%; margin: 0; padding: 0; }
-        .theme-toggle, .reset-btn, .btn-group, .sticky-total, .faq-container, .btn-add, .btn-remove, .mode-selector, .step-number { display: none !important; }
+        .theme-toggle, .reset-btn, .btn-group, .sticky-total, .faq-container, .btn-add, .btn-remove, .mode-container, .step-number { display: none !important; }
         input, select { border: none; background: none; padding: 0; font-weight: bold; -webkit-appearance: none; }
         .select-wrapper::after { display: none; }
         #result { display: block !important; border-top: 2px solid #000; }
@@ -362,15 +388,21 @@
         </div>
     </div>
 
-    <div class="mode-selector">
-        <button class="mode-btn active" onclick="setMode('inquiry')" id="btnModeInquiry">
-            🔍 查詢存貨
-            <span>只看價錢 / 查詢檔期</span>
-        </button>
-        <button class="mode-btn" onclick="setMode('booking')" id="btnModeBooking">
-            📝 提交預約
-            <span>填寫資料 / 正式預約</span>
-        </button>
+    <!-- UPDATED: 顯眼的模式選擇器 (確保客人第一眼就知道要選) -->
+    <div class="mode-container">
+        <div class="mode-title">👇想睇價錢定係直接預約？👇</div>
+        <div class="mode-selector">
+            <button class="mode-btn active" onclick="setMode('inquiry')" id="btnModeInquiry">
+                <span class="mode-btn-icon">🔍</span>
+                <span class="mode-btn-title">查詢存貨 / 睇價錢</span>
+                <span class="mode-btn-sub">不需填個人資料</span>
+            </button>
+            <button class="mode-btn" onclick="setMode('booking')" id="btnModeBooking">
+                <span class="mode-btn-icon">📝</span>
+                <span class="mode-btn-title">正式提交預約</span>
+                <span class="mode-btn-sub">需填資料及同意條款</span>
+            </button>
+        </div>
     </div>
     
     <div class="step-header">
