@@ -514,7 +514,7 @@
         <div class="dep-desc">無需證明文件</div>
       </div>
       <div class="deposit-card" onclick="setDepositRate(0.5, this)" data-rate="0.5">
-        <div class="dep-percent">50% 按金</div>
+        <div class="dep-percent">75% 按金</div>
         <div class="dep-desc">身份證+住址+門票</div>
       </div>
       <div class="deposit-card" onclick="setDepositRate(0, this)" data-rate="0">
@@ -1150,7 +1150,7 @@
       if(elements.coolingFan.checked) currentQuoteText += `❄️ 服務: 散熱風扇 (+$${coolingFanCost})\n`;
       
       let depositSchemeText = "標準按金"; let depositDocs = "無需文件";
-      if (currentDepositRate === 0.5) { depositSchemeText = "50% 按金"; depositDocs = "身份證+住址證明+活動門票"; }
+      if (currentDepositRate === 0.5) { depositSchemeText = "75% 按金"; depositDocs = "身份證+住址證明+活動門票"; }
       else if (currentDepositRate === 0) { depositSchemeText = "0% 學生按金"; depositDocs = "身份證+學生證+活動門票"; }
       
       currentQuoteText += `------------------\n`;
