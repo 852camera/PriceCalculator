@@ -39,7 +39,33 @@ const today = new Date().toISOString().split("T")[0];
 elements.start.min = today;
 elements.end.min = today;
 
+function populateDropdown() {
+    const selector = elements.productSelector;
+    const groups = {};
+    
+    // Loop through the data and build the HTML dynamically
+    for (const key in pricingData) {
+        const item = pricingData[key];
+        const cat = item.category || "其他";
+        
+        // If the category group doesn't exist yet, create it
+        if (!groups[cat]) {
+            groups[cat] = document.createElement("optgroup");
+            groups[cat].label = cat;
+            selector.appendChild(groups[cat]);
+        }
+        
+        // Create the option and add it to the group
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = item.name;
+        groups[cat].appendChild(opt);
+    }
+}
+
 window.addEventListener('DOMContentLoaded', () => {
+    populateDropdown(); // Automatically fill the dropdown based on data.js
+    
     const params = new URLSearchParams(window.location.search);
     if (params.has('start')) elements.start.value = params.get('start');
     if (params.has('end')) elements.end.value = params.get('end');
@@ -140,7 +166,8 @@ function renderProductList() {
     
     selectedProducts.forEach((item) => {
         const data = pricingData[item.productKey];
-        const name = document.querySelector(`#productSelector option[value="${item.productKey}"]`)?.text || item.productKey;
+        // Now safely gets the name directly from the data object instead of querying the DOM
+        const name = data?.name || item.productKey;
         
         let priceDisplay = `日租: $${data.perDay} (起)`;
         let rentalDays = 0;
@@ -429,7 +456,8 @@ function calculatePrice() {
   currentQuoteText += `📦 器材清單:\n`;
   
   itemDetails.forEach(item => {
-      const name = document.querySelector(`#productSelector option[value="${item.productKey}"]`)?.text || item.productKey;
+      // Safely gets the name directly from data.js
+      const name = pricingData[item.productKey]?.name || item.productKey;
       currentQuoteText += `   • ${name} (${item.start} - ${item.end}) : $${item.total}\n`;
   });
   
