@@ -20,7 +20,8 @@ const elements = {
     btnCopy: document.getElementById("btnCopy"),
     stickyTotal: document.getElementById("stickyTotal"),
     stickyPrice: document.getElementById("stickyPrice"),
-    stickyGuidance: document.getElementById("stickyGuidance"), // <-- Added new element
+    stickyGuidance: document.getElementById("stickyGuidance"),
+    progressBar: document.getElementById("progressBar"),
     termsModal: document.getElementById("termsModal"),
     step4Container: document.getElementById("step4Container"),
     step5Container: document.getElementById("step5Container"),
@@ -44,7 +45,6 @@ function populateDropdown() {
     const selector = elements.productSelector;
     const groups = {};
     
-    // Loop through the data and build the HTML dynamically
     for (const key in pricingData) {
         const item = pricingData[key];
         const cat = item.category || "其他";
@@ -76,12 +76,75 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    setMode('inquiry'); // Default mode
+    setMode('inquiry'); 
     if (elements.start.value) handleGlobalDateChange();
     calculatePrice();
 });
 
-// MODE SWITCHER LOGIC
+function updateProgress() {
+    let progress = 0;
+    let nextAction = "";
+    let isComplete = false;
+
+    const hasDates = elements.start.value !== "" && elements.end.value !== "";
+    const hasProducts = selectedProducts.length > 0;
+
+    const hasName = elements.name.value.trim().length > 0;
+    const hasPhone = elements.phone.value.trim().length === 8;
+    const hasPayment = elements.payment.value !== "";
+    const emailVal = elements.email.value.trim();
+    const hasEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
+    const step4Complete = hasName && hasPhone && hasPayment && hasEmail;
+    const step5Complete = elements.termsCheck.checked;
+
+    if (currentMode === 'inquiry') {
+        if (hasDates) progress += 40;
+        if (hasProducts) progress += 60;
+
+        if (!hasDates) nextAction = "第一步: 請選擇日期";
+        else if (!hasProducts) nextAction = "第二步: 請加入器材";
+        else { nextAction = "可以發送查詢了！"; isComplete = true; }
+        
+    } else { // Booking mode
+        if (hasDates) progress += 20;
+        if (hasProducts) progress += 30;
+        
+        if (hasProducts) {
+            let infoScore = 0;
+            if (hasName) infoScore += 7.5;
+            if (hasPhone) infoScore += 7.5;
+            if (hasEmail) infoScore += 7.5;
+            if (hasPayment) infoScore += 7.5;
+            progress += infoScore;
+        }
+
+        if (hasProducts && step4Complete && step5Complete) progress += 20;
+
+        if (!hasDates) nextAction = "第一步: 請選擇日期";
+        else if (!hasProducts) nextAction = "第二步: 請加入器材";
+        else if (!step4Complete) nextAction = "第四步: 填寫個人資料";
+        else if (!step5Complete) nextAction = "第五步: 閱讀及同意條款";
+        else { nextAction = "資料齊全，請發送預約"; isComplete = true; }
+    }
+
+    progress = Math.floor(progress);
+    
+    if (hasDates || hasProducts) elements.stickyTotal.classList.add("visible");
+    else elements.stickyTotal.classList.remove("visible");
+
+    elements.progressBar.style.width = `${progress}%`;
+
+    if (isComplete) {
+        elements.progressBar.style.backgroundColor = "var(--success-color)";
+        elements.stickyGuidance.style.color = "var(--success-color)";
+        elements.stickyGuidance.innerHTML = `✅ ${progress}%<br/><span style="font-weight:normal;">${nextAction}</span>`;
+    } else {
+        elements.progressBar.style.backgroundColor = "var(--primary-color)";
+        elements.stickyGuidance.style.color = "var(--text-muted)";
+        elements.stickyGuidance.innerHTML = `⏳ ${progress}%<br/><span style="font-weight:normal;">尚欠: ${nextAction}</span>`;
+    }
+}
+
 function setMode(mode) {
     currentMode = mode;
     document.getElementById('btnModeInquiry').classList.toggle('active', mode === 'inquiry');
@@ -94,67 +157,25 @@ function setMode(mode) {
         elements.step4Container.style.display = 'block';
         elements.step5Container.style.display = 'block';
     }
-    calculatePrice(); // Update UI buttons based on mode
+    calculatePrice(); 
+    updateProgress(); 
 }
 
-// DYNAMIC GUIDANCE UPDATER
-function updateGuidanceText(isValid) {
-    if (selectedProducts.length === 0) return;
-
-    if (currentMode === 'inquiry') {
-        elements.stickyGuidance.style.color = "var(--text-muted)";
-        elements.stickyGuidance.innerHTML = "👇 請向下捲動發送查詢";
-    } else {
-        if (isValid) {
-            elements.stickyGuidance.style.color = "var(--success-color)";
-            elements.stickyGuidance.innerHTML = "✅ 資料齊全，請向下捲動預約";
-        } else {
-            let missing = [];
-            
-            // Check if Step 4 (Info) is missing anything
-            const emailVal = elements.email.value.trim();
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            
-            if (!elements.name.value.trim() || 
-                !elements.phone.value.trim() || 
-                elements.phone.value.length !== 8 || 
-                !elements.payment.value || 
-                !emailVal || 
-                !emailPattern.test(emailVal)) {
-                missing.push("填寫步驟 4");
-            }
-
-            // Check if Step 5 (Terms) is missing
-            if (!elements.termsCheck.checked) {
-                missing.push("同意步驟 5");
-            }
-
-            elements.stickyGuidance.style.color = "var(--danger-color)";
-            elements.stickyGuidance.innerHTML = `⚠️ 尚欠: ${missing.join(' 及 ')}`;
-        }
-    }
-}
-
-// FORM VALIDATION FOR BOOKING MODE
 function validateBookingForm() {
     if(currentMode === 'inquiry') return;
     
     let isValid = true;
     
-    // Check text fields
     if(!elements.name.value.trim()) isValid = false;
     if(!elements.phone.value.trim() || elements.phone.value.length !== 8) isValid = false;
     if(!elements.payment.value) isValid = false;
     
-    // Email check
     const emailVal = elements.email.value.trim();
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if(!emailVal || !emailPattern.test(emailVal)) isValid = false;
     
-    // Terms check
     if(!elements.termsCheck.checked) isValid = false;
 
-    // Toggle Buttons
     if(isValid) {
         elements.btnWhatsapp.disabled = false;
         elements.btnCopy.disabled = false;
@@ -164,8 +185,7 @@ function validateBookingForm() {
         elements.btnCopy.disabled = true;
         elements.bookingValidationHint.style.display = 'block';
     }
-    
-    updateGuidanceText(isValid);
+    updateProgress();
 }
 
 function addProduct() {
@@ -276,18 +296,21 @@ function resetForm() {
     elements.result.style.display = "none";
     elements.actionInquiry.style.display = "none";
     elements.actionBooking.style.display = "none";
-    elements.stickyTotal.classList.remove("visible");
     
     const url = new URL(window.location); url.search = "";
     try { window.history.replaceState({}, '', url); } catch(e) {}
+    updateProgress(); 
 }
 
 function handleGlobalDateChange() {
-  if (!elements.start.value) { elements.quickDates.style.display = "none"; return; }
-  elements.quickDates.style.display = "flex";
-  elements.end.min = elements.start.value;
-  if (elements.end.value && elements.end.value < elements.start.value) elements.end.value = elements.start.value;
+  if (!elements.start.value) { elements.quickDates.style.display = "none"; }
+  else {
+      elements.quickDates.style.display = "flex";
+      elements.end.min = elements.start.value;
+      if (elements.end.value && elements.end.value < elements.start.value) elements.end.value = elements.start.value;
+  }
   calculatePrice();
+  updateProgress();
 }
 
 function setQuickDate(daysToAdd) {
@@ -356,7 +379,7 @@ if (el.scrollHeight - el.scrollTop - el.clientHeight < 20) {
         hint.innerText = "✅ 已經解鎖下方預約按鈕！";
         hint.classList.add('done');
         
-        validateBookingForm(); // Trigger validation to enable submit buttons
+        validateBookingForm(); 
         }
     }
 }
@@ -395,7 +418,6 @@ function calculateItemPrice(productKey, startDate, days) {
 function calculatePrice() {
   renderProductList();
   updateURL(); 
-  elements.stickyTotal.classList.remove("visible");
   
   const emailVal = elements.email.value.trim();
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -408,6 +430,8 @@ function calculatePrice() {
     elements.result.style.display = "none";
     elements.actionInquiry.style.display = "none";
     elements.actionBooking.style.display = "none";
+    elements.stickyPrice.innerText = `$0`;
+    updateProgress();
     return;
   }
 
@@ -536,17 +560,17 @@ function calculatePrice() {
   
   elements.result.style.display = "block";
   elements.stickyPrice.innerText = `$${grandTotal.toLocaleString()}`;
-  elements.stickyTotal.classList.add("visible");
   
   if(currentMode === 'inquiry') {
       elements.actionInquiry.style.display = "grid";
       elements.actionBooking.style.display = "none";
-      updateGuidanceText(true); // Tells them to scroll down
   } else {
       elements.actionInquiry.style.display = "none";
       elements.actionBooking.style.display = "grid";
-      validateBookingForm(); // validates and updates text
+      validateBookingForm(); 
   }
+  
+  updateProgress();
 }
 
 function toggleBreakdown() { document.getElementById("breakdownList").classList.toggle("open"); }
@@ -564,12 +588,8 @@ function getFinalQuoteText() {
 }
 
 function sendWhatsapp() { window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(getFinalQuoteText())}`, '_blank'); }
-function copyQuote(btn) { copyToClipboard(btn || elements.btnCopy, getFinalQuoteText()); }
 
-function scrollToActions() { 
-    if(currentMode === 'inquiry') document.getElementById('actionButtonsInquiry').scrollIntoView({behavior: 'smooth'});
-    else document.getElementById('actionButtonsBooking').scrollIntoView({behavior: 'smooth'});
-}
+function copyQuote(btn) { copyToClipboard(btn || elements.btnCopy, getFinalQuoteText()); }
 
 function showToast(message, type = 'normal') {
     const toast = document.getElementById("toast");
