@@ -20,6 +20,7 @@ const elements = {
     btnCopy: document.getElementById("btnCopy"),
     stickyTotal: document.getElementById("stickyTotal"),
     stickyPrice: document.getElementById("stickyPrice"),
+    stickyGuidance: document.getElementById("stickyGuidance"), // <-- Added new element
     termsModal: document.getElementById("termsModal"),
     step4Container: document.getElementById("step4Container"),
     step5Container: document.getElementById("step5Container"),
@@ -48,14 +49,12 @@ function populateDropdown() {
         const item = pricingData[key];
         const cat = item.category || "其他";
         
-        // If the category group doesn't exist yet, create it
         if (!groups[cat]) {
             groups[cat] = document.createElement("optgroup");
             groups[cat].label = cat;
             selector.appendChild(groups[cat]);
         }
         
-        // Create the option and add it to the group
         const opt = document.createElement("option");
         opt.value = key;
         opt.textContent = item.name;
@@ -64,7 +63,7 @@ function populateDropdown() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    populateDropdown(); // Automatically fill the dropdown based on data.js
+    populateDropdown(); 
     
     const params = new URLSearchParams(window.location.search);
     if (params.has('start')) elements.start.value = params.get('start');
@@ -98,6 +97,44 @@ function setMode(mode) {
     calculatePrice(); // Update UI buttons based on mode
 }
 
+// DYNAMIC GUIDANCE UPDATER
+function updateGuidanceText(isValid) {
+    if (selectedProducts.length === 0) return;
+
+    if (currentMode === 'inquiry') {
+        elements.stickyGuidance.style.color = "var(--text-muted)";
+        elements.stickyGuidance.innerHTML = "👇 請向下捲動發送查詢";
+    } else {
+        if (isValid) {
+            elements.stickyGuidance.style.color = "var(--success-color)";
+            elements.stickyGuidance.innerHTML = "✅ 資料齊全，請向下捲動預約";
+        } else {
+            let missing = [];
+            
+            // Check if Step 4 (Info) is missing anything
+            const emailVal = elements.email.value.trim();
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!elements.name.value.trim() || 
+                !elements.phone.value.trim() || 
+                elements.phone.value.length !== 8 || 
+                !elements.payment.value || 
+                !emailVal || 
+                !emailPattern.test(emailVal)) {
+                missing.push("填寫步驟 4");
+            }
+
+            // Check if Step 5 (Terms) is missing
+            if (!elements.termsCheck.checked) {
+                missing.push("同意步驟 5");
+            }
+
+            elements.stickyGuidance.style.color = "var(--danger-color)";
+            elements.stickyGuidance.innerHTML = `⚠️ 尚欠: ${missing.join(' 及 ')}`;
+        }
+    }
+}
+
 // FORM VALIDATION FOR BOOKING MODE
 function validateBookingForm() {
     if(currentMode === 'inquiry') return;
@@ -127,6 +164,8 @@ function validateBookingForm() {
         elements.btnCopy.disabled = true;
         elements.bookingValidationHint.style.display = 'block';
     }
+    
+    updateGuidanceText(isValid);
 }
 
 function addProduct() {
@@ -166,7 +205,6 @@ function renderProductList() {
     
     selectedProducts.forEach((item) => {
         const data = pricingData[item.productKey];
-        // Now safely gets the name directly from the data object instead of querying the DOM
         const name = data?.name || item.productKey;
         
         let priceDisplay = `日租: $${data.perDay} (起)`;
@@ -306,7 +344,6 @@ if (!el || el.clientHeight === 0) return;
 
 if (el.scrollHeight - el.scrollTop - el.clientHeight < 20) {
     if (elements.termsCheck.disabled) {
-        // UI Magic: Auto check and enable
         elements.termsCheck.disabled = false;
         elements.termsCheck.checked = true;
         
@@ -456,7 +493,6 @@ function calculatePrice() {
   currentQuoteText += `📦 器材清單:\n`;
   
   itemDetails.forEach(item => {
-      // Safely gets the name directly from data.js
       const name = pricingData[item.productKey]?.name || item.productKey;
       currentQuoteText += `   • ${name} (${item.start} - ${item.end}) : $${item.total}\n`;
   });
@@ -502,14 +538,14 @@ function calculatePrice() {
   elements.stickyPrice.innerText = `$${grandTotal.toLocaleString()}`;
   elements.stickyTotal.classList.add("visible");
   
-  // Update action button visibility based on mode
   if(currentMode === 'inquiry') {
       elements.actionInquiry.style.display = "grid";
       elements.actionBooking.style.display = "none";
+      updateGuidanceText(true); // Tells them to scroll down
   } else {
       elements.actionInquiry.style.display = "none";
       elements.actionBooking.style.display = "grid";
-      validateBookingForm(); // validate immediately to setup disabled states
+      validateBookingForm(); // validates and updates text
   }
 }
 
