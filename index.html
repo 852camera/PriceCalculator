@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>852camera 租借計算器</title>
+  <title>852CAMERA 租借計算器</title>
   
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -217,7 +217,7 @@
 
     <div class="btn-group" id="actionButtonsBooking" style="display:none; margin-top: 20px;">
         <div class="deposit-note" id="bookingValidationHint" style="margin-bottom:0; text-align:center;">
-            請完成上方步驟 4 及步驟 5 以解鎖預約按鈕
+            請完成上方進度要求以解鎖預約按鈕
         </div>
         <div class="btn-row">
             <button id="btnWhatsapp" class="btn-main btn-whatsapp" disabled onclick="sendWhatsapp()">
@@ -251,9 +251,13 @@
   </div>
   
   <div id="stickyTotal" class="sticky-total">
-      <div style="font-weight:bold; font-size:16px;">總計: <span id="stickyPrice" style="color:var(--primary-color)">$0</span></div>
-      <div id="stickyGuidance" style="font-size: 13px; font-weight: 600; text-align: right; max-width: 60%; line-height: 1.3;">
-          </div>
+      <div class="sticky-top-row">
+          <div style="font-weight:bold; font-size:16px;">總計: <span id="stickyPrice" style="color:var(--primary-color)">$0</span></div>
+          <div id="stickyGuidance" class="sticky-guidance-text"></div>
+      </div>
+      <div class="progress-container">
+          <div id="progressBar" class="progress-bar"></div>
+      </div>
   </div>
   
   <div id="toast" class="toast">訊息提示</div>
@@ -270,26 +274,22 @@
                   <li>預約一經確認及完成付款，所有已繳付之費用概不退還。</li>
                   <li>如承租人於提取器材時未能提供所需之按金，本公司有權取消交易，而已繳付之租金及相關費用將不予退還。</li>
               </ul>
-          
               <h4>二、 按金政策</h4>
               <ul>
                   <li>如以信用卡繳付按金，該筆款項僅作信用額度預留（授權凍結），並不構成實際資金交易。若器材歸還後經檢查確認無誤，本公司將解除該預留額度。</li>
                   <li>如器材因人為因素導致損壞而需進行維修，本公司有權暫時扣留部分或全部按金，直至維修報價落實及維修工作完成，以作扣除相關費用之用。</li>
                   <li>歸還後確認器材狀況正常，按金會於歸還翌日內原路退回(FPS)/付款日七天自動解除(信用卡)。</li>
               </ul>
-          
               <h4>三、 學生免按金優惠（如適用）</h4>
               <ul>
                   <li>申請人必須為承租人本人，並須提交印有有效日期且仍在有效期內之學生證正本+於租借期間內舉行之活動門票正本+身份證正本</li>
                   <li>本優惠僅適用於本地全日制之中學生及大專生（本科 Undergraduate 或以下級別）。</li>
                   <li>除當日租借外，免按金申請及相關證明文件必須於預計提取器材時間前至少二十四小時提交。逾期提交者，該申請將不獲受理，承租人必須繳付標準按金方可租用器材。</li>
               </ul>
-          
               <h4>四、 器材提取與狀態確認</h4>
               <ul>
                   <li>承租人於提取器材時，有責任即場檢查器材之外觀及操作功能。器材一經提取，即代表承租人確認該器材處於正常運作及良好狀態。其後提出之任何損壞或故障，均將視作於租借期間發生。</li>
               </ul>
-          
               <h4>五、 器材使用、損壞與賠償</h4>
               <ul>
                   <li>承租人於租借期間須妥善保管器材。如因人為疏忽、不當使用或意外導致任何器材或配件遺失或損壞，承租人須負上全部賠償責任。</li>
@@ -297,7 +297,6 @@
                   <li>遺失或損壞之賠償金額將根據本公司之最新價目表釐定；若屬價目表以外之損壞，則以官方或認可維修中心之維修報價為準。</li>
                   <li>如記憶卡出現讀取異常，承租人切勿擅自交由任何第三方進行數據修復或維修。否則將視同損壞記憶卡，承租人須按原價作出賠償。</li>
               </ul>
-          
               <h4>🛠️ 器材損壞／遺失賠償價目表</h4>
               <ul>
                   <li>刮花 HKD$500+ / 撞凹 HKD$1000+</li>
@@ -305,7 +304,6 @@
                   <li>電池：HKD$800 / 充電器：HKD$500</li>
                   <li>記憶卡：HKD$350 (128GB) / $700 (256GB) / $1200 (CFB)</li>
               </ul>
-          
               <h4>六、 歸還與續租政策</h4>
               <ul>
                   <li>如需續租，承租人必須於原定租借期屆滿前提出申請，並須獲本公司同意。</li>
@@ -313,29 +311,24 @@
                   <li>逾期歸還之附加費，將按每延遲一天收取該器材之「首日租金」計算。</li>
                   <li>承租人歸還器材時，設備電量必須保持在 80% 或以上。否則，本公司將收取港幣 $10 之充電服務費。</li>
               </ul>
-          
               <h4>七、 使用限制</h4>
               <ul>
                   <li>未經本公司事先書面同意，承租人絕對不得將器材轉租予任何第三方使用。</li>
               </ul>
-          
               <h4>八、 間接損失免責與責任限制</h4>
               <ul>
                   <li>如器材於租借期間因自然老化或機件故障（非人為因素）而無法正常運作，本公司之最高賠償責任僅限於退回該器材受影響期間之租金。</li>
                   <li>本公司對承租人因器材故障、資料遺失或未能如期提取器材而導致之任何直接或間接損失（包括但不限於工作延誤、重拍費用、交通費、營業利潤或名譽損失等），概不負上任何法律及賠償責任。</li>
               </ul>
-          
               <h4>九、 清潔與維護</h4>
               <ul>
                   <li>承租人須保持器材清潔。如器材於歸還時沾有嚴重污漬、沙泥、水分或異味，本公司有權向承租人收取額外之專業清潔費用（具體金額視乎情況而定）。</li>
               </ul>
-          
               <h4>十、 免責聲明</h4>
               <ul>
                   <li>承租人歸還器材前，有責任確保已取回所有個人物品，並自行將器材內之記憶卡或儲存裝置格式化。</li>
                   <li>本公司對任何遺留在器材內之個人物品遺失或損壞，以及任何個人資料外洩，概不承擔任何法律責任。</li>
               </ul>
-          
               <h4>十一、 適用法律及管轄權</h4>
               <ul>
                   <li>本條款及細則受香港特別行政區法律管轄，並按其解釋。如有任何爭議，本公司保留最終決定權。</li>
