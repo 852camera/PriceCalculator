@@ -10,12 +10,13 @@ const publicHolidays = [
 // Add 'category' and 'name' to each item so index.html builds itself automatically
 const pricingData = {
     // Samsung 手機
-    "S24U": { category: "Samsung 手機", name: "Samsung S24U", deposit: 4000, perDay: 180, weekday1: 160, weekend: { 2: 110, 3: 50, more: 50 }, weekday: { 2: 100, 3: 50, more: 50 } },
-    "S25U": { category: "Samsung 手機", name: "Samsung S25U", deposit: 8000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70 }, weekday: { 2: 150, 3: 70, more: 60 } },
+    "S24U (256GB)": { category: "Samsung 手機", name: "Samsung S24U", deposit: 4000, perDay: 180, weekday1: 160, weekend: { 2: 110, 3: 50, more: 50 }, weekday: { 2: 100, 3: 50, more: 50 } },
+    "S25U (512GB)": { category: "Samsung 手機", name: "Samsung S25U", deposit: 8000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70 }, weekday: { 2: 150, 3: 70, more: 60 } },
     
     // Vivo 手機
-    "X200 Ultra": { category: "Vivo 手機", name: "Vivo X200 Ultra + 專業套裝", deposit: 8000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70 }, weekday: { 2: 150, 3: 70, more: 60 } },
-    "X300 Pro": { category: "Vivo 手機", name: "Vivo X300 Pro + 專業套裝", deposit: 8000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70 }, weekday: { 2: 150, 3: 70, more: 60 } },
+    "X200 Ultra (512GB) 攝影套裝": { category: "Vivo 手機", name: "Vivo X200 Ultra 512GB 攝影套裝", deposit: 8000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70 }, weekday: { 2: 150, 3: 70, more: 60 } },
+    "X300 Pro (512GB) 攝影套裝": { category: "Vivo 手機", name: "Vivo X300 Pro 512GB 攝影套裝", deposit: 8000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70 }, weekday: { 2: 150, 3: 70, more: 60 } },
+    "X300 Ultra (1TB) 雙鏡頭攝影套裝": { category: "Vivo 手機", name: "Vivo X300 Ultra 1TB 雙鏡頭攝影套裝", deposit: 14000, perDay: 360, weekday1: 330, weekend: { 2: 220, 3: 110, more: 90 }, weekday: { 2: 200, 3: 100, more: 80 } },
     
     // Canon 相機
     "R5": { category: "Canon 相機", name: "Canon R5", deposit: 16000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90 }, weekday: { 2: 190, 3: 100, more: 80 } },
@@ -44,8 +45,7 @@ const pricingData = {
     
     // Fujifilm / Leica
     "X100VI": { category: "Fujifilm / Leica", name: "Fujifilm X100VI", deposit: 14000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90 }, weekday: { 2: 190, 3: 100, more: 80 } },
-    "Leica Q2": { category: "Fujifilm / Leica", name: "Leica Q2", deposit: 18000, perDay: 400, weekday1: 360, weekend: { 2: 240, 3: 120, more: 100 }, weekday: { 2: 220, 3: 110, more: 90 } },
-
+    
     // Monopod
     "COMAN M1 Pro 輕量碳纖單腳架+V5液壓雲台": { category: "Monopod", name: "COMAN M1 Pro 輕量碳纖單腳架+V5液壓雲台", deposit: 2000, perDay: 100, weekday1: 90, weekend: { 2: 60, 3: 30, more: 30 }, weekday: { 2: 50, 3: 30, more: 30 } }
 };
