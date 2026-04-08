@@ -557,7 +557,7 @@ function calculatePrice() {
   currentQuoteText += `📄 所需文件: ${depositDocs}\n`;
   currentQuoteText += `------------------\n`;
   currentQuoteText += `💰 總價: $${grandTotal.toLocaleString()}\n🔒 總按金: $${grandDeposit.toLocaleString()}`;
-  if(currentMode === 'booking') currentQuoteText += `\n\n✅ 本人已閱讀並同意租賃條款及細則，並確認以上資料正確無誤。`;
+  currentQuoteText += `\n\n✅ 本人已閱讀並同意租賃條款及細則，並確認以上資料正確無誤。`;
 
   let depositInfoHtml = currentDepositRate !== 0 ? `<div class="info-desc"><strong>${depMethod}:</strong> ${refundText}</div>` : "";
 
