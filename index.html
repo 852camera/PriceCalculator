@@ -198,15 +198,18 @@
     </div>
 
     <div class="btn-group" id="actionButtonsInquiry" style="display:none; margin-top: 20px;">
+        <div class="deposit-note" id="inquiryValidationHint" style="margin-bottom: 15px; text-align:center;">
+            請點擊閱讀上方《租賃條款》並勾選同意以解鎖查詢按鈕
+        </div>
         <div class="btn-row">
-            <button id="btnWhatsappInquiry" class="btn-main btn-whatsapp" onclick="sendWhatsapp()">
+            <button id="btnWhatsappInquiry" class="btn-main btn-whatsapp" disabled onclick="sendWhatsapp()">
               <span class="btn-icon">💬</span> 
               <div class="btn-content">
                   <span class="btn-title">WhatsApp 查詢</span>
                   <span class="btn-subtitle">直接傳送清單</span>
               </div>
             </button>
-            <button id="btnCopyInquiry" class="btn-main btn-copy" onclick="copyQuote(this)">
+            <button id="btnCopyInquiry" class="btn-main btn-copy" disabled onclick="copyQuote(this)">
                 <span class="btn-icon">📋</span>
                 <div class="btn-content">
                     <span class="btn-title">複製清單 (IG)</span>
