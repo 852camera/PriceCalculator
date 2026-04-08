@@ -29,7 +29,11 @@ const elements = {
     actionBooking: document.getElementById("actionButtonsBooking"),
     btnReadTNC: document.getElementById("btnReadTNC"),
     termsWrapper: document.getElementById("termsWrapper"),
-    bookingValidationHint: document.getElementById("bookingValidationHint")
+    bookingValidationHint: document.getElementById("bookingValidationHint"),
+    // 新增：綁定查詢模式的按鈕與提示
+    btnWhatsappInquiry: document.getElementById("btnWhatsappInquiry"),
+    btnCopyInquiry: document.getElementById("btnCopyInquiry"),
+    inquiryValidationHint: document.getElementById("inquiryValidationHint")
 };
 
 let currentQuoteText = "";
@@ -98,11 +102,13 @@ function updateProgress() {
     const step5Complete = elements.termsCheck.checked;
 
     if (currentMode === 'inquiry') {
-        if (hasDates) progress += 40;
-        if (hasProducts) progress += 60;
+        if (hasDates) progress += 30;
+        if (hasProducts) progress += 50;
+        if (hasProducts && step5Complete) progress += 20;
 
         if (!hasDates) nextAction = "第一步: 請選擇日期";
         else if (!hasProducts) nextAction = "第二步: 請加入器材";
+        else if (!step5Complete) nextAction = "第五步: 閱讀及同意條款";
         else { nextAction = "可以發送查詢了！"; isComplete = true; }
         
     } else { // Booking mode
@@ -152,7 +158,7 @@ function setMode(mode) {
     
     if (mode === 'inquiry') {
         elements.step4Container.style.display = 'none';
-        elements.step5Container.style.display = 'none';
+        elements.step5Container.style.display = 'block'; // 更改：查詢模式也顯示條款
     } else {
         elements.step4Container.style.display = 'block';
         elements.step5Container.style.display = 'block';
@@ -162,8 +168,24 @@ function setMode(mode) {
 }
 
 function validateBookingForm() {
-    if(currentMode === 'inquiry') return;
+    const isTermsChecked = elements.termsCheck.checked;
+
+    // 新增：處理 Inquiry (查詢模式) 的驗證
+    if (currentMode === 'inquiry') {
+        if (isTermsChecked) {
+            if (elements.btnWhatsappInquiry) elements.btnWhatsappInquiry.disabled = false;
+            if (elements.btnCopyInquiry) elements.btnCopyInquiry.disabled = false;
+            if (elements.inquiryValidationHint) elements.inquiryValidationHint.style.display = 'none';
+        } else {
+            if (elements.btnWhatsappInquiry) elements.btnWhatsappInquiry.disabled = true;
+            if (elements.btnCopyInquiry) elements.btnCopyInquiry.disabled = true;
+            if (elements.inquiryValidationHint) elements.inquiryValidationHint.style.display = 'block';
+        }
+        updateProgress();
+        return;
+    }
     
+    // 原有 Booking (預約模式) 的驗證
     let isValid = true;
     
     if(!elements.name.value.trim()) isValid = false;
@@ -174,7 +196,7 @@ function validateBookingForm() {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if(!emailVal || !emailPattern.test(emailVal)) isValid = false;
     
-    if(!elements.termsCheck.checked) isValid = false;
+    if(!isTermsChecked) isValid = false;
 
     if(isValid) {
         elements.btnWhatsapp.disabled = false;
@@ -376,7 +398,7 @@ if (el.scrollHeight - el.scrollTop - el.clientHeight < 20) {
         elements.termsWrapper.style.opacity = "1";
         elements.termsWrapper.style.pointerEvents = "auto";
         
-        hint.innerText = "✅ 已經解鎖下方預約按鈕！";
+        hint.innerText = "✅ 已經解鎖下方提交按鈕！";
         hint.classList.add('done');
         
         validateBookingForm(); 
@@ -561,14 +583,15 @@ function calculatePrice() {
   elements.result.style.display = "block";
   elements.stickyPrice.innerText = `$${grandTotal.toLocaleString()}`;
   
+  // 更新：切換模式後觸發驗證更新按鈕狀態
   if(currentMode === 'inquiry') {
       elements.actionInquiry.style.display = "grid";
       elements.actionBooking.style.display = "none";
   } else {
       elements.actionInquiry.style.display = "none";
       elements.actionBooking.style.display = "grid";
-      validateBookingForm(); 
   }
+  validateBookingForm(); 
   
   updateProgress();
 }
