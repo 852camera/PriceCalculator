@@ -44,7 +44,7 @@ const pricingData = {
     "1.4x Extender": { category: "Sony 鏡頭/配件", name: "1.4x 遠攝增距鏡", deposit: 2000, perDay: 80, weekday1: 70, weekend: { 2: 50, 3: 20, more: 20 }, weekday: { 2: 50, 3: 20, more: 20 } },
     
     // Fujifilm 相機
-    "X100VI": { category: "Fujifilm / Leica", name: "Fujifilm X100VI", deposit: 14000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90 }, weekday: { 2: 190, 3: 100, more: 80 } },
+    "X100VI": { category: "Fujifilm 相機", name: "Fujifilm X100VI", deposit: 14000, perDay: 350, weekday1: 320, weekend: { 2: 210, 3: 110, more: 90 }, weekday: { 2: 190, 3: 100, more: 80 } },
     
     // Monopod
     "COMAN M1 Pro 輕量碳纖單腳架+V5液壓雲台": { category: "Monopod", name: "COMAN M1 Pro 輕量碳纖單腳架+V5液壓雲台", deposit: 2000, perDay: 100, weekday1: 90, weekend: { 2: 60, 3: 30, more: 30 }, weekday: { 2: 50, 3: 30, more: 30 } }
