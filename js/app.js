@@ -10,9 +10,8 @@ const elements = {
     payment: document.getElementById("paymentMethod"),
     depositMethod: document.getElementById("depositPaymentMethod"), 
     depositGroup: document.getElementById("depositPaymentGroup"), 
-    photoEdit: document.getElementById("photoEditToggle"),
-    starFilter: document.getElementById("starFilterToggle"),
     coolingFan: document.getElementById("coolingFanToggle"), 
+    comanTripod: document.getElementById("comanTripodToggle"), // 新增單腳架
     result: document.getElementById("result"),
     quickDates: document.getElementById("quickDates"),
     termsCheck: document.getElementById("termsCheck"),
@@ -30,7 +29,6 @@ const elements = {
     btnReadTNC: document.getElementById("btnReadTNC"),
     termsWrapper: document.getElementById("termsWrapper"),
     bookingValidationHint: document.getElementById("bookingValidationHint"),
-    // 新增：綁定查詢模式的按鈕與提示
     btnWhatsappInquiry: document.getElementById("btnWhatsappInquiry"),
     btnCopyInquiry: document.getElementById("btnCopyInquiry"),
     inquiryValidationHint: document.getElementById("inquiryValidationHint")
@@ -158,7 +156,7 @@ function setMode(mode) {
     
     if (mode === 'inquiry') {
         elements.step4Container.style.display = 'none';
-        elements.step5Container.style.display = 'block'; // 更改：查詢模式也顯示條款
+        elements.step5Container.style.display = 'block';
     } else {
         elements.step4Container.style.display = 'block';
         elements.step5Container.style.display = 'block';
@@ -170,7 +168,6 @@ function setMode(mode) {
 function validateBookingForm() {
     const isTermsChecked = elements.termsCheck.checked;
 
-    // 新增：處理 Inquiry (查詢模式) 的驗證
     if (currentMode === 'inquiry') {
         if (isTermsChecked) {
             if (elements.btnWhatsappInquiry) elements.btnWhatsappInquiry.disabled = false;
@@ -185,7 +182,6 @@ function validateBookingForm() {
         return;
     }
     
-    // 原有 Booking (預約模式) 的驗證
     let isValid = true;
     
     if(!elements.name.value.trim()) isValid = false;
@@ -299,8 +295,8 @@ function toggleTheme() {
 function resetForm() {
     selectedProducts = []; elements.productSelector.value = ""; elements.start.value = ""; elements.end.value = "";
     elements.name.value = ""; elements.email.value = ""; elements.phone.value = ""; elements.payment.value = "";
-    elements.depositMethod.value = "Credit Card"; elements.photoEdit.checked = false; elements.starFilter.checked = false;
-    elements.coolingFan.checked = false; elements.termsCheck.checked = false; elements.termsCheck.disabled = true; 
+    elements.depositMethod.value = "Credit Card"; elements.coolingFan.checked = false; elements.comanTripod.checked = false;
+    elements.termsCheck.checked = false; elements.termsCheck.disabled = true; 
     
     currentDepositRate = 1; updateDepositUI(1); calculatePrice();
 
@@ -513,10 +509,10 @@ function calculatePrice() {
 
   let serviceDays = 0;
   if (minStart && maxEnd) serviceDays = Math.ceil((maxEnd - minStart) / (1000 * 60 * 60 * 24)) || 1;
-  let starFilterCost = 0; let coolingFanCost = 0; let hasExtras = false;
+  let coolingFanCost = 0; let comanTripodCost = 0; let hasExtras = false;
 
-  if (elements.starFilter.checked && serviceDays > 0) { starFilterCost = 20 * serviceDays; grandTotal += starFilterCost; hasExtras = true; }
   if (elements.coolingFan.checked && serviceDays > 0) { coolingFanCost = 20 * serviceDays; grandTotal += coolingFanCost; hasExtras = true; }
+  if (elements.comanTripod.checked && serviceDays > 0) { comanTripodCost = 80 * serviceDays; grandTotal += comanTripodCost; hasExtras = true; }
 
   let breakdownHtml = "";
   Object.keys(dailyBreakdownMap).sort().forEach(dateKey => {
@@ -525,10 +521,11 @@ function calculatePrice() {
       if(entry.type === 'holiday') { dayLabel = "假期"; typeClass = "badge holiday"; } else if(entry.type === 'weekend') { dayLabel = "假日"; }
       breakdownHtml += `<div class="breakdown-item"><div><span class="breakdown-date">${dateStr}</span><span class="${typeClass}">${dayLabel}</span></div><span class="breakdown-price">$${entry.amount}</span></div>`;
   });
+  
   if (hasExtras) {
        breakdownHtml += `<div style="border-top:1px dashed var(--border-color); margin:8px 0;"></div>`;
-       if (elements.starFilter.checked) breakdownHtml += `<div class="breakdown-item"><div style="color:var(--text-main); font-size:13px;">✨ 星鏡 (覆蓋期 ${serviceDays}日)</div><span class="breakdown-price">+$${starFilterCost}</span></div>`;
        if (elements.coolingFan.checked) breakdownHtml += `<div class="breakdown-item"><div style="color:var(--text-main); font-size:13px;">❄️ 散熱風扇 (覆蓋期 ${serviceDays}日)</div><span class="breakdown-price">+$${coolingFanCost}</span></div>`;
+       if (elements.comanTripod.checked) breakdownHtml += `<div class="breakdown-item"><div style="color:var(--text-main); font-size:13px;">📸 COMAN單腳架套裝 (覆蓋期 ${serviceDays}日)</div><span class="breakdown-price">+$${comanTripodCost}</span></div>`;
   }
 
   const depMethod = elements.depositMethod.value;
@@ -543,9 +540,8 @@ function calculatePrice() {
       currentQuoteText += `   • ${name} (${item.start} - ${item.end}) : $${item.total}\n`;
   });
   
-  if(elements.photoEdit.checked) currentQuoteText += `✨ 服務: 試用修圖 (免費)\n`;
-  if(elements.starFilter.checked) currentQuoteText += `✨ 服務: 加配星鏡 (+$${starFilterCost})\n`;
-  if(elements.coolingFan.checked) currentQuoteText += `❄️ 服務: 散熱風扇 (+$${coolingFanCost})\n`;
+  if(elements.coolingFan.checked) currentQuoteText += `❄️ 加配: 散熱風扇 (+$${coolingFanCost})\n`;
+  if(elements.comanTripod.checked) currentQuoteText += `📸 加配: COMAN單腳架套裝 (+$${comanTripodCost})\n`;
   
   let depositSchemeText = "標準按金"; let depositDocs = "無需文件";
   if (currentDepositRate === 0.75) { depositSchemeText = "75% 按金"; depositDocs = "身份證+住址證明+活動門票"; }
@@ -583,7 +579,6 @@ function calculatePrice() {
   elements.result.style.display = "block";
   elements.stickyPrice.innerText = `$${grandTotal.toLocaleString()}`;
   
-  // 更新：切換模式後觸發驗證更新按鈕狀態
   if(currentMode === 'inquiry') {
       elements.actionInquiry.style.display = "grid";
       elements.actionBooking.style.display = "none";
