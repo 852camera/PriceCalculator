@@ -658,10 +658,30 @@ async function submitWishlist() {
     const input = elements.customWishlist;
     const feedback = document.getElementById('wishlistFeedback');
     const text = input.value.trim();
+    const honeyPot = document.getElementById('honeyPot').value;
     
+    // 1. Anti-Bot: Honeypot Check
+    // If the invisible field has text, it's a bot. Silently drop the request but pretend it worked.
+    if (honeyPot !== "") {
+        input.value = '';
+        feedback.style.display = 'block';
+        setTimeout(() => { feedback.style.display = 'none'; }, 5000);
+        return;
+    }
+
     if (!text) {
         showToast("請先輸入您想要的器材喔！", "error");
         return;
+    }
+
+    // 2. Anti-Human Spam: Local Cooldown Check (1 hour = 3600000 milliseconds)
+    const lastSubmitTime = localStorage.getItem('lastWishlistSubmitTime');
+    if (lastSubmitTime) {
+        const timePassed = Date.now() - parseInt(lastSubmitTime);
+        if (timePassed < 3600000) { 
+            showToast("您近期已經許願過囉，請稍後再試！", "error");
+            return;
+        }
     }
 
     // 暫時禁用輸入框防止重複提交
@@ -677,13 +697,14 @@ async function submitWishlist() {
             },
             body: JSON.stringify({
                 access_key: 'ef28fedd-e6b9-4fbd-b64e-530f6abb9455',
-                subject: '【852CAMERA】新的器材建議！',
+                subject: '【852Camera】新的器材留言！',
                 message: `客人想要的新器材: ${text}`
             })
         });
         
         if (response.status === 200) {
-            // 成功：清空輸入框並顯示感謝訊息
+            localStorage.setItem('lastWishlistSubmitTime', Date.now().toString());
+            
             input.value = '';
             feedback.style.display = 'block';
             showToast("✅ 願望已送出！", "success");
