@@ -113,14 +113,16 @@
 
     <div style="background:rgba(245, 158, 11, 0.05); padding:15px; border-radius:12px; margin-bottom:20px; border:1px solid rgba(245, 158, 11, 0.3);">
         <label style="font-size:13px; margin-bottom:8px; color: #d97706; display: block; font-weight: bold;">
-            💡 器材建議
+            💡 意見收集
         </label>
         <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height: 1.4;">
-            如果我們沒有您需要的器材，請在下方留言默默告訴我們，我們會記錄下來作為未來的採購參考！
+            如果我們沒有您需要的器材，請在下方留言告訴我們，我們會記錄下來作為未來的採購參考！
         </div>
         
         <div style="display: flex; gap: 10px;">
-            <input type="text" id="customWishlist" placeholder="例如：Canon R1 / Sony A75 / Canon RF 24-105 F2.8 ...." style="flex: 1; padding: 10px; font-size: 13px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main);">
+            <input type="text" id="honeyPot" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off">
+            
+            <input type="text" id="customWishlist" placeholder="器材建議" style="flex: 1; padding: 10px; font-size: 13px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main);">
             <button type="button" onclick="submitWishlist()" style="background: #d97706; color: white; border: none; padding: 0 15px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px; white-space: nowrap; transition: var(--transition);">送出</button>
         </div>
         
