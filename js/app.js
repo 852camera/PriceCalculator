@@ -11,7 +11,7 @@ const elements = {
     depositMethod: document.getElementById("depositPaymentMethod"), 
     depositGroup: document.getElementById("depositPaymentGroup"), 
     coolingFan: document.getElementById("coolingFanToggle"), 
-    comanTripod: document.getElementById("comanTripodToggle"), // 新增單腳架
+    comanTripod: document.getElementById("comanTripodToggle"),
     result: document.getElementById("result"),
     quickDates: document.getElementById("quickDates"),
     termsCheck: document.getElementById("termsCheck"),
@@ -31,7 +31,8 @@ const elements = {
     bookingValidationHint: document.getElementById("bookingValidationHint"),
     btnWhatsappInquiry: document.getElementById("btnWhatsappInquiry"),
     btnCopyInquiry: document.getElementById("btnCopyInquiry"),
-    inquiryValidationHint: document.getElementById("inquiryValidationHint")
+    inquiryValidationHint: document.getElementById("inquiryValidationHint"),
+    customWishlist: document.getElementById("customWishlist") // 新增許願池輸入框
 };
 
 let currentQuoteText = "";
@@ -297,6 +298,9 @@ function resetForm() {
     elements.name.value = ""; elements.email.value = ""; elements.phone.value = ""; elements.payment.value = "";
     elements.depositMethod.value = "Credit Card"; elements.coolingFan.checked = false; elements.comanTripod.checked = false;
     elements.termsCheck.checked = false; elements.termsCheck.disabled = true; 
+    
+    // 清空許願池
+    if (elements.customWishlist) elements.customWishlist.value = "";
     
     currentDepositRate = 1; updateDepositUI(1); calculatePrice();
 
@@ -647,4 +651,53 @@ async function copyToClipboard(btn, text) {
     if (document.execCommand('copy')) handleSuccess();
     document.body.removeChild(textArea);
   } catch (err) { showToast("❌ 複製失敗", "error"); }
+}
+
+// 提交許願池到 Web3Forms
+async function submitWishlist() {
+    const input = elements.customWishlist;
+    const feedback = document.getElementById('wishlistFeedback');
+    const text = input.value.trim();
+    
+    if (!text) {
+        showToast("請先輸入您想要的器材喔！", "error");
+        return;
+    }
+
+    // 暫時禁用輸入框防止重複提交
+    input.disabled = true;
+
+    try {
+        // 使用 Web3Forms 於背景默默發送
+        const response = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                access_key: 'ef28fedd-e6b9-4fbd-b64e-530f6abb9455',
+                subject: '【852CAMERA】新的器材建議！',
+                message: `客人想要的新器材: ${text}`
+            })
+        });
+        
+        if (response.status === 200) {
+            // 成功：清空輸入框並顯示感謝訊息
+            input.value = '';
+            feedback.style.display = 'block';
+            showToast("✅ 願望已送出！", "success");
+            
+            // 5秒後隱藏感謝訊息
+            setTimeout(() => { 
+                feedback.style.display = 'none'; 
+            }, 5000);
+        } else {
+            showToast("❌ 傳送失敗，請稍後再試", "error");
+        }
+    } catch (error) {
+        showToast("❌ 網絡錯誤，請稍後再試", "error");
+    } finally {
+        input.disabled = false;
+    }
 }
