@@ -11,7 +11,7 @@ const publicHolidays = [
 const pricingData = {
     // Samsung 手機
     "S24U (256GB)": { category: "Samsung 手機", name: "Samsung S24U", deposit: 4000, perDay: 180, weekday1: 160, weekend: { 2: 110, 3: 50, more: 50 }, weekday: { 2: 100, 3: 50, more: 50 } },
-    "S25U (512GB)": { category: "Samsung 手機", name: "Samsung S25U", deposit: 8000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70 }, weekday: { 2: 150, 3: 70, more: 60 } },
+    "S25U (512GB)": { category: "Samsung 手機", name: "Samsung S25U", deposit: 8000, perDay: 220, weekday1: 200, weekend: { 2: 130, 3: 70, more: 60 }, weekday: { 2: 120, 3: 60, more: 50 } },
     
     // Vivo 手機
     "X200 Ultra (512GB) 攝影套裝": { category: "Vivo 手機", name: "Vivo X200 Ultra 512GB 攝影套裝", deposit: 8000, perDay: 280, weekday1: 250, weekend: { 2: 170, 3: 80, more: 70 }, weekday: { 2: 150, 3: 70, more: 60 } },
